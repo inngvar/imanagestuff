@@ -1,0 +1,44 @@
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+}
+
+dependencies {
+    implementation "com.h2database:h2"
+}
+
+def profiles = "dev"
+if (project.hasProperty("no-liquibase")) {
+    profiles += ",no-liquibase"
+}
+if (project.hasProperty("tls")) {
+    profiles += ",tls"
+}
+
+task webpack(type: NpmTask) {
+    inputs.files("package-lock.json")
+    inputs.files("build.gradle")
+    inputs.dir("src/main/webapp/")
+
+    def webpackDevFiles = fileTree("webpack//")
+    webpackDevFiles.exclude("webpack.prod.js")
+    inputs.files(webpackDevFiles)
+
+    outputs.dir("build/resources/main/META-INF/resources")
+
+    dependsOn npmInstall
+    args = ["run", "webpack:build"]
+    environment = [APP_VERSION: project.version]
+}
+
+processResources {
+    inputs.property('version', version)
+}
+
+
+processResources.dependsOn webpack
+
+
+

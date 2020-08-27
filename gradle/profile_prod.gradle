@@ -1,0 +1,28 @@
+dependencies {
+    testImplementation "com.h2database:h2"
+}
+
+def profiles = "prod"
+if (project.hasProperty("no-liquibase")) {
+    profiles += ",no-liquibase"
+}
+
+if (project.hasProperty("swagger")) {
+    profiles += ",swagger"
+}
+
+task webpack_test(type: NpmTask, dependsOn: "npmInstall") {
+    args = ["run", "webpack:test"]
+}
+
+task webpack(type: NpmTask, dependsOn: "npmInstall") {
+    args = ["run", "webpack:prod"]
+    environment = [APP_VERSION: project.version]
+}
+
+processResources {
+    inputs.property('version', version)
+}
+
+
+processResources.dependsOn webpack
