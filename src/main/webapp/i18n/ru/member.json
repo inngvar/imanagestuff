@@ -1,0 +1,26 @@
+{
+  "imanagestuffApp": {
+    "member": {
+      "home": {
+        "title": "Members",
+        "createLabel": "Создать новый Member",
+        "createOrEditLabel": "Создать или отредактировать Member",
+        "notFound": "No Members found"
+      },
+      "created": "Новый Member создан с идентификатором {{ param }}",
+      "updated": "Member обновлен с идентификатором {{ param }}",
+      "deleted": "Member удален с идентификатором {{ param }}",
+      "delete": {
+        "question": "Вы уверены что хотите удалить Member {{ id }}?"
+      },
+      "detail": {
+        "title": "Member"
+      },
+      "login": "Login",
+      "firstName": "First Name",
+      "middleName": "Middle Name",
+      "lastName": "Last Name",
+      "projects": "Projects"
+    }
+  }
+}
