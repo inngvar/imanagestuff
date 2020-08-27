@@ -1,0 +1,25 @@
+{
+  "imanagestuffApp": {
+    "project": {
+      "home": {
+        "title": "Projects",
+        "createLabel": "Создать новый Project",
+        "createOrEditLabel": "Создать или отредактировать Project",
+        "notFound": "No Projects found"
+      },
+      "created": "Новый Project создан с идентификатором {{ param }}",
+      "updated": "Project обновлен с идентификатором {{ param }}",
+      "deleted": "Project удален с идентификатором {{ param }}",
+      "delete": {
+        "question": "Вы уверены что хотите удалить Project {{ id }}?"
+      },
+      "detail": {
+        "title": "Project"
+      },
+      "name": "Name",
+      "descrption": "Descrption",
+      "sendReports": "Send Reports",
+      "members": "Members"
+    }
+  }
+}
