@@ -1,0 +1,27 @@
+{
+  "imanagestuffApp": {
+    "timeEntry": {
+      "home": {
+        "title": "Time Entries",
+        "createLabel": "Создать новый Time Entry",
+        "createOrEditLabel": "Создать или отредактировать Time Entry",
+        "notFound": "No Time Entries found"
+      },
+      "created": "Новый Time Entry создан с идентификатором {{ param }}",
+      "updated": "Time Entry обновлен с идентификатором {{ param }}",
+      "deleted": "Time Entry удален с идентификатором {{ param }}",
+      "delete": {
+        "question": "Вы уверены что хотите удалить Time Entry {{ id }}?"
+      },
+      "detail": {
+        "title": "Time Entry"
+      },
+      "duration": "Duration",
+      "date": "Date",
+      "shotDescription": "Shot Description",
+      "description": "Description",
+      "member": "Member",
+      "project": "Project"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+entity Project {
+	name String required
+    description String maxlength(4000)
+    sendReports String maxlength(4000)
+}
+
+entity Member{
+ 	login String required unique
+    firstName String required
+    middleName String
+    lastName String required
+}
+
+entity TimeEntry{
+	duration Duration required
+    date LocalDate required
+    shotDescription String maxlength(256)
+    description String maxlength(4000)
+}
+
+relationship ManyToMany {
+	Project{members(login)} to Member{projects(name)}
+}
+
+relationship ManyToOne {
+	TimeEntry{member(login) required} to Member
+    TimeEntry{project(name) required} to Project
+}
+
+// Set pagination options
+paginate * with infinite-scroll
+dto * with mapstruct
+service * with serviceClass
