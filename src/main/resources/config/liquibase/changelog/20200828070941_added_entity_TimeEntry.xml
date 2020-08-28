@@ -10,7 +10,7 @@
     <!--
         Added the entity TimeEntry.
     -->
-    <changeSet id="20200827193101-1" author="jhipster">
+    <changeSet id="20200828070941-1" author="jhipster">
         <createTable tableName="time_entry">
             <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
@@ -18,7 +18,7 @@
             <column name="duration" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="timestamp" type="datetime">
+            <column name="date" type="date">
                 <constraints nullable="false" />
             </column>
             <column name="shot_description" type="varchar(256)">
@@ -35,10 +35,9 @@
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
-        <dropDefaultValue tableName="time_entry" columnName="timestamp" columnDataType="datetime"/>
     </changeSet>
 
-    <changeSet id="20200827193101-1-relations" author="jhipster">
+    <changeSet id="20200828070941-1-relations" author="jhipster">
 
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
@@ -51,14 +50,14 @@
           This can be customized by adding or removing 'faker' in the 'spring.liquibase.contexts'
           Spring Boot configuration key.
     -->
-    <changeSet id="20200827193101-1-data" author="jhipster" context="faker">
+    <changeSet id="20200828070941-1-data" author="jhipster" context="faker">
         <loadData
                   file="config/liquibase/fake-data/time_entry.csv"
                   separator=";"
                   tableName="time_entry">
             <column name="id" type="numeric"/>
             <column name="duration" type="numeric"/>
-            <column name="timestamp" type="datetime"/>
+            <column name="date" type="date"/>
             <column name="shot_description" type="string"/>
             <column name="description" type="string"/>
             <column name="member_id" type="numeric"/>

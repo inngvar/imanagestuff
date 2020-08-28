@@ -2,10 +2,11 @@ package org.manage.web.rest;
 
 import static javax.ws.rs.core.UriBuilder.fromPath;
 
-import org.manage.domain.Member;
+import org.manage.service.MemberService;
 import org.manage.web.rest.errors.BadRequestAlertException;
 import org.manage.web.util.HeaderUtil;
 import org.manage.web.util.ResponseUtil;
+import org.manage.service.dto.MemberDTO;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
@@ -15,8 +16,7 @@ import org.manage.web.rest.vm.PageRequestVM;
 import org.manage.web.util.PaginationUtil;
 
 import javax.enterprise.context.ApplicationScoped;
-
-import javax.transaction.Transactional;
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -40,21 +40,21 @@ public class MemberResource {
     String applicationName;
 
 
-    
+    @Inject
+    MemberService memberService;
     /**
      * {@code POST  /members} : Create a new member.
      *
-     * @param member the member to create.
-     * @return the {@link Response} with status {@code 201 (Created)} and with body the new member, or with status {@code 400 (Bad Request)} if the member has already an ID.
+     * @param memberDTO the memberDTO to create.
+     * @return the {@link Response} with status {@code 201 (Created)} and with body the new memberDTO, or with status {@code 400 (Bad Request)} if the member has already an ID.
      */
     @POST
-    @Transactional
-    public Response createMember(@Valid Member member, @Context UriInfo uriInfo) {
-        log.debug("REST request to save Member : {}", member);
-        if (member.id != null) {
+    public Response createMember(@Valid MemberDTO memberDTO, @Context UriInfo uriInfo) {
+        log.debug("REST request to save Member : {}", memberDTO);
+        if (memberDTO.id != null) {
             throw new BadRequestAlertException("A new member cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        var result = Member.persistOrUpdate(member);
+        var result = memberService.persistOrUpdate(memberDTO);
         var response = Response.created(fromPath(uriInfo.getPath()).path(result.id.toString()).build()).entity(result);
         HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.id.toString()).forEach(response::header);
         return response.build();
@@ -63,38 +63,34 @@ public class MemberResource {
     /**
      * {@code PUT  /members} : Updates an existing member.
      *
-     * @param member the member to update.
-     * @return the {@link Response} with status {@code 200 (OK)} and with body the updated member,
-     * or with status {@code 400 (Bad Request)} if the member is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the member couldn't be updated.
+     * @param memberDTO the memberDTO to update.
+     * @return the {@link Response} with status {@code 200 (OK)} and with body the updated memberDTO,
+     * or with status {@code 400 (Bad Request)} if the memberDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the memberDTO couldn't be updated.
      */
     @PUT
-    @Transactional
-    public Response updateMember(@Valid Member member) {
-        log.debug("REST request to update Member : {}", member);
-        if (member.id == null) {
+    public Response updateMember(@Valid MemberDTO memberDTO) {
+        log.debug("REST request to update Member : {}", memberDTO);
+        if (memberDTO.id == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        var result = Member.persistOrUpdate(member);
+        var result = memberService.persistOrUpdate(memberDTO);
         var response = Response.ok().entity(result);
-        HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, member.id.toString()).forEach(response::header);
+        HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, memberDTO.id.toString()).forEach(response::header);
         return response.build();
     }
 
     /**
      * {@code DELETE  /members/:id} : delete the "id" member.
      *
-     * @param id the id of the member to delete.
+     * @param id the id of the memberDTO to delete.
      * @return the {@link Response} with status {@code 204 (NO_CONTENT)}.
      */
     @DELETE
     @Path("/{id}")
-    @Transactional
     public Response deleteMember(@PathParam("id") Long id) {
         log.debug("REST request to delete Member : {}", id);
-        Member.findByIdOptional(id).ifPresent(member -> {
-            member.delete();
-        });
+        memberService.delete(id);
         var response = Response.noContent();
         HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()).forEach(response::header);
         return response.build();
@@ -110,7 +106,7 @@ public class MemberResource {
     public Response getAllMembers(@BeanParam PageRequestVM pageRequest, @Context UriInfo uriInfo) {
         log.debug("REST request to get a page of Members");
         var page = pageRequest.toPage();
-        var result = new Paged<>(Member.findAll().page(page));
+        Paged<MemberDTO> result = memberService.findAll(page);
         var response = Response.ok().entity(result.content);
         response = PaginationUtil.withPaginationInfo(response, uriInfo, result);
         return response.build();
@@ -120,15 +116,15 @@ public class MemberResource {
     /**
      * {@code GET  /members/:id} : get the "id" member.
      *
-     * @param id the id of the member to retrieve.
-     * @return the {@link Response} with status {@code 200 (OK)} and with body the member, or with status {@code 404 (Not Found)}.
+     * @param id the id of the memberDTO to retrieve.
+     * @return the {@link Response} with status {@code 200 (OK)} and with body the memberDTO, or with status {@code 404 (Not Found)}.
      */
     @GET
     @Path("/{id}")
 
     public Response getMember(@PathParam("id") Long id) {
         log.debug("REST request to get Member : {}", id);
-        Optional<Member> member = Member.findByIdOptional(id);
-        return ResponseUtil.wrapOrNotFound(member);
+        Optional<MemberDTO> memberDTO = memberService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(memberDTO);
     }
 }

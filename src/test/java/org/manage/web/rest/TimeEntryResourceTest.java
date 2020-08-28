@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 
 import org.manage.TestUtil;
-import org.manage.domain.TimeEntry;
+import org.manage.service.dto.TimeEntryDTO;
 import io.quarkus.liquibase.LiquibaseFactory;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -21,24 +21,24 @@ import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 
 import java.time.Duration;
-    import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+    import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 @QuarkusTest
 public class TimeEntryResourceTest {
 
-    private static final TypeRef<TimeEntry> ENTITY_TYPE = new TypeRef<>() {
+    private static final TypeRef<TimeEntryDTO> ENTITY_TYPE = new TypeRef<>() {
     };
 
-    private static final TypeRef<List<TimeEntry>> LIST_OF_ENTITY_TYPE = new TypeRef<>() {
+    private static final TypeRef<List<TimeEntryDTO>> LIST_OF_ENTITY_TYPE = new TypeRef<>() {
     };
 
     private static final Duration DEFAULT_DURATION = Duration.ofHours(6);
     private static final Duration UPDATED_DURATION = Duration.ofHours(12);
 
-    private static final Instant DEFAULT_TIMESTAMP = Instant.ofEpochSecond(0L).truncatedTo(ChronoUnit.SECONDS);
-    private static final Instant UPDATED_TIMESTAMP = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+    private static final LocalDate DEFAULT_DATE = LocalDate.ofEpochDay(0L);
+    private static final LocalDate UPDATED_DATE = LocalDate.now(ZoneId.systemDefault());
 
     private static final String DEFAULT_SHOT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_SHOT_DESCRIPTION = "BBBBBBBBBB";
@@ -49,7 +49,7 @@ public class TimeEntryResourceTest {
 
     String adminToken;
 
-    TimeEntry timeEntry;
+    TimeEntryDTO timeEntryDTO;
 
     @Inject
     LiquibaseFactory liquibaseFactory;
@@ -82,18 +82,18 @@ public class TimeEntryResourceTest {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static TimeEntry createEntity() {
-        var timeEntry = new TimeEntry();
-        timeEntry.duration = DEFAULT_DURATION;
-        timeEntry.timestamp = DEFAULT_TIMESTAMP;
-        timeEntry.shotDescription = DEFAULT_SHOT_DESCRIPTION;
-        timeEntry.description = DEFAULT_DESCRIPTION;
-        return timeEntry;
+    public static TimeEntryDTO createEntity() {
+        var timeEntryDTO = new TimeEntryDTO();
+        timeEntryDTO.duration = DEFAULT_DURATION;
+        timeEntryDTO.date = DEFAULT_DATE;
+        timeEntryDTO.shotDescription = DEFAULT_SHOT_DESCRIPTION;
+        timeEntryDTO.description = DEFAULT_DESCRIPTION;
+        return timeEntryDTO;
     }
 
     @BeforeEach
     public void initTest() {
-        timeEntry = createEntity();
+        timeEntryDTO = createEntity();
     }
 
     @Test
@@ -112,13 +112,13 @@ public class TimeEntryResourceTest {
             .size();
 
         // Create the TimeEntry
-        timeEntry = given()
+        timeEntryDTO = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(timeEntry)
+            .body(timeEntryDTO)
             .when()
             .post("/api/time-entries")
             .then()
@@ -126,7 +126,7 @@ public class TimeEntryResourceTest {
             .extract().as(ENTITY_TYPE);
 
         // Validate the TimeEntry in the database
-        var timeEntryList = given()
+        var timeEntryDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -138,12 +138,12 @@ public class TimeEntryResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(timeEntryList).hasSize(databaseSizeBeforeCreate + 1);
-        var testTimeEntry = timeEntryList.stream().filter(it -> timeEntry.id.equals(it.id)).findFirst().get();
-        assertThat(testTimeEntry.duration).isEqualTo(DEFAULT_DURATION);
-        assertThat(testTimeEntry.timestamp).isEqualTo(DEFAULT_TIMESTAMP);
-        assertThat(testTimeEntry.shotDescription).isEqualTo(DEFAULT_SHOT_DESCRIPTION);
-        assertThat(testTimeEntry.description).isEqualTo(DEFAULT_DESCRIPTION);
+        assertThat(timeEntryDTOList).hasSize(databaseSizeBeforeCreate + 1);
+        var testTimeEntryDTO = timeEntryDTOList.stream().filter(it -> timeEntryDTO.id.equals(it.id)).findFirst().get();
+        assertThat(testTimeEntryDTO.duration).isEqualTo(DEFAULT_DURATION);
+        assertThat(testTimeEntryDTO.date).isEqualTo(DEFAULT_DATE);
+        assertThat(testTimeEntryDTO.shotDescription).isEqualTo(DEFAULT_SHOT_DESCRIPTION);
+        assertThat(testTimeEntryDTO.description).isEqualTo(DEFAULT_DESCRIPTION);
     }
 
     @Test
@@ -162,7 +162,7 @@ public class TimeEntryResourceTest {
             .size();
 
         // Create the TimeEntry with an existing ID
-        timeEntry.id = 1L;
+        timeEntryDTO.id = 1L;
 
         // An entity with an existing ID cannot be created, so this API call must fail
         given()
@@ -171,14 +171,14 @@ public class TimeEntryResourceTest {
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(timeEntry)
+            .body(timeEntryDTO)
             .when()
             .post("/api/time-entries")
             .then()
             .statusCode(BAD_REQUEST.getStatusCode());
 
         // Validate the TimeEntry in the database
-        var timeEntryList = given()
+        var timeEntryDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -190,7 +190,7 @@ public class TimeEntryResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(timeEntryList).hasSize(databaseSizeBeforeCreate);
+        assertThat(timeEntryDTOList).hasSize(databaseSizeBeforeCreate);
     }
 
     @Test
@@ -209,7 +209,7 @@ public class TimeEntryResourceTest {
             .size();
 
         // set the field null
-        timeEntry.duration = null;
+        timeEntryDTO.duration = null;
 
         // Create the TimeEntry, which fails.
         given()
@@ -218,14 +218,14 @@ public class TimeEntryResourceTest {
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(timeEntry)
+            .body(timeEntryDTO)
             .when()
             .post("/api/time-entries")
             .then()
             .statusCode(BAD_REQUEST.getStatusCode());
 
         // Validate the TimeEntry in the database
-        var timeEntryList = given()
+        var timeEntryDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -237,10 +237,10 @@ public class TimeEntryResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(timeEntryList).hasSize(databaseSizeBeforeTest);
+        assertThat(timeEntryDTOList).hasSize(databaseSizeBeforeTest);
     }
     @Test
-    public void checkTimestampIsRequired() throws Exception {
+    public void checkDateIsRequired() throws Exception {
         var databaseSizeBeforeTest = given()
             .auth()
             .preemptive()
@@ -255,7 +255,7 @@ public class TimeEntryResourceTest {
             .size();
 
         // set the field null
-        timeEntry.timestamp = null;
+        timeEntryDTO.date = null;
 
         // Create the TimeEntry, which fails.
         given()
@@ -264,14 +264,14 @@ public class TimeEntryResourceTest {
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(timeEntry)
+            .body(timeEntryDTO)
             .when()
             .post("/api/time-entries")
             .then()
             .statusCode(BAD_REQUEST.getStatusCode());
 
         // Validate the TimeEntry in the database
-        var timeEntryList = given()
+        var timeEntryDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -283,19 +283,19 @@ public class TimeEntryResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(timeEntryList).hasSize(databaseSizeBeforeTest);
+        assertThat(timeEntryDTOList).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
     public void updateTimeEntry() {
         // Initialize the database
-        timeEntry = given()
+        timeEntryDTO = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(timeEntry)
+            .body(timeEntryDTO)
             .when()
             .post("/api/time-entries")
             .then()
@@ -316,23 +316,23 @@ public class TimeEntryResourceTest {
             .size();
 
         // Get the timeEntry
-        var updatedTimeEntry = given()
+        var updatedTimeEntryDTO = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
             .accept(APPLICATION_JSON)
             .when()
-            .get("/api/time-entries/{id}", timeEntry.id)
+            .get("/api/time-entries/{id}", timeEntryDTO.id)
             .then()
             .statusCode(OK.getStatusCode())
             .contentType(APPLICATION_JSON)
             .extract().body().as(ENTITY_TYPE);
 
         // Update the timeEntry
-        updatedTimeEntry.duration = UPDATED_DURATION;
-        updatedTimeEntry.timestamp = UPDATED_TIMESTAMP;
-        updatedTimeEntry.shotDescription = UPDATED_SHOT_DESCRIPTION;
-        updatedTimeEntry.description = UPDATED_DESCRIPTION;
+        updatedTimeEntryDTO.duration = UPDATED_DURATION;
+        updatedTimeEntryDTO.date = UPDATED_DATE;
+        updatedTimeEntryDTO.shotDescription = UPDATED_SHOT_DESCRIPTION;
+        updatedTimeEntryDTO.description = UPDATED_DESCRIPTION;
 
         given()
             .auth()
@@ -340,14 +340,14 @@ public class TimeEntryResourceTest {
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(updatedTimeEntry)
+            .body(updatedTimeEntryDTO)
             .when()
             .put("/api/time-entries")
             .then()
             .statusCode(OK.getStatusCode());
 
         // Validate the TimeEntry in the database
-        var timeEntryList = given()
+        var timeEntryDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -359,12 +359,12 @@ public class TimeEntryResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(timeEntryList).hasSize(databaseSizeBeforeUpdate);
-        var testTimeEntry = timeEntryList.stream().filter(it -> updatedTimeEntry.id.equals(it.id)).findFirst().get();
-        assertThat(testTimeEntry.duration).isEqualTo(UPDATED_DURATION);
-        assertThat(testTimeEntry.timestamp).isEqualTo(UPDATED_TIMESTAMP);
-        assertThat(testTimeEntry.shotDescription).isEqualTo(UPDATED_SHOT_DESCRIPTION);
-        assertThat(testTimeEntry.description).isEqualTo(UPDATED_DESCRIPTION);
+        assertThat(timeEntryDTOList).hasSize(databaseSizeBeforeUpdate);
+        var testTimeEntryDTO = timeEntryDTOList.stream().filter(it -> updatedTimeEntryDTO.id.equals(it.id)).findFirst().get();
+        assertThat(testTimeEntryDTO.duration).isEqualTo(UPDATED_DURATION);
+        assertThat(testTimeEntryDTO.date).isEqualTo(UPDATED_DATE);
+        assertThat(testTimeEntryDTO.shotDescription).isEqualTo(UPDATED_SHOT_DESCRIPTION);
+        assertThat(testTimeEntryDTO.description).isEqualTo(UPDATED_DESCRIPTION);
     }
 
     @Test
@@ -389,14 +389,14 @@ public class TimeEntryResourceTest {
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(timeEntry)
+            .body(timeEntryDTO)
             .when()
             .put("/api/time-entries")
             .then()
             .statusCode(BAD_REQUEST.getStatusCode());
 
         // Validate the TimeEntry in the database
-        var timeEntryList = given()
+        var timeEntryDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -408,19 +408,19 @@ public class TimeEntryResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(timeEntryList).hasSize(databaseSizeBeforeUpdate);
+        assertThat(timeEntryDTOList).hasSize(databaseSizeBeforeUpdate);
     }
 
     @Test
     public void deleteTimeEntry() {
         // Initialize the database
-        timeEntry = given()
+        timeEntryDTO = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(timeEntry)
+            .body(timeEntryDTO)
             .when()
             .post("/api/time-entries")
             .then()
@@ -447,12 +447,12 @@ public class TimeEntryResourceTest {
             .oauth2(adminToken)
             .accept(APPLICATION_JSON)
             .when()
-            .delete("/api/time-entries/{id}", timeEntry.id)
+            .delete("/api/time-entries/{id}", timeEntryDTO.id)
             .then()
             .statusCode(NO_CONTENT.getStatusCode());
 
         // Validate the database contains one less item
-        var timeEntryList = given()
+        var timeEntryDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -464,19 +464,19 @@ public class TimeEntryResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(timeEntryList).hasSize(databaseSizeBeforeDelete - 1);
+        assertThat(timeEntryDTOList).hasSize(databaseSizeBeforeDelete - 1);
     }
 
     @Test
     public void getAllTimeEntries() {
         // Initialize the database
-        timeEntry = given()
+        timeEntryDTO = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(timeEntry)
+            .body(timeEntryDTO)
             .when()
             .post("/api/time-entries")
             .then()
@@ -494,20 +494,20 @@ public class TimeEntryResourceTest {
             .then()
             .statusCode(OK.getStatusCode())
             .contentType(APPLICATION_JSON)
-            .body("id", hasItem(timeEntry.id.intValue()))
-            .body("duration", hasItem(DEFAULT_DURATION.toString()))            .body("timestamp", hasItem(TestUtil.formatDateTime(DEFAULT_TIMESTAMP)))            .body("shotDescription", hasItem(DEFAULT_SHOT_DESCRIPTION))            .body("description", hasItem(DEFAULT_DESCRIPTION));
+            .body("id", hasItem(timeEntryDTO.id.intValue()))
+            .body("duration", hasItem(DEFAULT_DURATION.toString()))            .body("date", hasItem(TestUtil.formatDateTime(DEFAULT_DATE)))            .body("shotDescription", hasItem(DEFAULT_SHOT_DESCRIPTION))            .body("description", hasItem(DEFAULT_DESCRIPTION));
     }
 
     @Test
     public void getTimeEntry() {
         // Initialize the database
-        timeEntry = given()
+        timeEntryDTO = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(timeEntry)
+            .body(timeEntryDTO)
             .when()
             .post("/api/time-entries")
             .then()
@@ -521,7 +521,7 @@ public class TimeEntryResourceTest {
                 .oauth2(adminToken)
                 .accept(APPLICATION_JSON)
                 .when()
-                .get("/api/time-entries/{id}", timeEntry.id)
+                .get("/api/time-entries/{id}", timeEntryDTO.id)
                 .then()
                 .statusCode(OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -534,14 +534,14 @@ public class TimeEntryResourceTest {
             .oauth2(adminToken)
             .accept(APPLICATION_JSON)
             .when()
-            .get("/api/time-entries/{id}", timeEntry.id)
+            .get("/api/time-entries/{id}", timeEntryDTO.id)
             .then()
             .statusCode(OK.getStatusCode())
             .contentType(APPLICATION_JSON)
-            .body("id", is(timeEntry.id.intValue()))
+            .body("id", is(timeEntryDTO.id.intValue()))
             
                 .body("duration", is(DEFAULT_DURATION.toString()))
-                .body("timestamp", is(TestUtil.formatDateTime(DEFAULT_TIMESTAMP)))
+                .body("date", is(TestUtil.formatDateTime(DEFAULT_DATE)))
                 .body("shotDescription", is(DEFAULT_SHOT_DESCRIPTION))
                 .body("description", is(DEFAULT_DESCRIPTION));
     }

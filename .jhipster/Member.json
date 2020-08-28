@@ -4,17 +4,12 @@
     {
       "fieldName": "login",
       "fieldType": "String",
-      "fieldValidateRules": [
-        "required",
-        "unique"
-      ]
+      "fieldValidateRules": ["required", "unique"]
     },
     {
       "fieldName": "firstName",
       "fieldType": "String",
-      "fieldValidateRules": [
-        "required"
-      ]
+      "fieldValidateRules": ["required"]
     },
     {
       "fieldName": "middleName",
@@ -23,9 +18,7 @@
     {
       "fieldName": "lastName",
       "fieldType": "String",
-      "fieldValidateRules": [
-        "required"
-      ]
+      "fieldValidateRules": ["required"]
     }
   ],
   "relationships": [
@@ -38,11 +31,11 @@
       "ownerSide": false
     }
   ],
-  "changelogDate": "20200827193001",
+  "changelogDate": "20200828070841",
   "entityTableName": "member",
-  "dto": "no",
+  "dto": "mapstruct",
   "pagination": "infinite-scroll",
-  "service": "no",
+  "service": "serviceClass",
   "jpaMetamodelFiltering": false,
   "fluentMethods": true,
   "readOnly": false,

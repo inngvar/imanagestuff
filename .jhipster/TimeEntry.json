@@ -4,31 +4,23 @@
     {
       "fieldName": "duration",
       "fieldType": "Duration",
-      "fieldValidateRules": [
-        "required"
-      ]
+      "fieldValidateRules": ["required"]
     },
     {
-      "fieldName": "timestamp",
-      "fieldType": "Instant",
-      "fieldValidateRules": [
-        "required"
-      ]
+      "fieldName": "date",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
     },
     {
       "fieldName": "shotDescription",
       "fieldType": "String",
-      "fieldValidateRules": [
-        "maxlength"
-      ],
+      "fieldValidateRules": ["maxlength"],
       "fieldValidateRulesMaxlength": "256"
     },
     {
       "fieldName": "description",
       "fieldType": "String",
-      "fieldValidateRules": [
-        "maxlength"
-      ],
+      "fieldValidateRules": ["maxlength"],
       "fieldValidateRulesMaxlength": "4000"
     }
   ],
@@ -50,11 +42,11 @@
       "otherEntityField": "name"
     }
   ],
-  "changelogDate": "20200827193101",
+  "changelogDate": "20200828070941",
   "entityTableName": "time_entry",
-  "dto": "no",
+  "dto": "mapstruct",
   "pagination": "infinite-scroll",
-  "service": "no",
+  "service": "serviceClass",
   "jpaMetamodelFiltering": false,
   "fluentMethods": true,
   "readOnly": false,

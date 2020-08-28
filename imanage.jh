@@ -13,7 +13,7 @@ entity Member{
 
 entity TimeEntry{
 	duration Duration required
-    timestamp Instant required
+    date LocalDate required
     shotDescription String maxlength(256)
     description String maxlength(4000)
 }
@@ -29,3 +29,5 @@ relationship ManyToOne {
 
 // Set pagination options
 paginate * with infinite-scroll
+dto * with mapstruct
+service * with serviceClass

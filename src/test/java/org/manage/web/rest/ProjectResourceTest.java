@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 
 import org.manage.TestUtil;
-import org.manage.domain.Project;
+import org.manage.service.dto.ProjectDTO;
 import io.quarkus.liquibase.LiquibaseFactory;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -26,10 +26,10 @@ import java.util.List;
 @QuarkusTest
 public class ProjectResourceTest {
 
-    private static final TypeRef<Project> ENTITY_TYPE = new TypeRef<>() {
+    private static final TypeRef<ProjectDTO> ENTITY_TYPE = new TypeRef<>() {
     };
 
-    private static final TypeRef<List<Project>> LIST_OF_ENTITY_TYPE = new TypeRef<>() {
+    private static final TypeRef<List<ProjectDTO>> LIST_OF_ENTITY_TYPE = new TypeRef<>() {
     };
 
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
@@ -44,7 +44,7 @@ public class ProjectResourceTest {
 
     String adminToken;
 
-    Project project;
+    ProjectDTO projectDTO;
 
     @Inject
     LiquibaseFactory liquibaseFactory;
@@ -77,17 +77,17 @@ public class ProjectResourceTest {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Project createEntity() {
-        var project = new Project();
-        project.name = DEFAULT_NAME;
-        project.description = DEFAULT_DESCRIPTION;
-        project.sendReports = DEFAULT_SEND_REPORTS;
-        return project;
+    public static ProjectDTO createEntity() {
+        var projectDTO = new ProjectDTO();
+        projectDTO.name = DEFAULT_NAME;
+        projectDTO.description = DEFAULT_DESCRIPTION;
+        projectDTO.sendReports = DEFAULT_SEND_REPORTS;
+        return projectDTO;
     }
 
     @BeforeEach
     public void initTest() {
-        project = createEntity();
+        projectDTO = createEntity();
     }
 
     @Test
@@ -106,13 +106,13 @@ public class ProjectResourceTest {
             .size();
 
         // Create the Project
-        project = given()
+        projectDTO = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(project)
+            .body(projectDTO)
             .when()
             .post("/api/projects")
             .then()
@@ -120,7 +120,7 @@ public class ProjectResourceTest {
             .extract().as(ENTITY_TYPE);
 
         // Validate the Project in the database
-        var projectList = given()
+        var projectDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -132,11 +132,11 @@ public class ProjectResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(projectList).hasSize(databaseSizeBeforeCreate + 1);
-        var testProject = projectList.stream().filter(it -> project.id.equals(it.id)).findFirst().get();
-        assertThat(testProject.name).isEqualTo(DEFAULT_NAME);
-        assertThat(testProject.description).isEqualTo(DEFAULT_DESCRIPTION);
-        assertThat(testProject.sendReports).isEqualTo(DEFAULT_SEND_REPORTS);
+        assertThat(projectDTOList).hasSize(databaseSizeBeforeCreate + 1);
+        var testProjectDTO = projectDTOList.stream().filter(it -> projectDTO.id.equals(it.id)).findFirst().get();
+        assertThat(testProjectDTO.name).isEqualTo(DEFAULT_NAME);
+        assertThat(testProjectDTO.description).isEqualTo(DEFAULT_DESCRIPTION);
+        assertThat(testProjectDTO.sendReports).isEqualTo(DEFAULT_SEND_REPORTS);
     }
 
     @Test
@@ -155,7 +155,7 @@ public class ProjectResourceTest {
             .size();
 
         // Create the Project with an existing ID
-        project.id = 1L;
+        projectDTO.id = 1L;
 
         // An entity with an existing ID cannot be created, so this API call must fail
         given()
@@ -164,14 +164,14 @@ public class ProjectResourceTest {
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(project)
+            .body(projectDTO)
             .when()
             .post("/api/projects")
             .then()
             .statusCode(BAD_REQUEST.getStatusCode());
 
         // Validate the Project in the database
-        var projectList = given()
+        var projectDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -183,7 +183,7 @@ public class ProjectResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(projectList).hasSize(databaseSizeBeforeCreate);
+        assertThat(projectDTOList).hasSize(databaseSizeBeforeCreate);
     }
 
     @Test
@@ -202,7 +202,7 @@ public class ProjectResourceTest {
             .size();
 
         // set the field null
-        project.name = null;
+        projectDTO.name = null;
 
         // Create the Project, which fails.
         given()
@@ -211,14 +211,14 @@ public class ProjectResourceTest {
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(project)
+            .body(projectDTO)
             .when()
             .post("/api/projects")
             .then()
             .statusCode(BAD_REQUEST.getStatusCode());
 
         // Validate the Project in the database
-        var projectList = given()
+        var projectDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -230,19 +230,19 @@ public class ProjectResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(projectList).hasSize(databaseSizeBeforeTest);
+        assertThat(projectDTOList).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
     public void updateProject() {
         // Initialize the database
-        project = given()
+        projectDTO = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(project)
+            .body(projectDTO)
             .when()
             .post("/api/projects")
             .then()
@@ -263,22 +263,22 @@ public class ProjectResourceTest {
             .size();
 
         // Get the project
-        var updatedProject = given()
+        var updatedProjectDTO = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
             .accept(APPLICATION_JSON)
             .when()
-            .get("/api/projects/{id}", project.id)
+            .get("/api/projects/{id}", projectDTO.id)
             .then()
             .statusCode(OK.getStatusCode())
             .contentType(APPLICATION_JSON)
             .extract().body().as(ENTITY_TYPE);
 
         // Update the project
-        updatedProject.name = UPDATED_NAME;
-        updatedProject.description = UPDATED_DESCRIPTION;
-        updatedProject.sendReports = UPDATED_SEND_REPORTS;
+        updatedProjectDTO.name = UPDATED_NAME;
+        updatedProjectDTO.description = UPDATED_DESCRIPTION;
+        updatedProjectDTO.sendReports = UPDATED_SEND_REPORTS;
 
         given()
             .auth()
@@ -286,14 +286,14 @@ public class ProjectResourceTest {
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(updatedProject)
+            .body(updatedProjectDTO)
             .when()
             .put("/api/projects")
             .then()
             .statusCode(OK.getStatusCode());
 
         // Validate the Project in the database
-        var projectList = given()
+        var projectDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -305,11 +305,11 @@ public class ProjectResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(projectList).hasSize(databaseSizeBeforeUpdate);
-        var testProject = projectList.stream().filter(it -> updatedProject.id.equals(it.id)).findFirst().get();
-        assertThat(testProject.name).isEqualTo(UPDATED_NAME);
-        assertThat(testProject.description).isEqualTo(UPDATED_DESCRIPTION);
-        assertThat(testProject.sendReports).isEqualTo(UPDATED_SEND_REPORTS);
+        assertThat(projectDTOList).hasSize(databaseSizeBeforeUpdate);
+        var testProjectDTO = projectDTOList.stream().filter(it -> updatedProjectDTO.id.equals(it.id)).findFirst().get();
+        assertThat(testProjectDTO.name).isEqualTo(UPDATED_NAME);
+        assertThat(testProjectDTO.description).isEqualTo(UPDATED_DESCRIPTION);
+        assertThat(testProjectDTO.sendReports).isEqualTo(UPDATED_SEND_REPORTS);
     }
 
     @Test
@@ -334,14 +334,14 @@ public class ProjectResourceTest {
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(project)
+            .body(projectDTO)
             .when()
             .put("/api/projects")
             .then()
             .statusCode(BAD_REQUEST.getStatusCode());
 
         // Validate the Project in the database
-        var projectList = given()
+        var projectDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -353,19 +353,19 @@ public class ProjectResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(projectList).hasSize(databaseSizeBeforeUpdate);
+        assertThat(projectDTOList).hasSize(databaseSizeBeforeUpdate);
     }
 
     @Test
     public void deleteProject() {
         // Initialize the database
-        project = given()
+        projectDTO = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(project)
+            .body(projectDTO)
             .when()
             .post("/api/projects")
             .then()
@@ -392,12 +392,12 @@ public class ProjectResourceTest {
             .oauth2(adminToken)
             .accept(APPLICATION_JSON)
             .when()
-            .delete("/api/projects/{id}", project.id)
+            .delete("/api/projects/{id}", projectDTO.id)
             .then()
             .statusCode(NO_CONTENT.getStatusCode());
 
         // Validate the database contains one less item
-        var projectList = given()
+        var projectDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -409,19 +409,19 @@ public class ProjectResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(projectList).hasSize(databaseSizeBeforeDelete - 1);
+        assertThat(projectDTOList).hasSize(databaseSizeBeforeDelete - 1);
     }
 
     @Test
     public void getAllProjects() {
         // Initialize the database
-        project = given()
+        projectDTO = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(project)
+            .body(projectDTO)
             .when()
             .post("/api/projects")
             .then()
@@ -439,20 +439,20 @@ public class ProjectResourceTest {
             .then()
             .statusCode(OK.getStatusCode())
             .contentType(APPLICATION_JSON)
-            .body("id", hasItem(project.id.intValue()))
+            .body("id", hasItem(projectDTO.id.intValue()))
             .body("name", hasItem(DEFAULT_NAME))            .body("description", hasItem(DEFAULT_DESCRIPTION))            .body("sendReports", hasItem(DEFAULT_SEND_REPORTS));
     }
 
     @Test
     public void getProject() {
         // Initialize the database
-        project = given()
+        projectDTO = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(project)
+            .body(projectDTO)
             .when()
             .post("/api/projects")
             .then()
@@ -466,7 +466,7 @@ public class ProjectResourceTest {
                 .oauth2(adminToken)
                 .accept(APPLICATION_JSON)
                 .when()
-                .get("/api/projects/{id}", project.id)
+                .get("/api/projects/{id}", projectDTO.id)
                 .then()
                 .statusCode(OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -479,11 +479,11 @@ public class ProjectResourceTest {
             .oauth2(adminToken)
             .accept(APPLICATION_JSON)
             .when()
-            .get("/api/projects/{id}", project.id)
+            .get("/api/projects/{id}", projectDTO.id)
             .then()
             .statusCode(OK.getStatusCode())
             .contentType(APPLICATION_JSON)
-            .body("id", is(project.id.intValue()))
+            .body("id", is(projectDTO.id.intValue()))
             
                 .body("name", is(DEFAULT_NAME))
                 .body("description", is(DEFAULT_DESCRIPTION))

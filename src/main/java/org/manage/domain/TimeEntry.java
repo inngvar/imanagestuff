@@ -8,7 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.time.Duration;
 
 /**
@@ -31,8 +31,8 @@ public class TimeEntry extends PanacheEntityBase implements Serializable {
     public Duration duration;
 
     @NotNull
-    @Column(name = "timestamp", nullable = false)
-    public Instant timestamp;
+    @Column(name = "date", nullable = false)
+    public LocalDate date;
 
     @Size(max = 256)
     @Column(name = "shot_description", length = 256)
@@ -77,7 +77,7 @@ public class TimeEntry extends PanacheEntityBase implements Serializable {
         return "TimeEntry{" +
             "id=" + id +
             ", duration='" + duration + "'" +
-            ", timestamp='" + timestamp + "'" +
+            ", date='" + date + "'" +
             ", shotDescription='" + shotDescription + "'" +
             ", description='" + description + "'" +
             "}";
@@ -98,7 +98,7 @@ public class TimeEntry extends PanacheEntityBase implements Serializable {
         var entity = TimeEntry.<TimeEntry>findById(timeEntry.id);
         if (entity != null) {
             entity.duration = timeEntry.duration;
-            entity.timestamp = timeEntry.timestamp;
+            entity.date = timeEntry.date;
             entity.shotDescription = timeEntry.shotDescription;
             entity.description = timeEntry.description;
             entity.member = timeEntry.member;

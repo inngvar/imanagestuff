@@ -1,15 +1,15 @@
 import { Moment } from 'moment';
-import { IMember } from 'app/shared/model/member.model';
-import { IProject } from 'app/shared/model/project.model';
 
 export interface ITimeEntry {
   id?: number;
   duration?: number;
-  timestamp?: string;
+  date?: string;
   shotDescription?: string;
   description?: string;
-  member?: IMember;
-  project?: IProject;
+  memberLogin?: string;
+  memberId?: number;
+  projectName?: string;
+  projectId?: number;
 }
 
 export const defaultValue: Readonly<ITimeEntry> = {};

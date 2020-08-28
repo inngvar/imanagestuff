@@ -32,13 +32,11 @@ export const TimeEntryDetail = (props: ITimeEntryDetailProps) => {
           </dt>
           <dd>{timeEntryEntity.duration}</dd>
           <dt>
-            <span id="timestamp">
-              <Translate contentKey="imanagestuffApp.timeEntry.timestamp">Timestamp</Translate>
+            <span id="date">
+              <Translate contentKey="imanagestuffApp.timeEntry.date">Date</Translate>
             </span>
           </dt>
-          <dd>
-            {timeEntryEntity.timestamp ? <TextFormat value={timeEntryEntity.timestamp} type="date" format={APP_DATE_FORMAT} /> : null}
-          </dd>
+          <dd>{timeEntryEntity.date ? <TextFormat value={timeEntryEntity.date} type="date" format={APP_LOCAL_DATE_FORMAT} /> : null}</dd>
           <dt>
             <span id="shotDescription">
               <Translate contentKey="imanagestuffApp.timeEntry.shotDescription">Shot Description</Translate>
@@ -54,11 +52,11 @@ export const TimeEntryDetail = (props: ITimeEntryDetailProps) => {
           <dt>
             <Translate contentKey="imanagestuffApp.timeEntry.member">Member</Translate>
           </dt>
-          <dd>{timeEntryEntity.member ? timeEntryEntity.member.login : ''}</dd>
+          <dd>{timeEntryEntity.memberLogin ? timeEntryEntity.memberLogin : ''}</dd>
           <dt>
             <Translate contentKey="imanagestuffApp.timeEntry.project">Project</Translate>
           </dt>
-          <dd>{timeEntryEntity.project ? timeEntryEntity.project.name : ''}</dd>
+          <dd>{timeEntryEntity.projectName ? timeEntryEntity.projectName : ''}</dd>
         </dl>
         <Button tag={Link} to="/time-entry" replace color="info">
           <FontAwesomeIcon icon="arrow-left" />{' '}

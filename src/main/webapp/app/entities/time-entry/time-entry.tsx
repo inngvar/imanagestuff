@@ -105,8 +105,8 @@ export const TimeEntry = (props: ITimeEntryProps) => {
                   <th className="hand" onClick={sort('duration')}>
                     <Translate contentKey="imanagestuffApp.timeEntry.duration">Duration</Translate> <FontAwesomeIcon icon="sort" />
                   </th>
-                  <th className="hand" onClick={sort('timestamp')}>
-                    <Translate contentKey="imanagestuffApp.timeEntry.timestamp">Timestamp</Translate> <FontAwesomeIcon icon="sort" />
+                  <th className="hand" onClick={sort('date')}>
+                    <Translate contentKey="imanagestuffApp.timeEntry.date">Date</Translate> <FontAwesomeIcon icon="sort" />
                   </th>
                   <th className="hand" onClick={sort('shotDescription')}>
                     <Translate contentKey="imanagestuffApp.timeEntry.shotDescription">Shot Description</Translate>{' '}
@@ -133,11 +133,11 @@ export const TimeEntry = (props: ITimeEntryProps) => {
                       </Button>
                     </td>
                     <td>{timeEntry.duration}</td>
-                    <td>{timeEntry.timestamp ? <TextFormat type="date" value={timeEntry.timestamp} format={APP_DATE_FORMAT} /> : null}</td>
+                    <td>{timeEntry.date ? <TextFormat type="date" value={timeEntry.date} format={APP_LOCAL_DATE_FORMAT} /> : null}</td>
                     <td>{timeEntry.shotDescription}</td>
                     <td>{timeEntry.description}</td>
-                    <td>{timeEntry.member ? <Link to={`member/${timeEntry.member.id}`}>{timeEntry.member.login}</Link> : ''}</td>
-                    <td>{timeEntry.project ? <Link to={`project/${timeEntry.project.id}`}>{timeEntry.project.name}</Link> : ''}</td>
+                    <td>{timeEntry.memberLogin ? <Link to={`member/${timeEntry.memberId}`}>{timeEntry.memberLogin}</Link> : ''}</td>
+                    <td>{timeEntry.projectName ? <Link to={`project/${timeEntry.projectId}`}>{timeEntry.projectName}</Link> : ''}</td>
                     <td className="text-right">
                       <div className="btn-group flex-btn-group-container">
                         <Button tag={Link} to={`${match.url}/${timeEntry.id}`} color="info" size="sm">

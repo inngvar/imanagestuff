@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 
 import org.manage.TestUtil;
-import org.manage.domain.Member;
+import org.manage.service.dto.MemberDTO;
 import io.quarkus.liquibase.LiquibaseFactory;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -25,10 +25,10 @@ import javax.inject.Inject;
 @QuarkusTest
 public class MemberResourceTest {
 
-    private static final TypeRef<Member> ENTITY_TYPE = new TypeRef<>() {
+    private static final TypeRef<MemberDTO> ENTITY_TYPE = new TypeRef<>() {
     };
 
-    private static final TypeRef<List<Member>> LIST_OF_ENTITY_TYPE = new TypeRef<>() {
+    private static final TypeRef<List<MemberDTO>> LIST_OF_ENTITY_TYPE = new TypeRef<>() {
     };
 
     private static final String DEFAULT_LOGIN = "AAAAAAAAAA";
@@ -46,7 +46,7 @@ public class MemberResourceTest {
 
     String adminToken;
 
-    Member member;
+    MemberDTO memberDTO;
 
     @Inject
     LiquibaseFactory liquibaseFactory;
@@ -79,18 +79,18 @@ public class MemberResourceTest {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Member createEntity() {
-        var member = new Member();
-        member.login = DEFAULT_LOGIN;
-        member.firstName = DEFAULT_FIRST_NAME;
-        member.middleName = DEFAULT_MIDDLE_NAME;
-        member.lastName = DEFAULT_LAST_NAME;
-        return member;
+    public static MemberDTO createEntity() {
+        var memberDTO = new MemberDTO();
+        memberDTO.login = DEFAULT_LOGIN;
+        memberDTO.firstName = DEFAULT_FIRST_NAME;
+        memberDTO.middleName = DEFAULT_MIDDLE_NAME;
+        memberDTO.lastName = DEFAULT_LAST_NAME;
+        return memberDTO;
     }
 
     @BeforeEach
     public void initTest() {
-        member = createEntity();
+        memberDTO = createEntity();
     }
 
     @Test
@@ -109,13 +109,13 @@ public class MemberResourceTest {
             .size();
 
         // Create the Member
-        member = given()
+        memberDTO = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(member)
+            .body(memberDTO)
             .when()
             .post("/api/members")
             .then()
@@ -123,7 +123,7 @@ public class MemberResourceTest {
             .extract().as(ENTITY_TYPE);
 
         // Validate the Member in the database
-        var memberList = given()
+        var memberDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -135,12 +135,12 @@ public class MemberResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(memberList).hasSize(databaseSizeBeforeCreate + 1);
-        var testMember = memberList.stream().filter(it -> member.id.equals(it.id)).findFirst().get();
-        assertThat(testMember.login).isEqualTo(DEFAULT_LOGIN);
-        assertThat(testMember.firstName).isEqualTo(DEFAULT_FIRST_NAME);
-        assertThat(testMember.middleName).isEqualTo(DEFAULT_MIDDLE_NAME);
-        assertThat(testMember.lastName).isEqualTo(DEFAULT_LAST_NAME);
+        assertThat(memberDTOList).hasSize(databaseSizeBeforeCreate + 1);
+        var testMemberDTO = memberDTOList.stream().filter(it -> memberDTO.id.equals(it.id)).findFirst().get();
+        assertThat(testMemberDTO.login).isEqualTo(DEFAULT_LOGIN);
+        assertThat(testMemberDTO.firstName).isEqualTo(DEFAULT_FIRST_NAME);
+        assertThat(testMemberDTO.middleName).isEqualTo(DEFAULT_MIDDLE_NAME);
+        assertThat(testMemberDTO.lastName).isEqualTo(DEFAULT_LAST_NAME);
     }
 
     @Test
@@ -159,7 +159,7 @@ public class MemberResourceTest {
             .size();
 
         // Create the Member with an existing ID
-        member.id = 1L;
+        memberDTO.id = 1L;
 
         // An entity with an existing ID cannot be created, so this API call must fail
         given()
@@ -168,14 +168,14 @@ public class MemberResourceTest {
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(member)
+            .body(memberDTO)
             .when()
             .post("/api/members")
             .then()
             .statusCode(BAD_REQUEST.getStatusCode());
 
         // Validate the Member in the database
-        var memberList = given()
+        var memberDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -187,7 +187,7 @@ public class MemberResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(memberList).hasSize(databaseSizeBeforeCreate);
+        assertThat(memberDTOList).hasSize(databaseSizeBeforeCreate);
     }
 
     @Test
@@ -206,7 +206,7 @@ public class MemberResourceTest {
             .size();
 
         // set the field null
-        member.login = null;
+        memberDTO.login = null;
 
         // Create the Member, which fails.
         given()
@@ -215,14 +215,14 @@ public class MemberResourceTest {
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(member)
+            .body(memberDTO)
             .when()
             .post("/api/members")
             .then()
             .statusCode(BAD_REQUEST.getStatusCode());
 
         // Validate the Member in the database
-        var memberList = given()
+        var memberDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -234,7 +234,7 @@ public class MemberResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(memberList).hasSize(databaseSizeBeforeTest);
+        assertThat(memberDTOList).hasSize(databaseSizeBeforeTest);
     }
     @Test
     public void checkFirstNameIsRequired() throws Exception {
@@ -252,7 +252,7 @@ public class MemberResourceTest {
             .size();
 
         // set the field null
-        member.firstName = null;
+        memberDTO.firstName = null;
 
         // Create the Member, which fails.
         given()
@@ -261,14 +261,14 @@ public class MemberResourceTest {
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(member)
+            .body(memberDTO)
             .when()
             .post("/api/members")
             .then()
             .statusCode(BAD_REQUEST.getStatusCode());
 
         // Validate the Member in the database
-        var memberList = given()
+        var memberDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -280,7 +280,7 @@ public class MemberResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(memberList).hasSize(databaseSizeBeforeTest);
+        assertThat(memberDTOList).hasSize(databaseSizeBeforeTest);
     }
     @Test
     public void checkLastNameIsRequired() throws Exception {
@@ -298,7 +298,7 @@ public class MemberResourceTest {
             .size();
 
         // set the field null
-        member.lastName = null;
+        memberDTO.lastName = null;
 
         // Create the Member, which fails.
         given()
@@ -307,14 +307,14 @@ public class MemberResourceTest {
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(member)
+            .body(memberDTO)
             .when()
             .post("/api/members")
             .then()
             .statusCode(BAD_REQUEST.getStatusCode());
 
         // Validate the Member in the database
-        var memberList = given()
+        var memberDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -326,19 +326,19 @@ public class MemberResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(memberList).hasSize(databaseSizeBeforeTest);
+        assertThat(memberDTOList).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
     public void updateMember() {
         // Initialize the database
-        member = given()
+        memberDTO = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(member)
+            .body(memberDTO)
             .when()
             .post("/api/members")
             .then()
@@ -359,23 +359,23 @@ public class MemberResourceTest {
             .size();
 
         // Get the member
-        var updatedMember = given()
+        var updatedMemberDTO = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
             .accept(APPLICATION_JSON)
             .when()
-            .get("/api/members/{id}", member.id)
+            .get("/api/members/{id}", memberDTO.id)
             .then()
             .statusCode(OK.getStatusCode())
             .contentType(APPLICATION_JSON)
             .extract().body().as(ENTITY_TYPE);
 
         // Update the member
-        updatedMember.login = UPDATED_LOGIN;
-        updatedMember.firstName = UPDATED_FIRST_NAME;
-        updatedMember.middleName = UPDATED_MIDDLE_NAME;
-        updatedMember.lastName = UPDATED_LAST_NAME;
+        updatedMemberDTO.login = UPDATED_LOGIN;
+        updatedMemberDTO.firstName = UPDATED_FIRST_NAME;
+        updatedMemberDTO.middleName = UPDATED_MIDDLE_NAME;
+        updatedMemberDTO.lastName = UPDATED_LAST_NAME;
 
         given()
             .auth()
@@ -383,14 +383,14 @@ public class MemberResourceTest {
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(updatedMember)
+            .body(updatedMemberDTO)
             .when()
             .put("/api/members")
             .then()
             .statusCode(OK.getStatusCode());
 
         // Validate the Member in the database
-        var memberList = given()
+        var memberDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -402,12 +402,12 @@ public class MemberResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(memberList).hasSize(databaseSizeBeforeUpdate);
-        var testMember = memberList.stream().filter(it -> updatedMember.id.equals(it.id)).findFirst().get();
-        assertThat(testMember.login).isEqualTo(UPDATED_LOGIN);
-        assertThat(testMember.firstName).isEqualTo(UPDATED_FIRST_NAME);
-        assertThat(testMember.middleName).isEqualTo(UPDATED_MIDDLE_NAME);
-        assertThat(testMember.lastName).isEqualTo(UPDATED_LAST_NAME);
+        assertThat(memberDTOList).hasSize(databaseSizeBeforeUpdate);
+        var testMemberDTO = memberDTOList.stream().filter(it -> updatedMemberDTO.id.equals(it.id)).findFirst().get();
+        assertThat(testMemberDTO.login).isEqualTo(UPDATED_LOGIN);
+        assertThat(testMemberDTO.firstName).isEqualTo(UPDATED_FIRST_NAME);
+        assertThat(testMemberDTO.middleName).isEqualTo(UPDATED_MIDDLE_NAME);
+        assertThat(testMemberDTO.lastName).isEqualTo(UPDATED_LAST_NAME);
     }
 
     @Test
@@ -432,14 +432,14 @@ public class MemberResourceTest {
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(member)
+            .body(memberDTO)
             .when()
             .put("/api/members")
             .then()
             .statusCode(BAD_REQUEST.getStatusCode());
 
         // Validate the Member in the database
-        var memberList = given()
+        var memberDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -451,19 +451,19 @@ public class MemberResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(memberList).hasSize(databaseSizeBeforeUpdate);
+        assertThat(memberDTOList).hasSize(databaseSizeBeforeUpdate);
     }
 
     @Test
     public void deleteMember() {
         // Initialize the database
-        member = given()
+        memberDTO = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(member)
+            .body(memberDTO)
             .when()
             .post("/api/members")
             .then()
@@ -490,12 +490,12 @@ public class MemberResourceTest {
             .oauth2(adminToken)
             .accept(APPLICATION_JSON)
             .when()
-            .delete("/api/members/{id}", member.id)
+            .delete("/api/members/{id}", memberDTO.id)
             .then()
             .statusCode(NO_CONTENT.getStatusCode());
 
         // Validate the database contains one less item
-        var memberList = given()
+        var memberDTOList = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
@@ -507,19 +507,19 @@ public class MemberResourceTest {
             .contentType(APPLICATION_JSON)
             .extract().as(LIST_OF_ENTITY_TYPE);
 
-        assertThat(memberList).hasSize(databaseSizeBeforeDelete - 1);
+        assertThat(memberDTOList).hasSize(databaseSizeBeforeDelete - 1);
     }
 
     @Test
     public void getAllMembers() {
         // Initialize the database
-        member = given()
+        memberDTO = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(member)
+            .body(memberDTO)
             .when()
             .post("/api/members")
             .then()
@@ -537,20 +537,20 @@ public class MemberResourceTest {
             .then()
             .statusCode(OK.getStatusCode())
             .contentType(APPLICATION_JSON)
-            .body("id", hasItem(member.id.intValue()))
+            .body("id", hasItem(memberDTO.id.intValue()))
             .body("login", hasItem(DEFAULT_LOGIN))            .body("firstName", hasItem(DEFAULT_FIRST_NAME))            .body("middleName", hasItem(DEFAULT_MIDDLE_NAME))            .body("lastName", hasItem(DEFAULT_LAST_NAME));
     }
 
     @Test
     public void getMember() {
         // Initialize the database
-        member = given()
+        memberDTO = given()
             .auth()
             .preemptive()
             .oauth2(adminToken)
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(member)
+            .body(memberDTO)
             .when()
             .post("/api/members")
             .then()
@@ -564,7 +564,7 @@ public class MemberResourceTest {
                 .oauth2(adminToken)
                 .accept(APPLICATION_JSON)
                 .when()
-                .get("/api/members/{id}", member.id)
+                .get("/api/members/{id}", memberDTO.id)
                 .then()
                 .statusCode(OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -577,11 +577,11 @@ public class MemberResourceTest {
             .oauth2(adminToken)
             .accept(APPLICATION_JSON)
             .when()
-            .get("/api/members/{id}", member.id)
+            .get("/api/members/{id}", memberDTO.id)
             .then()
             .statusCode(OK.getStatusCode())
             .contentType(APPLICATION_JSON)
-            .body("id", is(member.id.intValue()))
+            .body("id", is(memberDTO.id.intValue()))
             
                 .body("login", is(DEFAULT_LOGIN))
                 .body("firstName", is(DEFAULT_FIRST_NAME))

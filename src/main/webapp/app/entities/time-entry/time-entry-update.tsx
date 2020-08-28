@@ -45,8 +45,6 @@ export const TimeEntryUpdate = (props: ITimeEntryUpdateProps) => {
   }, [props.updateSuccess]);
 
   const saveEntity = (event, errors, values) => {
-    values.timestamp = convertDateTimeToServer(values.timestamp);
-
     if (errors.length === 0) {
       const entity = {
         ...timeEntryEntity,
@@ -98,16 +96,14 @@ export const TimeEntryUpdate = (props: ITimeEntryUpdateProps) => {
                 />
               </AvGroup>
               <AvGroup>
-                <Label id="timestampLabel" for="time-entry-timestamp">
-                  <Translate contentKey="imanagestuffApp.timeEntry.timestamp">Timestamp</Translate>
+                <Label id="dateLabel" for="time-entry-date">
+                  <Translate contentKey="imanagestuffApp.timeEntry.date">Date</Translate>
                 </Label>
-                <AvInput
-                  id="time-entry-timestamp"
-                  type="datetime-local"
+                <AvField
+                  id="time-entry-date"
+                  type="date"
                   className="form-control"
-                  name="timestamp"
-                  placeholder={'YYYY-MM-DD HH:mm'}
-                  value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.timeEntryEntity.timestamp)}
+                  name="date"
                   validate={{
                     required: { value: true, errorMessage: translate('entity.validation.required') },
                   }}
@@ -143,14 +139,7 @@ export const TimeEntryUpdate = (props: ITimeEntryUpdateProps) => {
                 <Label for="time-entry-member">
                   <Translate contentKey="imanagestuffApp.timeEntry.member">Member</Translate>
                 </Label>
-                <AvInput
-                  id="time-entry-member"
-                  type="select"
-                  className="form-control"
-                  name="member.id"
-                  value={isNew ? members[0] && members[0].id : timeEntryEntity.member?.id}
-                  required
-                >
+                <AvInput id="time-entry-member" type="select" className="form-control" name="memberId" required>
                   {members
                     ? members.map(otherEntity => (
                         <option value={otherEntity.id} key={otherEntity.id}>
@@ -167,14 +156,7 @@ export const TimeEntryUpdate = (props: ITimeEntryUpdateProps) => {
                 <Label for="time-entry-project">
                   <Translate contentKey="imanagestuffApp.timeEntry.project">Project</Translate>
                 </Label>
-                <AvInput
-                  id="time-entry-project"
-                  type="select"
-                  className="form-control"
-                  name="project.id"
-                  value={isNew ? projects[0] && projects[0].id : timeEntryEntity.project?.id}
-                  required
-                >
+                <AvInput id="time-entry-project" type="select" className="form-control" name="projectId" required>
                   {projects
                     ? projects.map(otherEntity => (
                         <option value={otherEntity.id} key={otherEntity.id}>

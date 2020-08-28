@@ -17,7 +17,7 @@
         "title": "Time Entry"
       },
       "duration": "Duration",
-      "timestamp": "Timestamp",
+      "date": "Date",
       "shotDescription": "Shot Description",
       "description": "Description",
       "member": "Member",
