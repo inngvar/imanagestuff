@@ -9,8 +9,10 @@ import javax.validation.constraints.*;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * A Project.

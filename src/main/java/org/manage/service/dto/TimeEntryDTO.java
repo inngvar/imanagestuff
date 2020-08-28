@@ -4,6 +4,7 @@ package org.manage.service.dto;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.time.LocalDate;
 import java.time.Duration;
+import javax.json.bind.annotation.JsonbDateFormat;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -13,13 +14,14 @@ import java.util.Objects;
  */
 @RegisterForReflection
 public class TimeEntryDTO implements Serializable {
-    
+
     public Long id;
 
     @NotNull
     public Duration duration;
 
     @NotNull
+    @JsonbDateFormat(value = "yyyy-MM-dd")
     public LocalDate date;
 
     @Size(max = 256)

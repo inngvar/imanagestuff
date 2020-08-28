@@ -2,6 +2,8 @@ package org.manage.web.rest;
 
 import static javax.ws.rs.core.UriBuilder.fromPath;
 
+import io.quarkus.security.identity.SecurityIdentity;
+import org.manage.domain.Member;
 import org.manage.service.ProjectService;
 import org.manage.web.rest.errors.BadRequestAlertException;
 import org.manage.web.util.HeaderUtil;
@@ -39,9 +41,12 @@ public class ProjectResource {
     @ConfigProperty(name = "application.name")
     String applicationName;
 
+    @Inject
+    SecurityIdentity securityIdentity;
 
     @Inject
     ProjectService projectService;
+
     /**
      * {@code POST  /projects} : Create a new project.
      *
@@ -100,7 +105,7 @@ public class ProjectResource {
      * {@code GET  /projects} : get all the projects.
      *
      * @param pageRequest the pagination information.
-     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
+     * @param eagerload   flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link Response} with status {@code 200 (OK)} and the list of projects in body.
      */
     @GET
@@ -127,10 +132,22 @@ public class ProjectResource {
      */
     @GET
     @Path("/{id}")
-
     public Response getProject(@PathParam("id") Long id) {
         log.debug("REST request to get Project : {}", id);
         Optional<ProjectDTO> projectDTO = projectService.findOne(id);
         return ResponseUtil.wrapOrNotFound(projectDTO);
+    }
+
+    /**
+     * Return list of projects where current user is a member
+     *
+     * @return
+     */
+    @GET
+    @Path("current")
+    public Response getUserProjects() {
+        final String login = securityIdentity.getPrincipal().getName();
+        List<ProjectDTO> result = projectService.findByLogin(login);
+        return Response.ok(result).build();
     }
 }

@@ -1,7 +1,9 @@
 package org.manage.domain;
+
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+
 import javax.json.bind.annotation.JsonbTransient;
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
+
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import javax.persistence.*;
@@ -9,6 +11,7 @@ import javax.validation.constraints.*;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -44,6 +47,10 @@ public class Member extends PanacheEntityBase implements Serializable {
     @ManyToMany(mappedBy = "members")
     @JsonbTransient
     public Set<Project> projects = new HashSet<>();
+
+    public static Optional<Member> findByLogin(String login) {
+        return find("login=?1", login).firstResultOptional();
+    }
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 

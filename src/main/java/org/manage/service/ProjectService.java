@@ -1,6 +1,7 @@
 package org.manage.service;
 
 import io.quarkus.panache.common.Page;
+import org.manage.domain.Member;
 import org.manage.domain.Project;
 import org.manage.service.dto.ProjectDTO;
 import org.manage.service.mapper.ProjectMapper;
@@ -14,6 +15,7 @@ import javax.transaction.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 @Transactional
@@ -54,11 +56,12 @@ public class ProjectService {
     public Optional<ProjectDTO> findOne(Long id) {
         log.debug("Request to get Project : {}", id);
         return Project.findOneWithEagerRelationships(id)
-            .map(project -> projectMapper.toDto((Project) project)); 
+            .map(project -> projectMapper.toDto((Project) project));
     }
 
     /**
      * Get all the projects.
+     *
      * @param page the pagination information.
      * @return the list of entities.
      */
@@ -71,6 +74,7 @@ public class ProjectService {
 
     /**
      * Get all the projects with eager load of many-to-many relationships.
+     *
      * @param page the pagination information.
      * @return the list of entities.
      */
@@ -83,4 +87,14 @@ public class ProjectService {
     }
 
 
+    @Transactional
+    public List<ProjectDTO> findByLogin(String login) {
+        return Member.findByLogin(login)
+            .map(m -> m.projects)
+            .stream()
+            .filter(s -> s != null)
+            .flatMap(s -> s.stream())
+            .map(p -> projectMapper.toDto(p))
+            .collect(Collectors.toList());
+    }
 }
