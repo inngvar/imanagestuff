@@ -1,11 +1,11 @@
 {
   "home": {
-    "title": "Добро пожаловать, Java Hipster!",
-    "subtitle": "Это ваша домашняя страница",
+    "title": "Логируй работу каждый день",
+    "subtitle": "Это ваша прямая обязанность",
     "logged": {
       "message": "Вы вошли как пользователь \"{{username}}\"."
     },
-    "question": "Если у Вас возникли вопросы по JHipster:",
+    "question": "Если у Вас возникли вопросы по Логированию Работы решите их самостоятельно:",
     "link": {
       "homepage": "JHipster домашняя страница",
       "stackoverflowac": "JHipster на Stack Overflow",
