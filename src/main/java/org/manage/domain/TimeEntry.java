@@ -1,6 +1,9 @@
 package org.manage.domain;
+
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+
 import javax.json.bind.annotation.JsonbTransient;
+
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
@@ -10,6 +13,7 @@ import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Duration;
+import java.util.stream.Stream;
 
 /**
  * A TimeEntry.
@@ -53,6 +57,13 @@ public class TimeEntry extends PanacheEntityBase implements Serializable {
     @NotNull
     @JsonbTransient
     public Project project;
+
+    public static Stream<TimeEntry> getAllByDateBetweenAndMemberId(LocalDate date, Member member) {
+        final LocalDate from = LocalDate.from(date).minusDays(1);
+        final LocalDate to = LocalDate.from(date).plusDays(1);
+        return find("From TimeEntry e WHERE e.member=?1 AND (e.date BETWEEN ?2 AND ?3)", member, from, to)
+            .stream();
+    }
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 

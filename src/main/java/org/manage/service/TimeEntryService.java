@@ -1,6 +1,7 @@
 package org.manage.service;
 
 import io.quarkus.panache.common.Page;
+import org.manage.domain.Member;
 import org.manage.domain.TimeEntry;
 import org.manage.service.dto.TimeEntryDTO;
 import org.manage.service.mapper.TimeEntryMapper;
@@ -12,8 +13,10 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 @Transactional
@@ -54,7 +57,7 @@ public class TimeEntryService {
     public Optional<TimeEntryDTO> findOne(Long id) {
         log.debug("Request to get TimeEntry : {}", id);
         return TimeEntry.findByIdOptional(id)
-            .map(timeEntry -> timeEntryMapper.toDto((TimeEntry) timeEntry)); 
+            .map(timeEntry -> timeEntryMapper.toDto((TimeEntry) timeEntry));
     }
 
     /**
@@ -69,5 +72,10 @@ public class TimeEntryService {
     }
 
 
-
+    public List<TimeEntryDTO> findByDateAndMember(Long memberId, LocalDate date) {
+        log.debug("Request to find all TimeEntries by member{} and date{}", memberId, date);
+        return TimeEntry.getAllByDateBetweenAndMemberId(date, Member.findById(memberId))
+        .map(t->timeEntryMapper.toDto(t))
+            .collect(Collectors.toList());
+    }
 }

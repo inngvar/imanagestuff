@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -126,5 +127,12 @@ public class TimeEntryResource {
         log.debug("REST request to get TimeEntry : {}", id);
         Optional<TimeEntryDTO> timeEntryDTO = timeEntryService.findOne(id);
         return ResponseUtil.wrapOrNotFound(timeEntryDTO);
+    }
+
+    @GET
+    @Path("/of/{memberId}")
+    public Response getTimeEntry(@PathParam("memberId") Long memberId, @QueryParam("date")LocalDate date){
+        log.debug("REST request to get member: {}, timeEntries for date:{}", date, memberId);
+        return Response.ok(timeEntryService.findByDateAndMember(memberId, date)).build();
     }
 }

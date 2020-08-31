@@ -4,7 +4,7 @@ import React, {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import {Translate} from 'react-jhipster';
 import {connect} from 'react-redux';
-import {MemberList, ProjectList} from "app/modules/logwork/logwork-components";
+import {MemberList, ProjectList, TimeEntries} from "app/modules/logwork/logwork-components";
 import {
   Dropdown,
   DropdownMenu,
@@ -29,9 +29,10 @@ export const LogWork = (props: ILogWorkProp) => {
   const [currentProject, setCurrentProject] = useState({id: 'initial', members: []});
   const [currentMember, setCurrentMember] = useState({id: ''});
   const [reportDate, setReportDate] = useState(new Date().toISOString().substr(0, 10));
+  const [entries, setEntries] = useState(null);
 
   useEffect(() => {
-    if(!account.login){
+    if (!account.login) {
       return;
     }
     axios.get("api/projects/current").then(response => {
@@ -42,13 +43,22 @@ export const LogWork = (props: ILogWorkProp) => {
     })
   }, [account])
 
+  useEffect(() => {
+    if (!currentMember || !reportDate) {
+      return;
+    }
+    axios.get("api/time-entries/of/" + currentMember.id + "?date=" + reportDate).then(response => {
+      setEntries(response.data);
+    });
+  }, [currentMember, reportDate])
+
   const updateCurrentProject = selectedProject => {
     setCurrentProject(selectedProject);
     const mem = selectedProject.members.find(member => member.login === account.login);
     setCurrentMember(mem);
   }
 
-  const updateCurrentMember = member =>{
+  const updateCurrentMember = member => {
     setCurrentMember(member);
   }
 
@@ -67,16 +77,16 @@ export const LogWork = (props: ILogWorkProp) => {
             <Label>Пользователь</Label>
             <input type="text" value={account.login} readOnly={true}/>
           </FormGroup>
-
           <ProjectList projects={projects} value={currentProject} handler={updateCurrentProject}/>
           <MemberList project={currentProject} value={currentMember} handler={updateCurrentMember}/>
           <FormGroup>
             <Label>Дата:</Label>
-            <input type="date" name="date" class-name="form-control" defaultValue={reportDate}/>
+            <input type="date" name="reportDate" class-name="form-control" defaultValue={reportDate} value={reportDate}
+                   onChange={event => setReportDate(event.target.value)}/>
           </FormGroup>
         </Form>
         <Row>
-          <p>Отмеченные задачи</p>
+          <TimeEntries entries={entries}/>
         </Row>
       </Col>
     </Row>

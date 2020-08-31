@@ -59,15 +59,22 @@ export const MemberList = props => {
           </Input>
 
         )}
-
-
-      {/*    <Input type="select" name="member" id="member" value={props.member?.login}>
-        {props.project?.members.map((member, i) => (
-          <option key={i}
-                  value={member.id}>{member?.firstName + ' ' + member?.lastName + '(' + member.login + ')'}</option>
-        ))}
-      </Input>*/}
     </FormGroup>
+  );
+}
 
+export const TimeEntries = props => {
+  return (
+    <ul>
+      <div>
+        {props.entries ? (
+          props.entries.map((entry, i) => (
+            <li key={i}>{entry.id}</li>
+          ))
+        ) : (
+          <li>No Tasks</li>
+        )}
+      </div>
+    </ul>
   );
 }
