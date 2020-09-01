@@ -2,10 +2,10 @@ package org.manage.service;
 
 import io.quarkus.panache.common.Page;
 import org.manage.domain.Member;
+import org.manage.domain.Project;
 import org.manage.domain.TimeEntry;
 import org.manage.service.dto.TimeEntryDTO;
 import org.manage.service.mapper.TimeEntryMapper;
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +62,7 @@ public class TimeEntryService {
 
     /**
      * Get all the timeEntries.
+     *
      * @param page the pagination information.
      * @return the list of entities.
      */
@@ -72,10 +73,10 @@ public class TimeEntryService {
     }
 
 
-    public List<TimeEntryDTO> findByDateAndMember(Long memberId, LocalDate date) {
+    public List<TimeEntryDTO> findByDateAndMemberAndProject(Long memberId, LocalDate date, Long projectId) {
         log.debug("Request to find all TimeEntries by member{} and date{}", memberId, date);
-        return TimeEntry.getAllByDateBetweenAndMemberId(date, Member.findById(memberId))
-        .map(t->timeEntryMapper.toDto(t))
+        return TimeEntry.getAllByDateBetweenAndMemberAndProject(date, Member.findById(memberId), Project.findById(projectId))
+            .map(t -> timeEntryMapper.toDto(t))
             .collect(Collectors.toList());
     }
 }

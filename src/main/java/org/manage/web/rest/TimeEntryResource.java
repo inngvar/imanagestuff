@@ -21,7 +21,6 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -130,9 +129,9 @@ public class TimeEntryResource {
     }
 
     @GET
-    @Path("/of/{memberId}")
-    public Response getTimeEntry(@PathParam("memberId") Long memberId, @QueryParam("date")LocalDate date){
+    @Path("/of/{memberId}/in/{projectId}")
+    public Response getTimeEntry(@PathParam("memberId") Long memberId, @PathParam("projectId") Long projectId, @QueryParam("date")LocalDate date){
         log.debug("REST request to get member: {}, timeEntries for date:{}", date, memberId);
-        return Response.ok(timeEntryService.findByDateAndMember(memberId, date)).build();
+        return Response.ok(timeEntryService.findByDateAndMemberAndProject(memberId, date, projectId)).build();
     }
 }

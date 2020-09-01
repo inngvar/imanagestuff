@@ -47,10 +47,10 @@ export const LogWork = (props: ILogWorkProp) => {
     if (!currentMember || !reportDate) {
       return;
     }
-    axios.get("api/time-entries/of/" + currentMember.id + "?date=" + reportDate).then(response => {
+    axios.get("api/time-entries/of/" + currentMember.id + '/in/' + currentProject.id + '?date=' + reportDate).then(response => {
       setEntries(response.data);
     });
-  }, [currentMember, reportDate])
+  }, [currentMember, currentProject, reportDate])
 
   const updateCurrentProject = selectedProject => {
     setCurrentProject(selectedProject);
