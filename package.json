@@ -36,7 +36,8 @@
     "redux-promise-middleware": "6.1.2",
     "redux-thunk": "2.3.0",
     "tslib": "1.11.1",
-    "uuid": "7.0.3"
+    "uuid": "7.0.3",
+    "iso8601-duration": "^1.2.0"
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "1.0.13-4.3.1",

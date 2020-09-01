@@ -1,10 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import {Translate} from 'react-jhipster';
 
-import {NavItem, NavLink, NavbarBrand} from 'reactstrap';
-import {NavLink as Link} from 'react-router-dom';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {parse, end, toSeconds, pattern} from 'iso8601-duration';
 import {
+  Table,
   Dropdown,
   DropdownMenu,
   DropdownItem,
@@ -17,6 +16,11 @@ import {
   Conqtainer
 } from 'reactstrap';
 
+function roundToTwo(num) {
+  return Math.round((num + Number.EPSILON) * 100) / 100;
+}
+
+
 export const ProjectList = props => {
 
 
@@ -26,8 +30,8 @@ export const ProjectList = props => {
   }
 
   return (
-    <FormGroup>
-      <Label>Проект</Label>
+    <FormGroup className="col-md-6">
+      <Label for="project">Проект</Label>
       <Input type="select" name="project" id="project" onChange={onChange}>
         {props.projects.map((project, i) => (
           <option key={i} value={project.id}>{project.name}</option>
@@ -45,19 +49,18 @@ export const MemberList = props => {
   }
 
   return (
-    <FormGroup>
-      <Label>Участник {props.value.login}</Label>
-      {props.member ? (
-          <div>Empty</div>
-        ) :
-        (
+    <FormGroup className="col-md-6">
+      <Label for="member">Участник</Label>
+      {props.value ? (
           <Input type="select" name="member" id="member" value={props.value.login} onChange={onChange}>
             {props.project?.members.map((member, i) => (
               <option key={i}
                       value={member.login}>{member?.firstName + ' ' + member?.lastName + '(' + member.login + ')'}</option>
             ))}
           </Input>
-
+        ) :
+        (
+          <div>Empty</div>
         )}
     </FormGroup>
   );
@@ -65,16 +68,28 @@ export const MemberList = props => {
 
 export const TimeEntries = props => {
   return (
-    <ul>
-      <div>
+      <Table className="table-striped table-hover table-sm">
+        <thead className="thead-dark">
+        <tr>
+          <th scope="col">Часы</th>
+          <th scope="col">Описание</th>
+          <th scope="col">Дата</th>
+        </tr>
+        </thead>
+        <tbody>
         {props.entries ? (
           props.entries.map((entry, i) => (
-            <li key={i}>{entry.id}</li>
+            <tr key={i}>
+              <td>{roundToTwo(toSeconds(parse(entry.duration)) / 60 / 60)}</td>
+              <td>{entry.shotDescription}</td>
+              <td>{entry.date}</td>
+            </tr>
           ))
         ) : (
-          <li>No Tasks</li>
+          <p>No Tasks</p>
         )}
-      </div>
-    </ul>
+        </tbody>
+      </Table>
   );
 }
+

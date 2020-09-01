@@ -2,10 +2,13 @@ import axios from 'axios';
 import '../home/home.scss';
 import React, {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
+
+import {ITimeEntry} from 'app/shared/model/time-entry.model';
 import {Translate} from 'react-jhipster';
 import {connect} from 'react-redux';
 import {MemberList, ProjectList, TimeEntries} from "app/modules/logwork/logwork-components";
 import {
+  Button,
   Dropdown,
   DropdownMenu,
   DropdownItem,
@@ -20,16 +23,19 @@ import {
 } from 'reactstrap';
 import {IRootState} from 'app/shared/reducers';
 import project from "app/entities/project/project";
+import {cleanEntity} from "app/shared/util/entity-utils";
 
 export type ILogWorkProp = StateProps;
 
 export const LogWork = (props: ILogWorkProp) => {
   const {account} = props;
   const [projects, setProjects] = useState([]);
-  const [currentProject, setCurrentProject] = useState({id: 'initial', members: []});
-  const [currentMember, setCurrentMember] = useState({id: ''});
+  const [currentProject, setCurrentProject] = useState(null);
+  const [currentMember, setCurrentMember] = useState(null);
   const [reportDate, setReportDate] = useState(new Date().toISOString().substr(0, 10));
   const [entries, setEntries] = useState(null);
+  const [duration, setDuration] = useState(null);
+  const [entryDescription, setEntryDescription] = useState(null);
 
   useEffect(() => {
     if (!account.login) {
@@ -43,13 +49,18 @@ export const LogWork = (props: ILogWorkProp) => {
     })
   }, [account])
 
+  function updateEntries() {
+    axios.get("api/time-entries/of/" + currentMember.id + '/in/' + currentProject.id + '?date=' + reportDate).then(response => {
+      setEntries(response.data);
+    });
+  }
+
   useEffect(() => {
     if (!currentMember || !reportDate) {
       return;
     }
-    axios.get("api/time-entries/of/" + currentMember.id + '/in/' + currentProject.id + '?date=' + reportDate).then(response => {
-      setEntries(response.data);
-    });
+    updateEntries();
+
   }, [currentMember, currentProject, reportDate])
 
   const updateCurrentProject = selectedProject => {
@@ -62,9 +73,21 @@ export const LogWork = (props: ILogWorkProp) => {
     setCurrentMember(member);
   }
 
+  const addNewEntry = () => {
+    const entity = {
+      duration: 'PT' + duration.toUpperCase(),
+      shotDescription: entryDescription,
+      projectId: currentProject.id,
+      memberId: currentMember.id,
+      date: reportDate
+    };
+    axios.post('api/time-entries/', cleanEntity(entity)).then(result => {
+      updateEntries();
+    });
+  }
+
   return (
     <Row>
-      <p>CURRENT PROJECT:{currentProject ? currentProject.id : ''}</p>
       <Col md="9">
         <h2>
           <Translate contentKey="logwork.title">Log Your Work Every Day</Translate>
@@ -72,19 +95,55 @@ export const LogWork = (props: ILogWorkProp) => {
         <p className="lead">
           <Translate contentKey="logwork.subtitle">This is your duty</Translate>
         </p>
+        {currentMember ? (
+          <h5>{currentMember?.firstName + ' ' + currentMember?.lastName + '(' + currentMember.login + ')'}</h5>) : (
+          <p></p>)}
         <Form>
-          <FormGroup>
-            <Label>Пользователь</Label>
-            <input type="text" value={account.login} readOnly={true}/>
-          </FormGroup>
-          <ProjectList projects={projects} value={currentProject} handler={updateCurrentProject}/>
-          <MemberList project={currentProject} value={currentMember} handler={updateCurrentMember}/>
+          <Row class="form-row">
+            <ProjectList projects={projects} value={currentProject} handler={updateCurrentProject}/>
+            <MemberList project={currentProject} value={currentMember} handler={updateCurrentMember}/>
+          </Row>
           <FormGroup>
             <Label>Дата:</Label>
             <input type="date" name="reportDate" class-name="form-control" defaultValue={reportDate} value={reportDate}
                    onChange={event => setReportDate(event.target.value)}/>
           </FormGroup>
         </Form>
+        <Row>
+          <Form className="jumbotron">
+            <h3>Добавить задачу</h3>
+            <Row className='align-items-center'>
+              <FormGroup className='col-auto'>
+                <Label className="sr-only" for='description'>Описание</Label>
+                <input type="text"
+                       name='description'
+                       id="description"
+                       className='form-control'
+                       placeholder="Описание"
+                       value={entryDescription}
+                       onChange={event => setEntryDescription(event.target.value)}/>
+              </FormGroup>
+              <FormGroup className='col-auto'>
+                <Label className="sr-only" for={'logwork'}>Время</Label>
+                <input type="text"
+                       name='logwork'
+                       className='form-control'
+                       id="logwork"
+                       placeholder="Время"
+                       value={duration}
+                       onChange={e => setDuration(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup className='col-auto'>
+                <Button className='btn-primary' onClick={event => {
+                  addNewEntry();
+                  return false;
+                }}>+</Button>
+              </FormGroup>
+            </Row>
+          </Form>
+
+        </Row>
         <Row>
           <TimeEntries entries={entries}/>
         </Row>

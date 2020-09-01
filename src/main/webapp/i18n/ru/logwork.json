@@ -1,19 +1,7 @@
 {
-  "home": {
+  "logwork": {
     "title": "Логируй работу каждый день",
     "subtitle": "Это ваша прямая обязанность",
-    "logged": {
-      "message": "Вы вошли как пользователь \"{{username}}\"."
-    },
-    "question": "Если у Вас возникли вопросы по Логированию Работы решите их самостоятельно:",
-    "link": {
-      "homepage": "JHipster домашняя страница",
-      "stackoverflowac": "JHipster на Stack Overflow",
-      "bugtracker": "JHipster баг трекер",
-      "chat": "JHipster public chat room",
-      "follow": "пользователь @jhipster в Twitter"
-    },
-    "like": "Если вам нравится JHipster, не забудьте дать нам звёздочку на",
-    "github": "GitHub"
+    "question": "Если у Вас возникли вопросы по Логированию Работы решите их самостоятельно:"
   }
 }
