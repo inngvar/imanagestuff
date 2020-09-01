@@ -4,7 +4,7 @@ export interface ITimeEntry {
   id?: number;
   duration?: number;
   date?: string;
-  shotDescription?: string;
+  shortDescription?: string;
   description?: string;
   memberLogin?: string;
   memberId?: number;

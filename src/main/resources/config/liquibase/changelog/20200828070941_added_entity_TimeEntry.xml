@@ -21,7 +21,7 @@
             <column name="date" type="date">
                 <constraints nullable="false" />
             </column>
-            <column name="shot_description" type="varchar(256)">
+            <column name="short_description" type="varchar(256)">
                 <constraints nullable="true" />
             </column>
             <column name="description" type="varchar(4000)">
@@ -58,7 +58,7 @@
             <column name="id" type="numeric"/>
             <column name="duration" type="numeric"/>
             <column name="date" type="date"/>
-            <column name="shot_description" type="string"/>
+            <column name="short_description" type="string"/>
             <column name="description" type="string"/>
             <column name="member_id" type="numeric"/>
             <column name="project_id" type="numeric"/>

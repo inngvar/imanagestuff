@@ -23,7 +23,7 @@ public class TimeEntryDTO implements Serializable {
     public LocalDate date;
 
     @Size(max = 256)
-    public String shotDescription;
+    public String shortDescription;
 
     @Size(max = 4000)
     public String description;
@@ -56,7 +56,7 @@ public class TimeEntryDTO implements Serializable {
             "id=" + id +
             ", duration='" + duration + "'" +
             ", date='" + date + "'" +
-            ", shotDescription='" + shotDescription + "'" +
+            ", shortDescription='" + shortDescription + "'" +
             ", description='" + description + "'" +
             ", memberId=" + memberId +
             ", memberLogin='" + memberLogin + "'" +
