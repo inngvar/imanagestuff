@@ -108,8 +108,8 @@ export const TimeEntry = (props: ITimeEntryProps) => {
                   <th className="hand" onClick={sort('date')}>
                     <Translate contentKey="imanagestuffApp.timeEntry.date">Date</Translate> <FontAwesomeIcon icon="sort" />
                   </th>
-                  <th className="hand" onClick={sort('shotDescription')}>
-                    <Translate contentKey="imanagestuffApp.timeEntry.shotDescription">Shot Description</Translate>{' '}
+                  <th className="hand" onClick={sort('shortDescription')}>
+                    <Translate contentKey="imanagestuffApp.timeEntry.shortDescription">Short Description</Translate>{' '}
                     <FontAwesomeIcon icon="sort" />
                   </th>
                   <th className="hand" onClick={sort('description')}>
@@ -134,7 +134,7 @@ export const TimeEntry = (props: ITimeEntryProps) => {
                     </td>
                     <td>{timeEntry.duration}</td>
                     <td>{timeEntry.date ? <TextFormat type="date" value={timeEntry.date} format={APP_LOCAL_DATE_FORMAT} /> : null}</td>
-                    <td>{timeEntry.shotDescription}</td>
+                    <td>{timeEntry.shortDescription}</td>
                     <td>{timeEntry.description}</td>
                     <td>{timeEntry.memberLogin ? <Link to={`member/${timeEntry.memberId}`}>{timeEntry.memberLogin}</Link> : ''}</td>
                     <td>{timeEntry.projectName ? <Link to={`project/${timeEntry.projectId}`}>{timeEntry.projectName}</Link> : ''}</td>

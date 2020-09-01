@@ -40,8 +40,8 @@ public class TimeEntryResourceTest {
     private static final LocalDate DEFAULT_DATE = LocalDate.ofEpochDay(0L);
     private static final LocalDate UPDATED_DATE = LocalDate.now(ZoneId.systemDefault());
 
-    private static final String DEFAULT_SHOT_DESCRIPTION = "AAAAAAAAAA";
-    private static final String UPDATED_SHOT_DESCRIPTION = "BBBBBBBBBB";
+    private static final String DEFAULT_SHORT_DESCRIPTION = "AAAAAAAAAA";
+    private static final String UPDATED_SHORT_DESCRIPTION = "BBBBBBBBBB";
 
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
@@ -86,7 +86,7 @@ public class TimeEntryResourceTest {
         var timeEntryDTO = new TimeEntryDTO();
         timeEntryDTO.duration = DEFAULT_DURATION;
         timeEntryDTO.date = DEFAULT_DATE;
-        timeEntryDTO.shotDescription = DEFAULT_SHOT_DESCRIPTION;
+        timeEntryDTO.shortDescription = DEFAULT_SHORT_DESCRIPTION;
         timeEntryDTO.description = DEFAULT_DESCRIPTION;
         return timeEntryDTO;
     }
@@ -142,7 +142,7 @@ public class TimeEntryResourceTest {
         var testTimeEntryDTO = timeEntryDTOList.stream().filter(it -> timeEntryDTO.id.equals(it.id)).findFirst().get();
         assertThat(testTimeEntryDTO.duration).isEqualTo(DEFAULT_DURATION);
         assertThat(testTimeEntryDTO.date).isEqualTo(DEFAULT_DATE);
-        assertThat(testTimeEntryDTO.shotDescription).isEqualTo(DEFAULT_SHOT_DESCRIPTION);
+        assertThat(testTimeEntryDTO.shortDescription).isEqualTo(DEFAULT_SHORT_DESCRIPTION);
         assertThat(testTimeEntryDTO.description).isEqualTo(DEFAULT_DESCRIPTION);
     }
 
@@ -331,7 +331,7 @@ public class TimeEntryResourceTest {
         // Update the timeEntry
         updatedTimeEntryDTO.duration = UPDATED_DURATION;
         updatedTimeEntryDTO.date = UPDATED_DATE;
-        updatedTimeEntryDTO.shotDescription = UPDATED_SHOT_DESCRIPTION;
+        updatedTimeEntryDTO.shortDescription = UPDATED_SHORT_DESCRIPTION;
         updatedTimeEntryDTO.description = UPDATED_DESCRIPTION;
 
         given()
@@ -363,7 +363,7 @@ public class TimeEntryResourceTest {
         var testTimeEntryDTO = timeEntryDTOList.stream().filter(it -> updatedTimeEntryDTO.id.equals(it.id)).findFirst().get();
         assertThat(testTimeEntryDTO.duration).isEqualTo(UPDATED_DURATION);
         assertThat(testTimeEntryDTO.date).isEqualTo(UPDATED_DATE);
-        assertThat(testTimeEntryDTO.shotDescription).isEqualTo(UPDATED_SHOT_DESCRIPTION);
+        assertThat(testTimeEntryDTO.shortDescription).isEqualTo(UPDATED_SHORT_DESCRIPTION);
         assertThat(testTimeEntryDTO.description).isEqualTo(UPDATED_DESCRIPTION);
     }
 
@@ -495,7 +495,7 @@ public class TimeEntryResourceTest {
             .statusCode(OK.getStatusCode())
             .contentType(APPLICATION_JSON)
             .body("id", hasItem(timeEntryDTO.id.intValue()))
-            .body("duration", hasItem(DEFAULT_DURATION.toString()))            .body("date", hasItem(TestUtil.formatDateTime(DEFAULT_DATE)))            .body("shotDescription", hasItem(DEFAULT_SHOT_DESCRIPTION))            .body("description", hasItem(DEFAULT_DESCRIPTION));
+            .body("duration", hasItem(DEFAULT_DURATION.toString()))            .body("date", hasItem(TestUtil.formatDateTime(DEFAULT_DATE)))            .body("shortDescription", hasItem(DEFAULT_SHORT_DESCRIPTION))            .body("description", hasItem(DEFAULT_DESCRIPTION));
     }
 
     @Test
@@ -542,7 +542,7 @@ public class TimeEntryResourceTest {
             
                 .body("duration", is(DEFAULT_DURATION.toString()))
                 .body("date", is(TestUtil.formatDateTime(DEFAULT_DATE)))
-                .body("shotDescription", is(DEFAULT_SHOT_DESCRIPTION))
+                .body("shortDescription", is(DEFAULT_SHORT_DESCRIPTION))
                 .body("description", is(DEFAULT_DESCRIPTION));
     }
 

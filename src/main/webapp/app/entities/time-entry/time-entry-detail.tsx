@@ -38,11 +38,11 @@ export const TimeEntryDetail = (props: ITimeEntryDetailProps) => {
           </dt>
           <dd>{timeEntryEntity.date ? <TextFormat value={timeEntryEntity.date} type="date" format={APP_LOCAL_DATE_FORMAT} /> : null}</dd>
           <dt>
-            <span id="shotDescription">
-              <Translate contentKey="imanagestuffApp.timeEntry.shotDescription">Shot Description</Translate>
+            <span id="shortDescription">
+              <Translate contentKey="imanagestuffApp.timeEntry.shortDescription">Short Description</Translate>
             </span>
           </dt>
-          <dd>{timeEntryEntity.shotDescription}</dd>
+          <dd>{timeEntryEntity.shortDescription}</dd>
           <dt>
             <span id="description">
               <Translate contentKey="imanagestuffApp.timeEntry.description">Description</Translate>

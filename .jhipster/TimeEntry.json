@@ -12,7 +12,7 @@
       "fieldValidateRules": ["required"]
     },
     {
-      "fieldName": "shotDescription",
+      "fieldName": "shortDescription",
       "fieldType": "String",
       "fieldValidateRules": ["maxlength"],
       "fieldValidateRulesMaxlength": "256"

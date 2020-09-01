@@ -14,7 +14,7 @@ entity Member{
 entity TimeEntry{
 	duration Duration required
     date LocalDate required
-    shotDescription String maxlength(256)
+    shortDescription String maxlength(256)
     description String maxlength(4000)
 }
 

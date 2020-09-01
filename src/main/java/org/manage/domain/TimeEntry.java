@@ -40,8 +40,8 @@ public class TimeEntry extends PanacheEntityBase implements Serializable {
     public LocalDate date;
 
     @Size(max = 256)
-    @Column(name = "shot_description", length = 256)
-    public String shotDescription;
+    @Column(name = "short_description", length = 256)
+    public String shortDescription;
 
     @Size(max = 4000)
     @Column(name = "description", length = 4000)
@@ -89,7 +89,7 @@ public class TimeEntry extends PanacheEntityBase implements Serializable {
             "id=" + id +
             ", duration='" + duration + "'" +
             ", date='" + date + "'" +
-            ", shotDescription='" + shotDescription + "'" +
+            ", shortDescription='" + shortDescription + "'" +
             ", description='" + description + "'" +
             "}";
     }
@@ -110,7 +110,7 @@ public class TimeEntry extends PanacheEntityBase implements Serializable {
         if (entity != null) {
             entity.duration = timeEntry.duration;
             entity.date = timeEntry.date;
-            entity.shotDescription = timeEntry.shotDescription;
+            entity.shortDescription = timeEntry.shortDescription;
             entity.description = timeEntry.description;
             entity.member = timeEntry.member;
             entity.project = timeEntry.project;

@@ -110,13 +110,13 @@ export const TimeEntryUpdate = (props: ITimeEntryUpdateProps) => {
                 />
               </AvGroup>
               <AvGroup>
-                <Label id="shotDescriptionLabel" for="time-entry-shotDescription">
-                  <Translate contentKey="imanagestuffApp.timeEntry.shotDescription">Shot Description</Translate>
+                <Label id="shortDescriptionLabel" for="time-entry-shortDescription">
+                  <Translate contentKey="imanagestuffApp.timeEntry.shortDescription">Short Description</Translate>
                 </Label>
                 <AvField
-                  id="time-entry-shotDescription"
+                  id="time-entry-shortDescription"
                   type="text"
-                  name="shotDescription"
+                  name="shortDescription"
                   validate={{
                     maxLength: { value: 256, errorMessage: translate('entity.validation.maxlength', { max: 256 }) },
                   }}
