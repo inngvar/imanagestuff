@@ -15,7 +15,7 @@ public class DayReportDTO {
 
     public List<MemberReportInfoDTO> membersReports = Lists.newArrayList();
 
-    public Long totalHours;
+    public Double totalHours;
 
     public String subject;
 

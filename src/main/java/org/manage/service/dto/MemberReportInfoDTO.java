@@ -12,6 +12,6 @@ public class MemberReportInfoDTO{
 
     public List<TimeEntryDTO> entries = Lists.newArrayList();
 
-    public long totalHours;
+    public double totalHours;
 
 }
