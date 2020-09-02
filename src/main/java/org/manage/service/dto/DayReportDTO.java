@@ -18,5 +18,6 @@ public class DayReportDTO {
     public Long totalHours;
 
     public String subject;
+
 }
 

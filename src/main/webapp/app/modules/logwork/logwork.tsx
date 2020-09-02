@@ -2,7 +2,7 @@ import axios from 'axios';
 import '../home/home.scss';
 import React, {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
-
+import {durationToHours} from 'app/shared/util/date-utils';
 import {ITimeEntry} from 'app/shared/model/time-entry.model';
 import {Translate} from 'react-jhipster';
 import {connect} from 'react-redux';
@@ -36,6 +36,7 @@ export const LogWork = (props: ILogWorkProp) => {
   const [entries, setEntries] = useState(null);
   const [duration, setDuration] = useState(null);
   const [entryDescription, setEntryDescription] = useState(null);
+  const [totalHours, setTotalHours] = useState(0);
 
   useEffect(() => {
     if (!account.login) {
@@ -63,6 +64,17 @@ export const LogWork = (props: ILogWorkProp) => {
 
   }, [currentMember, currentProject, reportDate])
 
+  useEffect(() => {
+    if (!entries || entries.length < 1) {
+      return;
+    }
+    let sum = 0;
+    entries.forEach(e => {
+      sum = sum + durationToHours(e.duration);
+    });
+    setTotalHours(sum);
+  }, [entries])
+
   const updateCurrentProject = selectedProject => {
     setCurrentProject(selectedProject);
     const mem = selectedProject.members.find(member => member.login === account.login);
@@ -87,7 +99,7 @@ export const LogWork = (props: ILogWorkProp) => {
   }
 
   function sendReport() {
-    axios.post('api/reports/day-report',{
+    axios.post('api/reports/day-report', {
       projectId: currentProject.id,
       reportDate
     })
@@ -152,9 +164,13 @@ export const LogWork = (props: ILogWorkProp) => {
         </Row>
         <Row>
           <TimeEntries entries={entries}/>
+          <h5>Всего часов: {totalHours}</h5>
         </Row>
         <Row>
-          <Button onClick={e => {sendReport(); return false;}}>Отправить отчёт</Button>
+          <Button onClick={e => {
+            sendReport();
+            return false;
+          }}>Отправить отчёт</Button>
         </Row>
       </Col>
     </Row>

@@ -1,24 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import {Translate} from 'react-jhipster';
+import {durationToHours} from 'app/shared/util/date-utils';
 
-import {parse, end, toSeconds, pattern} from 'iso8601-duration';
 import {
   Table,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
-  DropdownToggle,
-  Row,
-  Form,
   FormGroup,
   Input,
   Label,
-  Conqtainer
 } from 'reactstrap';
-
-function roundToTwo(num) {
-  return Math.round((num + Number.EPSILON) * 100) / 100;
-}
 
 
 export const ProjectList = props => {
@@ -80,7 +69,7 @@ export const TimeEntries = props => {
         {props.entries ? (
           props.entries.map((entry, i) => (
             <tr key={i}>
-              <td>{roundToTwo(toSeconds(parse(entry.duration)) / 60 / 60)}</td>
+              <td>{durationToHours(entry.duration)}</td>
               <td>{entry.shortDescription}</td>
               <td>{entry.date}</td>
             </tr>
