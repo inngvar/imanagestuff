@@ -11,6 +11,6 @@ public class DurationExtension {
     private final static DecimalFormat f = new DecimalFormat("##.00");
 
     public static String hours(Duration duration){
-        return f.format(duration.getSeconds()/60.0/60.0);
+        return String.valueOf(duration.getSeconds()/60.0/60.0);
     }
 }
