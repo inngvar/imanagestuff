@@ -81,7 +81,7 @@ export const TimeEntries = props => {
           props.entries.map((entry, i) => (
             <tr key={i}>
               <td>{roundToTwo(toSeconds(parse(entry.duration)) / 60 / 60)}</td>
-              <td>{entry.shotDescription}</td>
+              <td>{entry.shortDescription}</td>
               <td>{entry.date}</td>
             </tr>
           ))

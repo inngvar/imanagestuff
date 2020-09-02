@@ -2,7 +2,9 @@ package org.manage.service;
 
 import io.quarkus.panache.common.Page;
 import org.manage.domain.Member;
+import org.manage.domain.Project;
 import org.manage.service.dto.MemberDTO;
+import org.manage.service.dto.ProjectDTO;
 import org.manage.service.mapper.MemberMapper;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import javax.transaction.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 @Transactional
@@ -54,7 +57,7 @@ public class MemberService {
     public Optional<MemberDTO> findOne(Long id) {
         log.debug("Request to get Member : {}", id);
         return Member.findByIdOptional(id)
-            .map(member -> memberMapper.toDto((Member) member)); 
+            .map(member -> memberMapper.toDto((Member) member));
     }
 
     /**
@@ -69,5 +72,8 @@ public class MemberService {
     }
 
 
-
+    public Stream<MemberDTO> findAllByProject(ProjectDTO projectDto) {
+        Project pr= Project.findById(projectDto.id);
+        return pr.members.stream().map(m->memberMapper.toDto(m));
+    }
 }

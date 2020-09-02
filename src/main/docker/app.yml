@@ -1,13 +1,15 @@
 version: '2'
 services:
   imanagestuff-app:
-    image: imanagestuff
+    image: cr.yandex/crp62acnnr4e12qnqtlp/imanagestuff:latest
     environment:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
-      - SPRING_PROFILES_ACTIVE=prod,swagger
+     # - SPRING_PROFILES_ACTIVE=prod,swagger
       - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://imanagestuff-postgresql:5432/imanagestuff
-      - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application
+      - quarkus.profile=prod
+      - quarkus.liquibase.contexts=prod
+      - quarkus.datasource.url=jdbc:postgresql://imanagestuff-postgresql:5432/imanagestuff
+     # - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application
     ports:
       - 8080:8080
   imanagestuff-postgresql:

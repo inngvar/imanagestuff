@@ -76,7 +76,7 @@ export const LogWork = (props: ILogWorkProp) => {
   const addNewEntry = () => {
     const entity = {
       duration: 'PT' + duration.toUpperCase(),
-      shotDescription: entryDescription,
+      shortDescription: entryDescription,
       projectId: currentProject.id,
       memberId: currentMember.id,
       date: reportDate
@@ -84,6 +84,13 @@ export const LogWork = (props: ILogWorkProp) => {
     axios.post('api/time-entries/', cleanEntity(entity)).then(result => {
       updateEntries();
     });
+  }
+
+  function sendReport() {
+    axios.post('api/reports/day-report',{
+      projectId: currentProject.id,
+      reportDate
+    })
   }
 
   return (
@@ -142,10 +149,12 @@ export const LogWork = (props: ILogWorkProp) => {
               </FormGroup>
             </Row>
           </Form>
-
         </Row>
         <Row>
           <TimeEntries entries={entries}/>
+        </Row>
+        <Row>
+          <Button onClick={e => {sendReport(); return false;}}>Отправить отчёт</Button>
         </Row>
       </Col>
     </Row>

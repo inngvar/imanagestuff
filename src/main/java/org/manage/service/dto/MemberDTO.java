@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 @RegisterForReflection
 public class MemberDTO implements Serializable {
-    
+
     public Long id;
 
     @NotNull
@@ -25,6 +25,7 @@ public class MemberDTO implements Serializable {
     @NotNull
     public String lastName;
 
+    public String fio;
 
     @Override
     public boolean equals(Object o) {

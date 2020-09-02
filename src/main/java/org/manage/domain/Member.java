@@ -5,6 +5,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import javax.json.bind.annotation.JsonbTransient;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import org.manage.service.dto.MemberDTO;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -13,6 +14,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * A Member.

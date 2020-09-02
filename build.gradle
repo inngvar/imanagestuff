@@ -153,6 +153,7 @@ dependencies {
     implementation "io.quarkus:quarkus-undertow"
     implementation "io.quarkus:quarkus-resteasy"
     implementation "io.quarkus:quarkus-resteasy-jsonb"
+    implementation "io.quarkus:quarkus-resteasy-qute"
     implementation "io.quarkus:quarkus-mailer"
     implementation "io.quarkus:quarkus-hibernate-orm-panache"
     implementation "io.quarkus:quarkus-hibernate-validator"
@@ -187,7 +188,12 @@ dependencies {
 
     //jhipster-needle-gradle-dependency - JHipster will add additional dependencies here
 }
-
+quarkusBuild {
+    nativeArgs {
+        containerBuild = true
+        buildImage = "quay.io/quarkus/ubi-quarkus-native-image:20.1.0-java11"
+    }
+}
 task cleanResources(type: Delete) {
     delete "build/resources"
 }

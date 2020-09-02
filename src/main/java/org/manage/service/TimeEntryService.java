@@ -73,7 +73,7 @@ public class TimeEntryService {
     }
 
 
-    public List<TimeEntryDTO> findByDateAndMemberAndProject(Long memberId, LocalDate date, Long projectId) {
+    public List<TimeEntryDTO> findByMemberAndDateAndProject(Long memberId, LocalDate date, Long projectId) {
         log.debug("Request to find all TimeEntries by member{} and date{}", memberId, date);
         return TimeEntry.getAllByDateBetweenAndMemberAndProject(date, Member.findById(memberId), Project.findById(projectId))
             .map(t -> timeEntryMapper.toDto(t))

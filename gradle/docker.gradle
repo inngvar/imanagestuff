@@ -7,7 +7,7 @@ task containerImageBuild {
 task containerImagePush {
     group = 'jib'
     System.setProperty('quarkus.container-image.build', 'true')
-    System.setProperty('container-image.push', 'true')
+    System.setProperty('quarkus.container-image.push', 'true')
     finalizedBy 'assemble'
 }
 

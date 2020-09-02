@@ -16,6 +16,9 @@ public interface MemberMapper extends EntityMapper<MemberDTO, Member> {
     @Mapping(target = "projects", ignore = true)
     Member toEntity(MemberDTO memberDTO);
 
+    @Mapping(target = "fio", expression = "java(member.lastName +\" \"+ member.firstName)")
+    MemberDTO toDto(Member member);
+
     default Member fromId(Long id) {
         if (id == null) {
             return null;

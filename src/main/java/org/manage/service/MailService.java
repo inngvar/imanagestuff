@@ -4,9 +4,12 @@ import org.manage.config.JHipsterProperties;
 import org.manage.domain.User;
 import io.quarkus.mailer.MailTemplate;
 import io.quarkus.qute.api.ResourcePath;
+
 import java.util.concurrent.CompletionStage;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+
+import org.manage.service.dto.DayReportDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,18 +31,20 @@ public class MailService {
     final MailTemplate creationEmail;
 
     final MailTemplate passwordResetEmail;
+    private final MailTemplate dayReport;
 
     @Inject
     public MailService(
         JHipsterProperties jHipsterProperties,
         @ResourcePath("mail/activationEmail") MailTemplate activationEmail,
         @ResourcePath("mail/creationEmail") MailTemplate creationEmail,
-        @ResourcePath("mail/passwordResetEmail") MailTemplate passwordResetEmail
-    ) {
+        @ResourcePath("mail/passwordResetEmail") MailTemplate passwordResetEmail,
+        @ResourcePath("mail/dayReport") MailTemplate dayReport) {
         this.jHipsterProperties = jHipsterProperties;
         this.activationEmail = activationEmail;
         this.creationEmail = creationEmail;
         this.passwordResetEmail = passwordResetEmail;
+        this.dayReport = dayReport;
     }
 
     public CompletionStage<Void> sendEmailFromTemplate(User user, MailTemplate template, String subject) {
@@ -69,5 +74,14 @@ public class MailService {
     public CompletionStage<Void> sendPasswordResetMail(User user) {
         log.debug("Sending password reset email to '{}'", user.email);
         return sendEmailFromTemplate(user, passwordResetEmail, "jhipsterSampleApplication password reset");
+    }
+
+    public CompletionStage<Void> sendDayReport(DayReportDTO dayReportDTO){
+        return dayReport
+            .to(dayReportDTO.project.sendReports.split(","))
+            .subject(dayReportDTO.subject)
+            .data("report", dayReportDTO)
+            .send();
+
     }
 }

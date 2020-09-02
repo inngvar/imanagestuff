@@ -132,6 +132,6 @@ public class TimeEntryResource {
     @Path("/of/{memberId}/in/{projectId}")
     public Response getTimeEntry(@PathParam("memberId") Long memberId, @PathParam("projectId") Long projectId, @QueryParam("date")LocalDate date){
         log.debug("REST request to get member: {}, timeEntries for date:{}", date, memberId);
-        return Response.ok(timeEntryService.findByDateAndMemberAndProject(memberId, date, projectId)).build();
+        return Response.ok(timeEntryService.findByMemberAndDateAndProject(memberId, date, projectId)).build();
     }
 }

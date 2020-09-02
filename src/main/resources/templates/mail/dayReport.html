@@ -1,0 +1,25 @@
+{@org.manage.service.dto.DayReportDTO report}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Отчёт за {report.date}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<p>
+    Отчёт по работе над проектом {report.project.name} за {report.date}
+</p>
+<p>
+
+{#for memberReport in report.membersReports}
+<h2>{memberReport.member.fio ?: 'Unknown'}</h2>
+<ul>
+    {#for timeEntry in memberReport.entries}
+    <li>
+        {timeEntry.duration.hours} -- {timeEntry.shortDescription}
+    </li>
+    {/for}
+</ul>
+{/for}
+</body>
+</html>
