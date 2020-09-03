@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 @Provider
 public class LocalDateProvider implements ParamConverterProvider {
 
-    public static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    public static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(Constants.LOCAL_DATE_FORMAT);
 
     @Override
     public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType, Annotation[] annotations) {
