@@ -96,6 +96,8 @@ export const LogWork = (props: ILogWorkProp) => {
     };
     axios.post('api/time-entries/', cleanEntity(entity)).then(result => {
       updateEntries();
+      setEntryDescription("");
+      setDuration("");
     });
   }
 
@@ -142,6 +144,17 @@ export const LogWork = (props: ILogWorkProp) => {
                         value={entryDescription}
                         onChange={event => setEntryDescription(event.target.value)}>
                 </textarea>
+              </FormGroup>
+              <FormGroup className='col-auto'>
+                <Label className="sr-only" for={'logwork'}>Время</Label>
+                <input type="text"
+                       name='logwork'
+                       className='form-control'
+                       id="logwork"
+                       placeholder="Время"
+                       value={duration}
+                       onChange={e => setDuration(e.target.value)}
+                />
               </FormGroup>
               <FormGroup className='col-auto'>
                 <Button className='btn-primary' onClick={event => {
