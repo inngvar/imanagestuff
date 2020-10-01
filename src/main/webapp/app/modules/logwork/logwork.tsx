@@ -1,5 +1,6 @@
 import axios from 'axios';
 import '../home/home.scss';
+import './logwork.scss';
 import React, {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import {durationToHours} from 'app/shared/util/date-utils';
@@ -136,14 +137,13 @@ export const LogWork = (props: ILogWorkProp) => {
             <Row className='align-items-center'>
               <FormGroup className='col-auto'>
                 <Label className="sr-only" for='description'>Описание</Label>
-                <input type="text"
-                       name='description'
-                       id="description"
-                       className='form-control'
-                       placeholder="Описание"
-                       value={entryDescription}
-                       onChange={event => setEntryDescription(event.target.value)}
-                       />
+                <textarea name='description'
+                        id="description"
+                        className='form-control logwork'
+                        placeholder="Описание"
+                        value={entryDescription}
+                        onChange={event => setEntryDescription(event.target.value)}>
+                </textarea>
               </FormGroup>
               <FormGroup className='col-auto'>
                 <Label className="sr-only" for={'logwork'}>Время</Label>
@@ -163,6 +163,19 @@ export const LogWork = (props: ILogWorkProp) => {
                 }}>+</Button>
               </FormGroup>
             </Row>
+             <Row className='align-items-center' >
+                <FormGroup className='col-auto'>
+                  <Label className="sr-only" for={'logwork'}>Время</Label>
+                  <input type="text"
+                         name='logwork'
+                         className='form-control'
+                         id="logwork"
+                         placeholder="Время"
+                         value={duration}
+                         onChange={e => setDuration(e.target.value)}
+                  />
+                </FormGroup>
+              </Row>
           </Form>
         </Row>
         <Row>
