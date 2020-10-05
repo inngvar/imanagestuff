@@ -1,13 +1,17 @@
 import React, {useState, useEffect} from 'react';
 import {Translate} from 'react-jhipster';
 import {durationToHours} from 'app/shared/util/date-utils';
-
+import { Link, RouteComponentProps } from 'react-router-dom';
 import {
   Table,
   FormGroup,
   Input,
   Label,
+  Button,
+  FontAwesomeIcon
 } from 'reactstrap';
+import TimeEntryUpdateModal from "app/entities/time-entry/time-entry-modal";
+
 
 
 export const ProjectList = props => {
@@ -56,6 +60,18 @@ export const MemberList = props => {
 }
 
 export const TimeEntries = props => {
+  const [totalHours, setTotalHours] = useState(0);
+  useEffect(() => {
+    if (!props.entries || props.entries.length < 1) {
+      return;
+    }
+    let sum = 0;
+    props.entries.forEach(e => {
+      sum = sum + durationToHours(e.duration);
+    });
+    setTotalHours(sum);
+  })
+
   return (
       <Table className="table-striped table-hover table-sm">
         <thead className="thead-dark">
@@ -63,6 +79,7 @@ export const TimeEntries = props => {
           <th scope="col">Часы</th>
           <th scope="col">Описание</th>
           <th scope="col">Дата</th>
+          <th scope="col"/>
         </tr>
         </thead>
         <tbody>
@@ -72,12 +89,18 @@ export const TimeEntries = props => {
               <td>{durationToHours(entry.duration)}</td>
               <td>{entry.shortDescription}</td>
               <td>{entry.date}</td>
+              <td>
+                <div >
+                  <TimeEntryUpdateModal entity={entry} />
+                </div>
+              </td>
             </tr>
           ))
         ) : (
           <p>No Tasks</p>
         )}
         </tbody>
+        <h5>Всего часов: {totalHours}</h5>
       </Table>
   );
 }
