@@ -3,17 +3,15 @@ package org.manage.web.rest;
 import org.manage.service.MailService;
 import org.manage.service.ReportService;
 import org.manage.service.dto.DayReportDTO;
-import org.manage.service.dto.DayReportRequestModel;
+import org.manage.service.dto.ReportRequestModel;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.LocalDate;
 import java.util.concurrent.CompletionStage;
 
 @Path("/api/reports")
@@ -33,10 +31,18 @@ public class ReportResource {
 
     @POST
     @Path("day-report")
-    public CompletionStage<Response> sendDayReport(@Valid DayReportRequestModel reportRequest) {
-        final DayReportDTO dayReportDTO = reportService.generateDayReport(reportRequest.projectId, reportRequest.reportDate);
+    public CompletionStage<Response> sendDayReport(@Valid ReportRequestModel reportRequest) {
+        final DayReportDTO dayReportDTO = reportService.generateReport(reportRequest.projectId, reportRequest.fromtDate, reportRequest.fromtDate);
         return mailService.sendDayReport(dayReportDTO)
             .thenApply(x -> Response.accepted().build());
     }
+
+    @GET
+    @Path("project/{id}")
+    public Response projectReport(@PathParam("id") Long projectId, @QueryParam("dateFrom") LocalDate dateFrom, @QueryParam("dateTo") LocalDate dateTo) {
+        return Response.ok(reportService.generateReport(projectId, dateFrom, dateTo))
+            .build();
+    }
+
 
 }

@@ -12,7 +12,6 @@ import {
 
 export const ProjectList = props => {
 
-
   const onChange = event => {
     const te = props.projects.find(p => p.id.toString() === event.target.value)
     props.handler(te);

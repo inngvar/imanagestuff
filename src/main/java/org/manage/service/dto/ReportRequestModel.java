@@ -7,13 +7,17 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @RegisterForReflection
-public class DayReportRequestModel {
+public class ReportRequestModel {
 
     @NotNull
     public Long projectId;
 
     @NotNull
     @JsonbDateFormat(value = "yyyy-MM-dd")
-    public LocalDate reportDate;
+    public LocalDate fromtDate;
+
+    @NotNull
+    @JsonbDateFormat(value = "yyyy-MM-dd")
+    public LocalDate toDate;
 
 }

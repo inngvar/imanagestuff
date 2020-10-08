@@ -37,9 +37,19 @@ export const Home = props => (
 export const LogWork = props => (
   <NavItem>
     <NavLink tag={Link} to="/logwork" className="d-flex align-items-center">
-      <FontAwesomeIcon icon="home"/>
+      <FontAwesomeIcon icon="user-clock"/>
       <span>
           <Translate contentKey="global.menu.worklog">WorkLog</Translate>
+      </span>
+    </NavLink>
+  </NavItem>
+);
+export  const ReportMenu = props =>(
+  <NavItem>
+    <NavLink tag={Link} to="/report" className="d-flex align-items-center">
+      <FontAwesomeIcon icon="info"/>
+      <span>
+          <Translate contentKey="global.menu.report">WorkLog</Translate>
       </span>
     </NavLink>
   </NavItem>

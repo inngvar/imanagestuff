@@ -59,8 +59,8 @@ public class TimeEntry extends PanacheEntityBase implements Serializable {
     @JsonbTransient
     public Project project;
 
-    public static Stream<TimeEntry> getAllByDateBetweenAndMemberAndProject(LocalDate date, Member member, Project project) {
-        return find("From TimeEntry e WHERE e.member=?1 AND e.project = ?2 AND e.date = ?3", member, project, date)
+    public static Stream<TimeEntry> getAllByDateBetweenAndMemberAndProject(LocalDate dateFrom, LocalDate dateTo, Member member, Project project) {
+        return find("From TimeEntry e WHERE e.member=?1 AND e.project = ?2 AND (e.date >= ?3 AND e.date<=?4)", member, project, dateFrom, dateTo)
             .stream();
     }
 

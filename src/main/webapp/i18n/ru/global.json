@@ -5,6 +5,7 @@
     "menu": {
       "home": "Главная",
       "worklog": "Отметка времени",
+      "report": "Отчёт",
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Сущности",

@@ -1,13 +1,17 @@
 task containerImageBuild {
     group = 'jib'
-    System.setProperty('quarkus.container-image.build', 'true')
+    doFirst {
+        System.setProperty('quarkus.container-image.build', 'true')
+    }
     finalizedBy 'assemble'
 }
 
 task containerImagePush {
     group = 'jib'
-    System.setProperty('quarkus.container-image.build', 'true')
-    System.setProperty('quarkus.container-image.push', 'true')
+    doFirst {
+        System.setProperty('quarkus.container-image.build', 'true')
+        System.setProperty('quarkus.container-image.push', 'true')
+    }
     finalizedBy 'assemble'
 }
 

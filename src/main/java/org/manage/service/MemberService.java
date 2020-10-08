@@ -72,7 +72,7 @@ public class MemberService {
     }
 
 
-    public Stream<MemberDTO> findAllByProject(ProjectDTO projectDto) {
+    public Stream<MemberDTO>    findAllByProject(ProjectDTO projectDto) {
         Project pr= Project.findById(projectDto.id);
         return pr.members.stream().map(m->memberMapper.toDto(m));
     }
