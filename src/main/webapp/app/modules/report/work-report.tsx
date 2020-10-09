@@ -24,7 +24,6 @@ export const WorkReport = (props: ILogWorkProp) => {
   const [currentProject, setCurrentProject] = useState(null);
   const [dateFrom, setDateFrom] = useState(new Date().toISOString().substr(0, 10));
   const [dateTo, setDateTo] = useState(new Date().toISOString().substr(0, 10));
-  const [reportDate, setReportDate] = useState(new Date().toISOString().substr(0, 10));
 
   useEffect(() => {
     if (!account.login) {
@@ -48,10 +47,10 @@ export const WorkReport = (props: ILogWorkProp) => {
         </Row>
         <FormGroup>
           <Label>Дата: </Label>
-          <input type="dateFrom" name="dateFrom" class-name="form-control" defaultValue={dateFrom} value={dateFrom}
+          <input type="date" name="dateFrom" class-name="form-control" defaultValue={dateFrom} value={dateFrom}
                  onChange={event => setDateFrom(event.target.value)}/>
           <Label>по </Label>
-          <input type="dateTo" name="dateTo" class-name="form-control" defaultValue={dateTo} value={dateTo}
+          <input type="date" name="dateTo" class-name="form-control" defaultValue={dateTo} value={dateTo}
                  onChange={event => setDateTo(event.target.value)}/>
         </FormGroup>
       </Form>

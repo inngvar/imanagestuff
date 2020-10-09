@@ -22,7 +22,7 @@ export const ProjectReport = props => {
     axios.get("api/reports/project/" + props.project.id + '?dateFrom=' + props.dateFrom + '&dateTo=' + props.dateTo).then(response => {
       setProjectStats(response.data);
     });
-  }, [props.project]);
+  }, [props.project, props.dateFrom, props.dateTo]);
 
   return (
     <Row>
