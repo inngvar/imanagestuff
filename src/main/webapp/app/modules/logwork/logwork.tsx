@@ -86,6 +86,17 @@ export const LogWork = (props: ILogWorkProp) => {
     setCurrentMember(member);
   }
 
+  function formatDuration(durationToFormat) {
+    return durationToFormat.toUpperCase()
+      .replaceAll(' ', '')
+      .replaceAll('В', 'D')
+      .replaceAll('Д', 'D')
+      .replaceAll('Р', 'H')
+      .replaceAll('Ч', 'H')
+      .replaceAll('Ь', 'M')
+      .replaceAll('М', 'M')
+  }
+
   const addNewEntry = () => {
     const entity = {
       duration: 'PT' + formatDuration(duration),
@@ -99,17 +110,6 @@ export const LogWork = (props: ILogWorkProp) => {
       setEntryDescription("");
       setDuration("");
     });
-  }
-
-  function formatDuration(duration) {
-    return duration.toUpperCase()
-      .replaceAll(' ', '')
-      .replaceAll('В', 'D')
-      .replaceAll('Д', 'D')
-      .replaceAll('Р', 'H')
-      .replaceAll('Ч', 'H')
-      .replaceAll('Ь', 'M')
-      .replaceAll('М', 'M')
   }
 
   function sendReport() {
