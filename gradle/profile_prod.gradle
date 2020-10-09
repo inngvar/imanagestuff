@@ -16,6 +16,7 @@ task webpack_test(type: NpmTask, dependsOn: "npmInstall") {
 }
 
 task webpack(type: NpmTask, dependsOn: "npmInstall") {
+    outputs.dir("build/resources/main/META-INF/resources")
     args = ["run", "webpack:prod"]
     environment = [APP_VERSION: project.version]
 }
