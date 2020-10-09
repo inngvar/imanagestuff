@@ -88,7 +88,7 @@ export const LogWork = (props: ILogWorkProp) => {
 
   const addNewEntry = () => {
     const entity = {
-      duration: 'PT' + duration.toUpperCase(),
+      duration: 'PT' + formatDuration(duration),
       shortDescription: entryDescription,
       projectId: currentProject.id,
       memberId: currentMember.id,
@@ -99,6 +99,17 @@ export const LogWork = (props: ILogWorkProp) => {
       setEntryDescription("");
       setDuration("");
     });
+  }
+
+  function formatDuration(duration) {
+    return duration.toUpperCase()
+      .replaceAll(' ', '')
+      .replaceAll('В', 'D')
+      .replaceAll('Д', 'D')
+      .replaceAll('Р', 'H')
+      .replaceAll('Ч', 'H')
+      .replaceAll('Ь', 'M')
+      .replaceAll('М', 'M')
   }
 
   function sendReport() {
