@@ -11,11 +11,13 @@ import {durationToHours} from "app/shared/util/date-utils";
 
 const TimeEntryUpdateModal = (props) => {
   const {
-    className
+    className,
+    num,
+    entity
   } = props;
 
-  const timeEntryEntity = props.entity
-  timeEntryEntity.durationToHours = durationToHours(props.entity.duration)
+  const timeEntryEntity = entity
+  timeEntryEntity.durationToHours = durationToHours(entity.duration)
   const [modal, setModal] = useState(false);
 
   const toggle = () => {
@@ -23,13 +25,7 @@ const TimeEntryUpdateModal = (props) => {
   };
 
   function saveEntity (event, errors, values) {
-    const result = props.entity
-    result.duration = 'PT' + values.durationToHours.toString().toUpperCase()
-    result.description = values.description
-    result.shortDescription = values.shortDescription
-    result.date = values.date
-    axios.put('api/time-entries/', result)
-
+    props.saveEntity(event, errors, values, num);
     toggle()
   }
 
@@ -92,7 +88,7 @@ const TimeEntryUpdateModal = (props) => {
               </Label>
               <AvField
                 id="time-entry-description"
-                type="text"
+                type="textarea"
                 name="description"
                 validate={{
                   maxLength: { value: 4000, errorMessage: translate('entity.validation.maxlength', { max: 4000 }) },
@@ -100,7 +96,7 @@ const TimeEntryUpdateModal = (props) => {
               />
             </AvGroup>
             <FormGroup>
-              <Button tag={Link} id="cancel-save" to="/time-entry" replace color="info">
+              <Button onClick={toggle} id="cancel-save" to="/time-entry" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;
                 <span className="d-none d-md-inline">

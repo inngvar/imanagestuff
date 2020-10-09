@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Translate} from 'react-jhipster';
+import axios from 'axios';
 import {durationToHours} from 'app/shared/util/date-utils';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import {
@@ -61,16 +61,31 @@ export const MemberList = props => {
 
 export const TimeEntries = props => {
   const [totalHours, setTotalHours] = useState(0);
-  useEffect(() => {
-    if (!props.entries || props.entries.length < 1) {
-      return;
-    }
+  function setTotal() {
     let sum = 0;
     props.entries.forEach(e => {
       sum = sum + durationToHours(e.duration);
     });
     setTotalHours(sum);
+  }
+  useEffect(() => {
+    if (!props.entries || props.entries.length < 1) {
+      return;
+    }
+    setTotal()
   })
+
+  function saveEntity (event, errors, values, num) {
+    const result = props.entries[num]
+    result.duration = 'PT' + values.durationToHours.toUpperCase();
+    result.description = values.description
+    result.shortDescription = values.shortDescription
+    result.date = values.date
+    axios.put('api/time-entries/', result)
+    props.entries[num]=result
+    setTotal();
+  }
+
 
   return (
       <Table className="table-striped table-hover table-sm">
@@ -91,7 +106,7 @@ export const TimeEntries = props => {
               <td>{entry.date}</td>
               <td>
                 <div >
-                  <TimeEntryUpdateModal entity={entry} />
+                  <TimeEntryUpdateModal entity={entry} saveEntity={saveEntity} num={i}/>
                 </div>
               </td>
             </tr>
