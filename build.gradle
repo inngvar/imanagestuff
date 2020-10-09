@@ -157,11 +157,10 @@ dependencies {
     implementation "io.quarkus:quarkus-mailer"
     implementation "io.quarkus:quarkus-hibernate-orm-panache"
     implementation "io.quarkus:quarkus-hibernate-validator"
+    implementation "io.quarkus:quarkus-liquibase"
     implementation "io.quarkus:quarkus-jdbc-postgresql"
-    liquibaseRuntime "io.quarkus:quarkus-jdbc-postgresql"
     implementation "io.quarkus:quarkus-jdbc-h2"
     implementation "io.quarkus:quarkus-test-h2"
-    implementation "io.quarkus:quarkus-liquibase"
     implementation "io.quarkus:quarkus-elytron-security"
     implementation "io.quarkus:quarkus-smallrye-jwt"
     implementation "io.quarkus:quarkus-smallrye-openapi"
@@ -169,12 +168,13 @@ dependencies {
     implementation "org.mapstruct:mapstruct:${mapstruct_version}"
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
 
+    /*liquibaseRuntime sourceSets.main.compileClasspath
     liquibaseRuntime "org.liquibase:liquibase-core"
+    liquibaseRuntime "io.quarkus:quarkus-jdbc-postgresql"
     liquibaseRuntime "org.liquibase.ext:liquibase-hibernate5:${liquibase_hibernate5_version}"
-    liquibaseRuntime sourceSets.main.compileClasspath
     liquibaseRuntime 'ch.qos.logback:logback-core:1.2.3'
     liquibaseRuntime 'ch.qos.logback:logback-classic:1.2.3'
-    liquibaseRuntime 'org.springframework.data:spring-data-jpa:2.3.1.RELEASE'
+    liquibaseRuntime 'org.springframework.data:spring-data-jpa:2.3.1.RELEASE'*/
 
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstruct_version}"
 
