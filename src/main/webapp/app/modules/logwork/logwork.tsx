@@ -88,13 +88,13 @@ export const LogWork = (props: ILogWorkProp) => {
 
   function formatDuration(durationToFormat) {
     return durationToFormat.toUpperCase()
-      .replaceAll(' ', '')
-      .replaceAll('В', 'D')
-      .replaceAll('Д', 'D')
-      .replaceAll('Р', 'H')
-      .replaceAll('Ч', 'H')
-      .replaceAll('Ь', 'M')
-      .replaceAll('М', 'M')
+      .replace(/ /g, '')
+      .replace(/В/g, 'D')
+      .replace(/Д/g, 'D')
+      .replace(/Р/g, 'H')
+      .replace(/Ч/g, 'H')
+      .replace(/Ь/g, 'M')
+      .replace(/М/g, 'M')
   }
 
   const addNewEntry = () => {
