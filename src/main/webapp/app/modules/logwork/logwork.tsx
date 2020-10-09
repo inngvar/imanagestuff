@@ -167,7 +167,6 @@ export const LogWork = (props: ILogWorkProp) => {
         </Row>
         <Row>
           <TimeEntries entries={entries}/>
-          <h5>Всего часов: {totalHours}</h5>
         </Row>
         <Row>
           <Button onClick={e => {
