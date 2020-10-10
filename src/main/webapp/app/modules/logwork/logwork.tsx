@@ -115,7 +115,7 @@ export const LogWork = (props: ILogWorkProp) => {
   function sendReport() {
     axios.post('api/reports/day-report', {
       projectId: currentProject.id,
-      reportDate
+      dateFrom: reportDate
     })
   }
 
