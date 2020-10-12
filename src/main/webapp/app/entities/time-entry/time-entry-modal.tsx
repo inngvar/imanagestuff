@@ -16,8 +16,6 @@ const TimeEntryUpdateModal = (props) => {
     entity
   } = props;
 
-  const timeEntryEntity = entity
-  timeEntryEntity.durationToHours = durationToHours(entity.duration)
   const [modal, setModal] = useState(false);
 
   const toggle = () => {
@@ -35,7 +33,7 @@ const TimeEntryUpdateModal = (props) => {
       <Modal isOpen={modal} toggle={toggle} className={className}>
         <ModalHeader toggle={toggle}>Введите изменения</ModalHeader>
         <ModalBody>
-          <AvForm model={timeEntryEntity} onSubmit={saveEntity}>
+          <AvForm model={entity} onSubmit={saveEntity}>
               <AvGroup>
                 <Label for="time-entry-id">
                   <Translate contentKey="global.field.id">ID</Translate>
@@ -49,7 +47,7 @@ const TimeEntryUpdateModal = (props) => {
               <AvField
                 id="time-entry-duration"
                 type="text"
-                name="durationToHours"
+                name="duration"
                 validate={{
                   required: { value: true, errorMessage: translate('entity.validation.required') },
                 }}
