@@ -28,6 +28,6 @@ relationship ManyToOne {
 }
 
 // Set pagination options
-paginate * with infinite-scroll
+paginate * with pagination
 dto * with mapstruct
 service * with serviceClass

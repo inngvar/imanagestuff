@@ -26,11 +26,13 @@ export const TimeEntryUpdate = (props: ITimeEntryUpdateProps) => {
   const { timeEntryEntity, members, projects, loading, updating } = props;
 
   const handleClose = () => {
-    props.history.push('/time-entry');
+    props.history.push('/time-entry' + props.location.search);
   };
 
   useEffect(() => {
-    if (!isNew) {
+    if (isNew) {
+      props.reset();
+    } else {
       props.getEntity(props.match.params.id);
     }
 

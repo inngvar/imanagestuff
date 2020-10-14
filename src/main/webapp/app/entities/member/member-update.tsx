@@ -23,11 +23,13 @@ export const MemberUpdate = (props: IMemberUpdateProps) => {
   const { memberEntity, projects, loading, updating } = props;
 
   const handleClose = () => {
-    props.history.push('/member');
+    props.history.push('/member' + props.location.search);
   };
 
   useEffect(() => {
-    if (!isNew) {
+    if (isNew) {
+      props.reset();
+    } else {
       props.getEntity(props.match.params.id);
     }
 
