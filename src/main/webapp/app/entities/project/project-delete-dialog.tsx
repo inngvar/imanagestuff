@@ -17,7 +17,7 @@ export const ProjectDeleteDialog = (props: IProjectDeleteDialogProps) => {
   }, []);
 
   const handleClose = () => {
-    props.history.push('/project');
+    props.history.push('/project' + props.location.search);
   };
 
   useEffect(() => {

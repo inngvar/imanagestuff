@@ -23,11 +23,13 @@ export const ProjectUpdate = (props: IProjectUpdateProps) => {
   const { projectEntity, members, loading, updating } = props;
 
   const handleClose = () => {
-    props.history.push('/project');
+    props.history.push('/project' + props.location.search);
   };
 
   useEffect(() => {
-    if (!isNew) {
+    if (isNew) {
+      props.reset();
+    } else {
       props.getEntity(props.match.params.id);
     }
 

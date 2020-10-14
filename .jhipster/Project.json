@@ -32,7 +32,7 @@
   "changelogDate": "20200828070741",
   "entityTableName": "project",
   "dto": "mapstruct",
-  "pagination": "infinite-scroll",
+  "pagination": "pagination",
   "service": "serviceClass",
   "jpaMetamodelFiltering": false,
   "fluentMethods": true,

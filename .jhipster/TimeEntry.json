@@ -45,7 +45,7 @@
   "changelogDate": "20200828070941",
   "entityTableName": "time_entry",
   "dto": "mapstruct",
-  "pagination": "infinite-scroll",
+  "pagination": "pagination",
   "service": "serviceClass",
   "jpaMetamodelFiltering": false,
   "fluentMethods": true,

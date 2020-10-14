@@ -17,7 +17,7 @@ export const MemberDeleteDialog = (props: IMemberDeleteDialogProps) => {
   }, []);
 
   const handleClose = () => {
-    props.history.push('/member');
+    props.history.push('/member' + props.location.search);
   };
 
   useEffect(() => {
