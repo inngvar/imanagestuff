@@ -14,7 +14,7 @@ public class ReportRequestModel {
 
     @NotNull
     @JsonbDateFormat(value = "yyyy-MM-dd")
-    public LocalDate fromtDate;
+    public LocalDate fromDate;
 
     @NotNull
     @JsonbDateFormat(value = "yyyy-MM-dd")

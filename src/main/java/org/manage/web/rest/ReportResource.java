@@ -32,7 +32,7 @@ public class ReportResource {
     @POST
     @Path("day-report")
     public CompletionStage<Response> sendDayReport(@Valid ReportRequestModel reportRequest) {
-        final DayReportDTO dayReportDTO = reportService.generateReport(reportRequest.projectId, reportRequest.fromtDate, reportRequest.fromtDate);
+        final DayReportDTO dayReportDTO = reportService.generateReport(reportRequest.projectId, reportRequest.fromDate, reportRequest.toDate);
         return mailService.sendDayReport(dayReportDTO)
             .thenApply(x -> Response.accepted().build());
     }

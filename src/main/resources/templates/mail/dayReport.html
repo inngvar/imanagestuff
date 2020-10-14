@@ -2,12 +2,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Отчёт за {report.date}</title>
+    <title>Отчёт за {report.subject}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
 <p>
-    Отчёт по работе над проектом {report.project.name} за {report.date}
+    Отчёт по работе над проектом "{report.project.name}" за {report.subject}
 </p>
 <p>
 
@@ -19,9 +19,9 @@
         {timeEntry.duration.hours} -- {timeEntry.shortDescription}
     </li>
     {/for}
-    <li>Всего часов: {memberReport.totalHours}</li>
+    <li>Всего часов: {memberReport.totalHours.round}</li>
 </ul>
 {/for}
-<h5>Итого часов: {report.totalHours}</h5>
+<h5>Итого часов: {report.totalHours.round}</h5>
 </body>
 </html>

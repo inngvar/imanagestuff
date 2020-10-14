@@ -28,11 +28,14 @@ public class ReportService {
             .map(m -> toMemberReportInfoDTO(m, fromDate, toDate, projectId))
             .collect(Collectors.toList());
         DayReportDTO dayReportDTO = new DayReportDTO();
-        dayReportDTO.date = fromDate;
+        dayReportDTO.fromDate = fromDate;
+        dayReportDTO.toDate = toDate;
         dayReportDTO.membersReports = membersReports;
         dayReportDTO.project = projectDto;
         dayReportDTO.totalHours = dayReportDTO.membersReports.stream().collect(Collectors.summingDouble(r -> r.totalHours));
-        dayReportDTO.subject = "Отчёт по работе над проектом " + dayReportDTO.project.name + " за " + LocalDateProvider.dateFormatter.format(fromDate);
+        dayReportDTO.subject = fromDate.equals(toDate) ?
+            LocalDateProvider.dateFormatter.format(fromDate) :
+            "период с "+ LocalDateProvider.dateFormatter.format(fromDate) + " по " + LocalDateProvider.dateFormatter.format(toDate);
         return dayReportDTO;
     }
 
