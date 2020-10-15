@@ -22,6 +22,15 @@ export const EntitiesMenu = props => (
     <MenuItem icon="asterisk" to="/time-entry">
       <Translate contentKey="global.menu.entities.timeEntry" />
     </MenuItem>
+    <MenuItem icon="asterisk" to="/time-log">
+      <Translate contentKey="global.menu.entities.timeLog" />
+    </MenuItem>
+    <MenuItem icon="asterisk" to="/time-check-task">
+      <Translate contentKey="global.menu.entities.timeCheckTask" />
+    </MenuItem>
+    <MenuItem icon="asterisk" to="/task-config">
+      <Translate contentKey="global.menu.entities.taskConfig" />
+    </MenuItem>
     {/* jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here */}
   </NavDropdown>
 );

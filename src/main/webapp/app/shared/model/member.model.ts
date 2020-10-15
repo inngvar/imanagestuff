@@ -1,3 +1,4 @@
+import { ITimeLog } from 'app/shared/model/time-log.model';
 import { IProject } from 'app/shared/model/project.model';
 
 export interface IMember {
@@ -6,6 +7,8 @@ export interface IMember {
   firstName?: string;
   middleName?: string;
   lastName?: string;
+  timeLogs?: ITimeLog[];
+  taskConfigId?: number;
   projects?: IProject[];
 }
 

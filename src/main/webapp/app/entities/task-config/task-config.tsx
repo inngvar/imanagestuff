@@ -6,15 +6,15 @@ import { Translate, ICrudGetAllAction, getSortState, IPaginationBaseState, JhiPa
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
-import { getEntities } from './member.reducer';
-import { IMember } from 'app/shared/model/member.model';
+import { getEntities } from './task-config.reducer';
+import { ITaskConfig } from 'app/shared/model/task-config.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 
-export interface IMemberProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
+export interface ITaskConfigProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
-export const Member = (props: IMemberProps) => {
+export const TaskConfig = (props: ITaskConfigProps) => {
   const [paginationState, setPaginationState] = useState(
     overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE), props.location.search)
   );
@@ -64,59 +64,43 @@ export const Member = (props: IMemberProps) => {
       activePage: currentPage,
     });
 
-  const { memberList, match, loading, totalItems } = props;
+  const { taskConfigList, match, loading, totalItems } = props;
   return (
     <div>
-      <h2 id="member-heading">
-        <Translate contentKey="imanagestuffApp.member.home.title">Members</Translate>
+      <h2 id="task-config-heading">
+        <Translate contentKey="imanagestuffApp.taskConfig.home.title">Task Configs</Translate>
         <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
           <FontAwesomeIcon icon="plus" />
           &nbsp;
-          <Translate contentKey="imanagestuffApp.member.home.createLabel">Create new Member</Translate>
+          <Translate contentKey="imanagestuffApp.taskConfig.home.createLabel">Create new Task Config</Translate>
         </Link>
       </h2>
       <div className="table-responsive">
-        {memberList && memberList.length > 0 ? (
+        {taskConfigList && taskConfigList.length > 0 ? (
           <Table responsive>
             <thead>
               <tr>
                 <th className="hand" onClick={sort('id')}>
                   <Translate contentKey="global.field.id">ID</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('login')}>
-                  <Translate contentKey="imanagestuffApp.member.login">Login</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('firstName')}>
-                  <Translate contentKey="imanagestuffApp.member.firstName">First Name</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('middleName')}>
-                  <Translate contentKey="imanagestuffApp.member.middleName">Middle Name</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('lastName')}>
-                  <Translate contentKey="imanagestuffApp.member.lastName">Last Name</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th>
-                  <Translate contentKey="imanagestuffApp.member.taskConfig">Task Config</Translate> <FontAwesomeIcon icon="sort" />
+                <th className="hand" onClick={sort('name')}>
+                  <Translate contentKey="imanagestuffApp.taskConfig.name">Name</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th />
               </tr>
             </thead>
             <tbody>
-              {memberList.map((member, i) => (
+              {taskConfigList.map((taskConfig, i) => (
                 <tr key={`entity-${i}`}>
                   <td>
-                    <Button tag={Link} to={`${match.url}/${member.id}`} color="link" size="sm">
-                      {member.id}
+                    <Button tag={Link} to={`${match.url}/${taskConfig.id}`} color="link" size="sm">
+                      {taskConfig.id}
                     </Button>
                   </td>
-                  <td>{member.login}</td>
-                  <td>{member.firstName}</td>
-                  <td>{member.middleName}</td>
-                  <td>{member.lastName}</td>
-                  <td>{member.taskConfigId ? <Link to={`task-config/${member.taskConfigId}`}>{member.taskConfigId}</Link> : ''}</td>
+                  <td>{taskConfig.name}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`${match.url}/${member.id}`} color="info" size="sm">
+                      <Button tag={Link} to={`${match.url}/${taskConfig.id}`} color="info" size="sm">
                         <FontAwesomeIcon icon="eye" />{' '}
                         <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.view">View</Translate>
@@ -124,7 +108,7 @@ export const Member = (props: IMemberProps) => {
                       </Button>
                       <Button
                         tag={Link}
-                        to={`${match.url}/${member.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                        to={`${match.url}/${taskConfig.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
                         color="primary"
                         size="sm"
                       >
@@ -135,7 +119,7 @@ export const Member = (props: IMemberProps) => {
                       </Button>
                       <Button
                         tag={Link}
-                        to={`${match.url}/${member.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                        to={`${match.url}/${taskConfig.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
                         color="danger"
                         size="sm"
                       >
@@ -153,13 +137,13 @@ export const Member = (props: IMemberProps) => {
         ) : (
           !loading && (
             <div className="alert alert-warning">
-              <Translate contentKey="imanagestuffApp.member.home.notFound">No Members found</Translate>
+              <Translate contentKey="imanagestuffApp.taskConfig.home.notFound">No Task Configs found</Translate>
             </div>
           )
         )}
       </div>
       {props.totalItems ? (
-        <div className={memberList && memberList.length > 0 ? '' : 'd-none'}>
+        <div className={taskConfigList && taskConfigList.length > 0 ? '' : 'd-none'}>
           <Row className="justify-content-center">
             <JhiItemCount page={paginationState.activePage} total={totalItems} itemsPerPage={paginationState.itemsPerPage} i18nEnabled />
           </Row>
@@ -180,10 +164,10 @@ export const Member = (props: IMemberProps) => {
   );
 };
 
-const mapStateToProps = ({ member }: IRootState) => ({
-  memberList: member.entities,
-  loading: member.loading,
-  totalItems: member.totalItems,
+const mapStateToProps = ({ taskConfig }: IRootState) => ({
+  taskConfigList: taskConfig.entities,
+  loading: taskConfig.loading,
+  totalItems: taskConfig.totalItems,
 });
 
 const mapDispatchToProps = {
@@ -193,4 +177,4 @@ const mapDispatchToProps = {
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
 
-export default connect(mapStateToProps, mapDispatchToProps)(Member);
+export default connect(mapStateToProps, mapDispatchToProps)(TaskConfig);
