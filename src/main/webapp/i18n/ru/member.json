@@ -20,6 +20,8 @@
       "firstName": "First Name",
       "middleName": "Middle Name",
       "lastName": "Last Name",
+      "timeLogs": "Time Logs",
+      "taskConfig": "Task Config",
       "projects": "Projects"
     }
   }

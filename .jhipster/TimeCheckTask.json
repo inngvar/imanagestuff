@@ -1,0 +1,29 @@
+{
+  "name": "TimeCheckTask",
+  "fields": [
+    {
+      "fieldName": "date",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "timeLog",
+      "otherEntityRelationshipName": "timeCheckTask",
+      "relationshipName": "checks"
+    }
+  ],
+  "changelogDate": "20201015053818",
+  "entityTableName": "time_check_task",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

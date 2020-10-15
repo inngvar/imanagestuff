@@ -10,6 +10,9 @@
         "project": "Project",
         "member": "Member",
         "timeEntry": "Time Entry",
+        "timeLog": "Time Log",
+        "timeCheckTask": "Time Check Task",
+        "taskConfig": "Task Config",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {

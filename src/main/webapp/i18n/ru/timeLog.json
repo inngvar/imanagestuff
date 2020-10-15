@@ -1,0 +1,24 @@
+{
+  "imanagestuffApp": {
+    "timeLog": {
+      "home": {
+        "title": "Time Logs",
+        "createLabel": "Создать новый Time Log",
+        "createOrEditLabel": "Создать или отредактировать Time Log",
+        "notFound": "No Time Logs found"
+      },
+      "created": "Новый Time Log создан с идентификатором {{ param }}",
+      "updated": "Time Log обновлен с идентификатором {{ param }}",
+      "deleted": "Time Log удален с идентификатором {{ param }}",
+      "delete": {
+        "question": "Вы уверены что хотите удалить Time Log {{ id }}?"
+      },
+      "detail": {
+        "title": "Time Log"
+      },
+      "timestamp": "Timestamp",
+      "member": "Member",
+      "timeCheckTask": "Time Check Task"
+    }
+  }
+}

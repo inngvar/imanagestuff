@@ -23,6 +23,19 @@
   ],
   "relationships": [
     {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "timeLog",
+      "otherEntityRelationshipName": "member",
+      "relationshipName": "timeLogs"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "taskConfig",
+      "otherEntityRelationshipName": "members",
+      "relationshipName": "taskConfig",
+      "otherEntityField": "id"
+    },
+    {
       "relationshipType": "many-to-many",
       "otherEntityName": "project",
       "otherEntityRelationshipName": "members",
