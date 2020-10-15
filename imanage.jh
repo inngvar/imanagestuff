@@ -27,6 +27,24 @@ relationship ManyToOne {
     TimeEntry{project(name) required} to Project
 }
 
+entity TimeLog {
+	timestamp ZonedDateTime required
+}
+
+entity TimeCheckTask{
+    date LocalDate required
+}
+
+entity TaskConfig{
+    name String required
+}
+
+relationship OneToMany {
+	Member{timeLogs(timestamp)} to TimeLog{member(login) required}
+	TaskConfig{members(login)} to Member
+    TimeCheckTask{checks(timestamp)} to TimeLog
+}
+
 // Set pagination options
 paginate * with pagination
 dto * with mapstruct

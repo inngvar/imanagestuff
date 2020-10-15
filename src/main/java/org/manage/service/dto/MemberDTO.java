@@ -27,6 +27,8 @@ public class MemberDTO implements Serializable {
 
     public String fio;
 
+    public Long taskConfigId;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -52,6 +54,7 @@ public class MemberDTO implements Serializable {
             ", firstName='" + firstName + "'" +
             ", middleName='" + middleName + "'" +
             ", lastName='" + lastName + "'" +
+            ", taskConfigId=" + taskConfigId +
             "}";
     }
 }

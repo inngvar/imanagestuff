@@ -7,6 +7,8 @@ import { Translate, translate, ICrudGetAction, ICrudGetAllAction, ICrudPutAction
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 
+import { ITaskConfig } from 'app/shared/model/task-config.model';
+import { getEntities as getTaskConfigs } from 'app/entities/task-config/task-config.reducer';
 import { IProject } from 'app/shared/model/project.model';
 import { getEntities as getProjects } from 'app/entities/project/project.reducer';
 import { getEntity, updateEntity, createEntity, reset } from './member.reducer';
@@ -17,10 +19,11 @@ import { mapIdList } from 'app/shared/util/entity-utils';
 export interface IMemberUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const MemberUpdate = (props: IMemberUpdateProps) => {
+  const [taskConfigId, setTaskConfigId] = useState('0');
   const [projectsId, setProjectsId] = useState('0');
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
 
-  const { memberEntity, projects, loading, updating } = props;
+  const { memberEntity, taskConfigs, projects, loading, updating } = props;
 
   const handleClose = () => {
     props.history.push('/member' + props.location.search);
@@ -33,6 +36,7 @@ export const MemberUpdate = (props: IMemberUpdateProps) => {
       props.getEntity(props.match.params.id);
     }
 
+    props.getTaskConfigs();
     props.getProjects();
   }, []);
 
@@ -125,6 +129,21 @@ export const MemberUpdate = (props: IMemberUpdateProps) => {
                   }}
                 />
               </AvGroup>
+              <AvGroup>
+                <Label for="member-taskConfig">
+                  <Translate contentKey="imanagestuffApp.member.taskConfig">Task Config</Translate>
+                </Label>
+                <AvInput id="member-taskConfig" type="select" className="form-control" name="taskConfigId">
+                  <option value="" key="0" />
+                  {taskConfigs
+                    ? taskConfigs.map(otherEntity => (
+                        <option value={otherEntity.id} key={otherEntity.id}>
+                          {otherEntity.id}
+                        </option>
+                      ))
+                    : null}
+                </AvInput>
+              </AvGroup>
               <Button tag={Link} id="cancel-save" to="/member" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;
@@ -147,6 +166,7 @@ export const MemberUpdate = (props: IMemberUpdateProps) => {
 };
 
 const mapStateToProps = (storeState: IRootState) => ({
+  taskConfigs: storeState.taskConfig.entities,
   projects: storeState.project.entities,
   memberEntity: storeState.member.entity,
   loading: storeState.member.loading,
@@ -155,6 +175,7 @@ const mapStateToProps = (storeState: IRootState) => ({
 });
 
 const mapDispatchToProps = {
+  getTaskConfigs,
   getProjects,
   getEntity,
   updateEntity,

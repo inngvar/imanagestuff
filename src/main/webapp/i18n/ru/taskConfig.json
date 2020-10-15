@@ -1,0 +1,23 @@
+{
+  "imanagestuffApp": {
+    "taskConfig": {
+      "home": {
+        "title": "Task Configs",
+        "createLabel": "Создать новый Task Config",
+        "createOrEditLabel": "Создать или отредактировать Task Config",
+        "notFound": "No Task Configs found"
+      },
+      "created": "Новый Task Config создан с идентификатором {{ param }}",
+      "updated": "Task Config обновлен с идентификатором {{ param }}",
+      "deleted": "Task Config удален с идентификатором {{ param }}",
+      "delete": {
+        "question": "Вы уверены что хотите удалить Task Config {{ id }}?"
+      },
+      "detail": {
+        "title": "Task Config"
+      },
+      "name": "Name",
+      "members": "Members"
+    }
+  }
+}

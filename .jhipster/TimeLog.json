@@ -1,0 +1,38 @@
+{
+  "name": "TimeLog",
+  "fields": [
+    {
+      "fieldName": "timestamp",
+      "fieldType": "ZonedDateTime",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "member",
+      "otherEntityRelationshipName": "timeLogs",
+      "relationshipValidateRules": "required",
+      "relationshipName": "member",
+      "otherEntityField": "login"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "timeCheckTask",
+      "otherEntityRelationshipName": "checks",
+      "relationshipName": "timeCheckTask",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20201015053718",
+  "entityTableName": "time_log",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}
