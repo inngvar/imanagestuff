@@ -10,6 +10,7 @@ import {
   Label,
 } from 'reactstrap';
 import {TimeEntries} from "app/modules/logwork/logwork-components";
+import {TimeEntryToDuration} from "app/entities/time-entry/time-to-total.tsx";
 
 
 export const ProjectReport = props => {
@@ -32,6 +33,17 @@ export const ProjectReport = props => {
     })
   }
 
+  const timeEntities = membersReports => {
+    let result = [];
+    if(membersReports) {
+      for (let i = 0; i < membersReports.length; i++) {
+        const res = result.concat(membersReports[i].entries);
+        result = res;
+      }
+    }
+    return result;
+  }
+
   return (
     <Row>
       <Col md="12">
@@ -52,12 +64,9 @@ export const ProjectReport = props => {
           }}>Отправить отчёт</Button>
         </Row>
         <Row>
-          <h3>
-            Итого часов по проекту {roundNumberToTwo(projectStats?.totalHours)}
-          </h3>
+          <h3><TimeEntryToDuration entities={timeEntities(projectStats?.membersReports)} added='Всего по проекту : '/></h3>
         </Row>
       </Col>
     </Row>
-
   );
 }

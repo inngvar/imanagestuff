@@ -10,11 +10,21 @@ public class DurationExtension {
 
     private final static DecimalFormat f = new DecimalFormat("##.00");
 
+    private static String decOfNum(int number, String[] titles) {
+        int [] cases = {2, 0, 1, 1, 1, 2};
+        return titles[(number % 100 > 4 && number % 100 < 20) ? 2 : cases[(number % 10 < 5) ? number % 10 : 5]];
+    }
+
     public static String hours(Duration duration){
         return round(duration.getSeconds()/60.0/60.0);
     }
 
     public static String round(Double totalHours){
-        return String.format("%.2f",totalHours);
+        int hours = (int) Math.floor(totalHours);
+        int minutes = (int) Math.round(60 * (totalHours - hours));
+        String result = hours > 0 ? hours + " " + decOfNum(hours, new String[]{"час", "часа", "часов"}) : "";
+        result += minutes > 0 ? " " + minutes + " " + decOfNum(minutes, new String[]{"минута", "минуты", "минут"}) : "";
+        return result.trim();
     }
+
 }
