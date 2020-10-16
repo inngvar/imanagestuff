@@ -13,15 +13,13 @@ import org.mapstruct.*;
 public interface MemberMapper extends EntityMapper<MemberDTO, Member> {
 
     @Mapping(source = "taskConfig.id", target = "taskConfigId")
+    @Mapping(target = "fio", expression = "java(member.lastName +\" \"+ member.firstName)")
     MemberDTO toDto(Member member);
 
     @Mapping(target = "timeLogs", ignore = true)
     @Mapping(source = "taskConfigId", target = "taskConfig")
     @Mapping(target = "projects", ignore = true)
     Member toEntity(MemberDTO memberDTO);
-
-    @Mapping(target = "fio", expression = "java(member.lastName +\" \"+ member.firstName)")
-    MemberDTO toDto(Member member);
 
     default Member fromId(Long id) {
         if (id == null) {
