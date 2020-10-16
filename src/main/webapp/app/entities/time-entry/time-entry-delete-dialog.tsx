@@ -17,7 +17,7 @@ export const TimeEntryDeleteDialog = (props: ITimeEntryDeleteDialogProps) => {
   }, []);
 
   const handleClose = () => {
-    props.history.push('/time-entry');
+    props.history.push('/time-entry' + props.location.search);
   };
 
   useEffect(() => {

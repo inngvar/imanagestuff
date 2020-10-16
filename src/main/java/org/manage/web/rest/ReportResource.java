@@ -3,7 +3,7 @@ package org.manage.web.rest;
 import org.manage.service.MailService;
 import org.manage.service.ReportService;
 import org.manage.service.dto.DayReportDTO;
-import org.manage.service.dto.ReportRequestModel;
+import org.manage.service.dto.ReportSingleDayRequestModel;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -31,8 +31,8 @@ public class ReportResource {
 
     @POST
     @Path("day-report")
-    public CompletionStage<Response> sendDayReport(@Valid ReportRequestModel reportRequest) {
-        final DayReportDTO dayReportDTO = reportService.generateReport(reportRequest.projectId, reportRequest.fromDate, reportRequest.toDate);
+    public CompletionStage<Response> sendDayReport(@Valid ReportSingleDayRequestModel reportRequest) {
+        final DayReportDTO dayReportDTO = reportService.generateReport(reportRequest.projectId, reportRequest.dateFrom, reportRequest.dateFrom);
         return mailService.sendDayReport(dayReportDTO)
             .thenApply(x -> Response.accepted().build());
     }

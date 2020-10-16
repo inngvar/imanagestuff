@@ -34,7 +34,7 @@
   "changelogDate": "20200828070841",
   "entityTableName": "member",
   "dto": "mapstruct",
-  "pagination": "infinite-scroll",
+  "pagination": "pagination",
   "service": "serviceClass",
   "jpaMetamodelFiltering": false,
   "fluentMethods": true,

@@ -76,7 +76,7 @@ export const TimeEntries = props => {
 
   function saveEntity (event, errors, values, num) {
     const result = props.entries[num]
-    result.duration = 'PT' + values.durationToHours.toUpperCase();
+    result.duration = 'PT' + values.duration.toUpperCase();
     result.description = values.description
     result.shortDescription = values.shortDescription
     result.date = values.date
