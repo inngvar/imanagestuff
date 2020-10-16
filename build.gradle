@@ -117,15 +117,19 @@ project.ext.diffChangelogFile = "src/main/resources/config/liquibase/changelog/"
 liquibase {
     activities {
         main {
-            driver "org.h2.Driver"
-            url "jdbc:h2:file:./build/h2db/db/imanagestuff"
+            changeLogFile project.ext.diffChangelogFile
+            url "jdbc:h2:file:./build/classes/java/main/build/h2db/db/imanagestuff;DB_CLOSE_DELAY=-1"
             username "imanagestuff"
             password ""
-            changeLogFile project.ext.diffChangelogFile
-            referenceUrl "hibernate:spring:org.manage.domain?dialect=org.hibernate.dialect.H2Dialect"
-            defaultSchemaName ""
-            logLevel "debug"
-            classpath "$buildDir/classes/java/main"
+            driver "org.h2.Driver"
+
+            referenceDriver "liquibase.ext.hibernate.database.connection.HibernateDriver"
+            referenceUrl "hibernate:spring:org.manage.domain?dialect=org.hibernate.dialect.PostgreSQLDialect" +
+                    "&hibernate.physical_naming_strategy=org.manage.config.hibernate.JHipsterCompatiblePhysicalNamingStrategy" +
+                "&hibernate.implicit_naming_strategy=org.manage.config.hibernate.JHipsterCompatibleImplicitNamingStrategy"
+
+            //logLevel "debug"
+            //classpath "$buildDir/classes/java/main"
         }
     }
     runList = project.ext.runList
@@ -171,11 +175,17 @@ dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
 
     liquibaseRuntime sourceSets.main.compileClasspath
-    liquibaseRuntime "io.quarkus:quarkus-jdbc-postgresql"
+    liquibaseRuntime 'org.liquibase.ext:liquibase-hibernate5:3.6'
+    liquibaseRuntime sourceSets.main.output
+    liquibaseRuntime 'org.liquibase:liquibase-core:4.1.1'
+    liquibaseRuntime 'org.liquibase:liquibase-groovy-dsl:2.1.1'
+    liquibaseRuntime 'org.postgresql:postgresql:42.2.16'
     liquibaseRuntime "org.liquibase.ext:liquibase-hibernate5:${liquibase_hibernate5_version}"
     liquibaseRuntime 'ch.qos.logback:logback-core:1.2.3'
     liquibaseRuntime 'ch.qos.logback:logback-classic:1.2.3'
     liquibaseRuntime 'org.springframework.data:spring-data-jpa:2.3.1.RELEASE'
+    liquibaseRuntime group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+    liquibaseRuntime "io.quarkus:quarkus-jdbc-h2"
 
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstruct_version}"
 

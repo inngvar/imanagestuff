@@ -28,6 +28,26 @@ Add the `help` flag on any command to see how you can use it. For example, `npm 
 
 The `npm run` command will list all of the scripts available to run for this project.
 
+#### How to add new entity or change exist entity
+switch to branch jhipster
+describe you changes in imange.jh
+* regenerate application with 
+
+
+    jhipser import-jdl --skip-db-changelog imange.jh
+    
+* generate diff changelog
+  * start application, this will create database with current scheme
+  * stop application
+  * run command `./gradlew liquibaseDiffChangelog`   
+  * changelog file will be generated under `resources/config/liquibase/changelog`
+  * check content of generated file
+  * add the file to `resources/config/liquibase/master.xml`
+  * lunch application and check all is working fine
+* commit changes to jhipster branch
+* merge changes to master branch    
+
+
 ### PWA Support
 
 JHipster ships with PWA (Progressive Web App) support, and it's turned off by default. One of the main components of a PWA is a service worker.
