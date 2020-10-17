@@ -112,13 +112,6 @@ export const LogWork = (props: ILogWorkProp) => {
     });
   }
 
-  function sendReport() {
-    axios.post('api/reports/day-report', {
-      projectId: currentProject.id,
-      dateFrom: reportDate
-    })
-  }
-
   return (
     <Row>
       <Col md="9">
@@ -178,12 +171,6 @@ export const LogWork = (props: ILogWorkProp) => {
         </Row>
         <Row>
           <TimeEntries entries={entries}/>
-        </Row>
-        <Row>
-          <Button onClick={e => {
-            sendReport();
-            return false;
-          }}>Отправить отчёт</Button>
         </Row>
       </Col>
     </Row>
