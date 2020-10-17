@@ -25,12 +25,8 @@ export const ProjectReport = props => {
     });
   }, [props.project, props.dateFrom, props.dateTo]);
 
-  function sendReport(from, to) {
-    axios.post('api/reports/day-report', {
-      projectId: props.project.id,
-      fromDate: from,
-      toDate: to
-    })
+  function sendReport() {
+    axios.post('api/reports/day-report/'+props.project.id + '?dateFrom=' + props.dateFrom + '&dateTo=' + props.dateTo);
   }
 
   const timeEntities = membersReports => {
@@ -58,10 +54,7 @@ export const ProjectReport = props => {
             (<p>noData</p>)
         }
         <Row>
-          <Button onClick={e => {
-            sendReport(props.dateFrom ,props.dateTo);
-            return false;
-          }}>Отправить отчёт</Button>
+          <Button onClick={()=>sendReport()}>Отправить отчёт</Button>
         </Row>
         <Row>
           <h3><TimeEntryToDuration entities={timeEntities(projectStats?.membersReports)} added='Всего по проекту : '/></h3>

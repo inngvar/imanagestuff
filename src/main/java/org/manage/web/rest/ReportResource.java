@@ -30,9 +30,9 @@ public class ReportResource {
     }
 
     @POST
-    @Path("day-report")
-    public CompletionStage<Response> sendDayReport(@Valid ReportSingleDayRequestModel reportRequest) {
-        final DayReportDTO dayReportDTO = reportService.generateReport(reportRequest.projectId, reportRequest.dateFrom, reportRequest.dateFrom);
+    @Path("day-report/{id}")
+    public CompletionStage<Response> sendDayReport(@PathParam("id") Long projectId, @QueryParam("dateFrom") LocalDate dateFrom, @QueryParam("dateTo") LocalDate dateTo) {
+        final DayReportDTO dayReportDTO = reportService.generateReport(projectId, dateFrom, dateTo);
         return mailService.sendDayReport(dayReportDTO)
             .thenApply(x -> Response.accepted().build());
     }
