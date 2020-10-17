@@ -36,6 +36,9 @@ describe you changes in imange.jh
 
     jhipser import-jdl --skip-db-changelog imange.jh
     
+* commit changes
+* switch to yours feature branch
+* merge changes from jhipster
 * generate diff changelog
   * start application, this will create database with current scheme
   * stop application
@@ -44,8 +47,7 @@ describe you changes in imange.jh
   * check content of generated file
   * add the file to `resources/config/liquibase/master.xml`
   * lunch application and check all is working fine
-* commit changes to jhipster branch
-* merge changes to master branch    
+* push changes 
 
 
 ### PWA Support
