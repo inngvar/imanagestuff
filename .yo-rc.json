@@ -4,7 +4,7 @@
       "packageName": "org.manage",
       "nativeLanguage": "ru"
     },
-    "jhipsterVersion": "6.10.1",
+    "jhipsterVersion": "6.10.3",
     "applicationType": "monolith",
     "baseName": "imanagestuff",
     "packageName": "org.manage",

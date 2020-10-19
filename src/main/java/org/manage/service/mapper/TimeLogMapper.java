@@ -9,16 +9,14 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity {@link TimeLog} and its DTO {@link TimeLogDTO}.
  */
-@Mapper(componentModel = "cdi", uses = {MemberMapper.class, TimeCheckTaskMapper.class})
+@Mapper(componentModel = "cdi", uses = {MemberMapper.class})
 public interface TimeLogMapper extends EntityMapper<TimeLogDTO, TimeLog> {
 
     @Mapping(source = "member.id", target = "memberId")
-    @Mapping(source = "member.login", target = "memberLogin")
-    @Mapping(source = "timeCheckTask.id", target = "timeCheckTaskId")
+    @Mapping(source = "member.lastName", target = "memberLastName")
     TimeLogDTO toDto(TimeLog timeLog);
 
     @Mapping(source = "memberId", target = "member")
-    @Mapping(source = "timeCheckTaskId", target = "timeCheckTask")
     TimeLog toEntity(TimeLogDTO timeLogDTO);
 
     default TimeLog fromId(Long id) {

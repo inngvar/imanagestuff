@@ -20,7 +20,8 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
-    import java.time.Instant;
+    import java.time.LocalDate;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.ZoneOffset;
 import java.time.ZoneId;
@@ -37,8 +38,14 @@ public class TimeLogResourceTest {
     private static final TypeRef<List<TimeLogDTO>> LIST_OF_ENTITY_TYPE = new TypeRef<>() {
     };
 
-    private static final ZonedDateTime DEFAULT_TIMESTAMP = ZonedDateTime.ofInstant(Instant.ofEpochSecond(0L).truncatedTo(ChronoUnit.SECONDS), ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_TIMESTAMP = ZonedDateTime.now(ZoneId.systemDefault()).truncatedTo(ChronoUnit.SECONDS);
+    private static final LocalDate DEFAULT_DATE = LocalDate.ofEpochDay(0L);
+    private static final LocalDate UPDATED_DATE = LocalDate.now(ZoneId.systemDefault());
+
+    private static final ZonedDateTime DEFAULT_CHECK_IN = ZonedDateTime.ofInstant(Instant.ofEpochSecond(0L).truncatedTo(ChronoUnit.SECONDS), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_CHECK_IN = ZonedDateTime.now(ZoneId.systemDefault()).truncatedTo(ChronoUnit.SECONDS);
+
+    private static final ZonedDateTime DEFAULT_CHECK_OUT = ZonedDateTime.ofInstant(Instant.ofEpochSecond(0L).truncatedTo(ChronoUnit.SECONDS), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_CHECK_OUT = ZonedDateTime.now(ZoneId.systemDefault()).truncatedTo(ChronoUnit.SECONDS);
 
 
     String adminToken;
@@ -78,7 +85,9 @@ public class TimeLogResourceTest {
      */
     public static TimeLogDTO createEntity() {
         var timeLogDTO = new TimeLogDTO();
-        timeLogDTO.timestamp = DEFAULT_TIMESTAMP;
+        timeLogDTO.date = DEFAULT_DATE;
+        timeLogDTO.checkIn = DEFAULT_CHECK_IN;
+        timeLogDTO.checkOut = DEFAULT_CHECK_OUT;
         return timeLogDTO;
     }
 
@@ -131,7 +140,9 @@ public class TimeLogResourceTest {
 
         assertThat(timeLogDTOList).hasSize(databaseSizeBeforeCreate + 1);
         var testTimeLogDTO = timeLogDTOList.stream().filter(it -> timeLogDTO.id.equals(it.id)).findFirst().get();
-        assertThat(testTimeLogDTO.timestamp).isEqualTo(DEFAULT_TIMESTAMP);
+        assertThat(testTimeLogDTO.date).isEqualTo(DEFAULT_DATE);
+        assertThat(testTimeLogDTO.checkIn).isEqualTo(DEFAULT_CHECK_IN);
+        assertThat(testTimeLogDTO.checkOut).isEqualTo(DEFAULT_CHECK_OUT);
     }
 
     @Test
@@ -182,7 +193,7 @@ public class TimeLogResourceTest {
     }
 
     @Test
-    public void checkTimestampIsRequired() throws Exception {
+    public void checkDateIsRequired() throws Exception {
         var databaseSizeBeforeTest = given()
             .auth()
             .preemptive()
@@ -197,7 +208,99 @@ public class TimeLogResourceTest {
             .size();
 
         // set the field null
-        timeLogDTO.timestamp = null;
+        timeLogDTO.date = null;
+
+        // Create the TimeLog, which fails.
+        given()
+            .auth()
+            .preemptive()
+            .oauth2(adminToken)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .body(timeLogDTO)
+            .when()
+            .post("/api/time-logs")
+            .then()
+            .statusCode(BAD_REQUEST.getStatusCode());
+
+        // Validate the TimeLog in the database
+        var timeLogDTOList = given()
+            .auth()
+            .preemptive()
+            .oauth2(adminToken)
+            .accept(APPLICATION_JSON)
+            .when()
+            .get("/api/time-logs")
+            .then()
+            .statusCode(OK.getStatusCode())
+            .contentType(APPLICATION_JSON)
+            .extract().as(LIST_OF_ENTITY_TYPE);
+
+        assertThat(timeLogDTOList).hasSize(databaseSizeBeforeTest);
+    }
+    @Test
+    public void checkCheckInIsRequired() throws Exception {
+        var databaseSizeBeforeTest = given()
+            .auth()
+            .preemptive()
+            .oauth2(adminToken)
+            .accept(APPLICATION_JSON)
+            .when()
+            .get("/api/time-logs")
+            .then()
+            .statusCode(OK.getStatusCode())
+            .contentType(APPLICATION_JSON)
+            .extract().as(LIST_OF_ENTITY_TYPE)
+            .size();
+
+        // set the field null
+        timeLogDTO.checkIn = null;
+
+        // Create the TimeLog, which fails.
+        given()
+            .auth()
+            .preemptive()
+            .oauth2(adminToken)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .body(timeLogDTO)
+            .when()
+            .post("/api/time-logs")
+            .then()
+            .statusCode(BAD_REQUEST.getStatusCode());
+
+        // Validate the TimeLog in the database
+        var timeLogDTOList = given()
+            .auth()
+            .preemptive()
+            .oauth2(adminToken)
+            .accept(APPLICATION_JSON)
+            .when()
+            .get("/api/time-logs")
+            .then()
+            .statusCode(OK.getStatusCode())
+            .contentType(APPLICATION_JSON)
+            .extract().as(LIST_OF_ENTITY_TYPE);
+
+        assertThat(timeLogDTOList).hasSize(databaseSizeBeforeTest);
+    }
+    @Test
+    public void checkCheckOutIsRequired() throws Exception {
+        var databaseSizeBeforeTest = given()
+            .auth()
+            .preemptive()
+            .oauth2(adminToken)
+            .accept(APPLICATION_JSON)
+            .when()
+            .get("/api/time-logs")
+            .then()
+            .statusCode(OK.getStatusCode())
+            .contentType(APPLICATION_JSON)
+            .extract().as(LIST_OF_ENTITY_TYPE)
+            .size();
+
+        // set the field null
+        timeLogDTO.checkOut = null;
 
         // Create the TimeLog, which fails.
         given()
@@ -271,7 +374,9 @@ public class TimeLogResourceTest {
             .extract().body().as(ENTITY_TYPE);
 
         // Update the timeLog
-        updatedTimeLogDTO.timestamp = UPDATED_TIMESTAMP;
+        updatedTimeLogDTO.date = UPDATED_DATE;
+        updatedTimeLogDTO.checkIn = UPDATED_CHECK_IN;
+        updatedTimeLogDTO.checkOut = UPDATED_CHECK_OUT;
 
         given()
             .auth()
@@ -300,7 +405,9 @@ public class TimeLogResourceTest {
 
         assertThat(timeLogDTOList).hasSize(databaseSizeBeforeUpdate);
         var testTimeLogDTO = timeLogDTOList.stream().filter(it -> updatedTimeLogDTO.id.equals(it.id)).findFirst().get();
-        assertThat(testTimeLogDTO.timestamp).isEqualTo(UPDATED_TIMESTAMP);
+        assertThat(testTimeLogDTO.date).isEqualTo(UPDATED_DATE);
+        assertThat(testTimeLogDTO.checkIn).isEqualTo(UPDATED_CHECK_IN);
+        assertThat(testTimeLogDTO.checkOut).isEqualTo(UPDATED_CHECK_OUT);
     }
 
     @Test
@@ -431,7 +538,7 @@ public class TimeLogResourceTest {
             .statusCode(OK.getStatusCode())
             .contentType(APPLICATION_JSON)
             .body("id", hasItem(timeLogDTO.id.intValue()))
-            .body("timestamp", hasItem(TestUtil.formatDateTime(DEFAULT_TIMESTAMP)));
+            .body("date", hasItem(TestUtil.formatDateTime(DEFAULT_DATE)))            .body("checkIn", hasItem(TestUtil.formatDateTime(DEFAULT_CHECK_IN)))            .body("checkOut", hasItem(TestUtil.formatDateTime(DEFAULT_CHECK_OUT)));
     }
 
     @Test
@@ -476,7 +583,9 @@ public class TimeLogResourceTest {
             .contentType(APPLICATION_JSON)
             .body("id", is(timeLogDTO.id.intValue()))
             
-                .body("timestamp", is(TestUtil.formatDateTime(DEFAULT_TIMESTAMP)));
+                .body("date", is(TestUtil.formatDateTime(DEFAULT_DATE)))
+                .body("checkIn", is(TestUtil.formatDateTime(DEFAULT_CHECK_IN)))
+                .body("checkOut", is(TestUtil.formatDateTime(DEFAULT_CHECK_OUT)));
     }
 
     @Test

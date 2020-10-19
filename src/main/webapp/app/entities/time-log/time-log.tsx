@@ -83,14 +83,17 @@ export const TimeLog = (props: ITimeLogProps) => {
                 <th className="hand" onClick={sort('id')}>
                   <Translate contentKey="global.field.id">ID</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('timestamp')}>
-                  <Translate contentKey="imanagestuffApp.timeLog.timestamp">Timestamp</Translate> <FontAwesomeIcon icon="sort" />
+                <th className="hand" onClick={sort('date')}>
+                  <Translate contentKey="imanagestuffApp.timeLog.date">Date</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('checkIn')}>
+                  <Translate contentKey="imanagestuffApp.timeLog.checkIn">Check In</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('checkOut')}>
+                  <Translate contentKey="imanagestuffApp.timeLog.checkOut">Check Out</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th>
                   <Translate contentKey="imanagestuffApp.timeLog.member">Member</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th>
-                  <Translate contentKey="imanagestuffApp.timeLog.timeCheckTask">Time Check Task</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th />
               </tr>
@@ -103,15 +106,10 @@ export const TimeLog = (props: ITimeLogProps) => {
                       {timeLog.id}
                     </Button>
                   </td>
-                  <td>{timeLog.timestamp ? <TextFormat type="date" value={timeLog.timestamp} format={APP_DATE_FORMAT} /> : null}</td>
-                  <td>{timeLog.memberLogin ? <Link to={`member/${timeLog.memberId}`}>{timeLog.memberLogin}</Link> : ''}</td>
-                  <td>
-                    {timeLog.timeCheckTaskId ? (
-                      <Link to={`time-check-task/${timeLog.timeCheckTaskId}`}>{timeLog.timeCheckTaskId}</Link>
-                    ) : (
-                      ''
-                    )}
-                  </td>
+                  <td>{timeLog.date ? <TextFormat type="date" value={timeLog.date} format={APP_LOCAL_DATE_FORMAT} /> : null}</td>
+                  <td>{timeLog.checkIn ? <TextFormat type="date" value={timeLog.checkIn} format={APP_DATE_FORMAT} /> : null}</td>
+                  <td>{timeLog.checkOut ? <TextFormat type="date" value={timeLog.checkOut} format={APP_DATE_FORMAT} /> : null}</td>
+                  <td>{timeLog.memberLastName ? <Link to={`member/${timeLog.memberId}`}>{timeLog.memberLastName}</Link> : ''}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${timeLog.id}`} color="info" size="sm">

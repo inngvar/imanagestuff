@@ -28,14 +28,6 @@ import timeEntry, {
 import timeLog, {
   TimeLogState
 } from 'app/entities/time-log/time-log.reducer';
-// prettier-ignore
-import timeCheckTask, {
-  TimeCheckTaskState
-} from 'app/entities/time-check-task/time-check-task.reducer';
-// prettier-ignore
-import taskConfig, {
-  TaskConfigState
-} from 'app/entities/task-config/task-config.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 export interface IRootState {
@@ -53,8 +45,6 @@ export interface IRootState {
   readonly member: MemberState;
   readonly timeEntry: TimeEntryState;
   readonly timeLog: TimeLogState;
-  readonly timeCheckTask: TimeCheckTaskState;
-  readonly taskConfig: TaskConfigState;
   /* jhipster-needle-add-reducer-type - JHipster will add reducer type here */
   readonly loadingBar: any;
 }
@@ -74,8 +64,6 @@ const rootReducer = combineReducers<IRootState>({
   member,
   timeEntry,
   timeLog,
-  timeCheckTask,
-  taskConfig,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar,
 });

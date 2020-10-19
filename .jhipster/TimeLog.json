@@ -2,7 +2,17 @@
   "name": "TimeLog",
   "fields": [
     {
-      "fieldName": "timestamp",
+      "fieldName": "date",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "checkIn",
+      "fieldType": "ZonedDateTime",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "checkOut",
       "fieldType": "ZonedDateTime",
       "fieldValidateRules": ["required"]
     }
@@ -11,20 +21,13 @@
     {
       "relationshipType": "many-to-one",
       "otherEntityName": "member",
-      "otherEntityRelationshipName": "timeLogs",
+      "otherEntityRelationshipName": "timeLog",
       "relationshipValidateRules": "required",
       "relationshipName": "member",
-      "otherEntityField": "login"
-    },
-    {
-      "relationshipType": "many-to-one",
-      "otherEntityName": "timeCheckTask",
-      "otherEntityRelationshipName": "checks",
-      "relationshipName": "timeCheckTask",
-      "otherEntityField": "id"
+      "otherEntityField": "lastName"
     }
   ],
-  "changelogDate": "20201015053718",
+  "changelogDate": "20201019053743",
   "entityTableName": "time_log",
   "dto": "mapstruct",
   "pagination": "pagination",

@@ -95,9 +95,6 @@ export const Member = (props: IMemberProps) => {
                 <th className="hand" onClick={sort('lastName')}>
                   <Translate contentKey="imanagestuffApp.member.lastName">Last Name</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                <th>
-                  <Translate contentKey="imanagestuffApp.member.taskConfig">Task Config</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
                 <th />
               </tr>
             </thead>
@@ -113,7 +110,6 @@ export const Member = (props: IMemberProps) => {
                   <td>{member.firstName}</td>
                   <td>{member.middleName}</td>
                   <td>{member.lastName}</td>
-                  <td>{member.taskConfigId ? <Link to={`task-config/${member.taskConfigId}`}>{member.taskConfigId}</Link> : ''}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${member.id}`} color="info" size="sm">

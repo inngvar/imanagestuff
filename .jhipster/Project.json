@@ -29,7 +29,7 @@
       "ownerSide": true
     }
   ],
-  "changelogDate": "20200828070741",
+  "changelogDate": "20201019053443",
   "entityTableName": "project",
   "dto": "mapstruct",
   "pagination": "pagination",

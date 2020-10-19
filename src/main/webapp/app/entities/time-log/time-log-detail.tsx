@@ -26,19 +26,27 @@ export const TimeLogDetail = (props: ITimeLogDetailProps) => {
         </h2>
         <dl className="jh-entity-details">
           <dt>
-            <span id="timestamp">
-              <Translate contentKey="imanagestuffApp.timeLog.timestamp">Timestamp</Translate>
+            <span id="date">
+              <Translate contentKey="imanagestuffApp.timeLog.date">Date</Translate>
             </span>
           </dt>
-          <dd>{timeLogEntity.timestamp ? <TextFormat value={timeLogEntity.timestamp} type="date" format={APP_DATE_FORMAT} /> : null}</dd>
+          <dd>{timeLogEntity.date ? <TextFormat value={timeLogEntity.date} type="date" format={APP_LOCAL_DATE_FORMAT} /> : null}</dd>
+          <dt>
+            <span id="checkIn">
+              <Translate contentKey="imanagestuffApp.timeLog.checkIn">Check In</Translate>
+            </span>
+          </dt>
+          <dd>{timeLogEntity.checkIn ? <TextFormat value={timeLogEntity.checkIn} type="date" format={APP_DATE_FORMAT} /> : null}</dd>
+          <dt>
+            <span id="checkOut">
+              <Translate contentKey="imanagestuffApp.timeLog.checkOut">Check Out</Translate>
+            </span>
+          </dt>
+          <dd>{timeLogEntity.checkOut ? <TextFormat value={timeLogEntity.checkOut} type="date" format={APP_DATE_FORMAT} /> : null}</dd>
           <dt>
             <Translate contentKey="imanagestuffApp.timeLog.member">Member</Translate>
           </dt>
-          <dd>{timeLogEntity.memberLogin ? timeLogEntity.memberLogin : ''}</dd>
-          <dt>
-            <Translate contentKey="imanagestuffApp.timeLog.timeCheckTask">Time Check Task</Translate>
-          </dt>
-          <dd>{timeLogEntity.timeCheckTaskId ? timeLogEntity.timeCheckTaskId : ''}</dd>
+          <dd>{timeLogEntity.memberLastName ? timeLogEntity.memberLastName : ''}</dd>
         </dl>
         <Button tag={Link} to="/time-log" replace color="info">
           <FontAwesomeIcon icon="arrow-left" />{' '}

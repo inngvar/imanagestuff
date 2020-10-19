@@ -42,7 +42,7 @@
       "otherEntityField": "name"
     }
   ],
-  "changelogDate": "20200828070941",
+  "changelogDate": "20201019053643",
   "entityTableName": "time_entry",
   "dto": "mapstruct",
   "pagination": "pagination",
