@@ -1,8 +1,8 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.0.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
-    <changeSet author="igorch (generated)" id="1602855387024-2">
+    <changeSet author="igorch (generated)" id="1602924414014-2">
         <createTable tableName="task_config">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="task_configPK"/>
             </column>
             <column name="name" type="VARCHAR(255)">
@@ -10,9 +10,9 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="igorch (generated)" id="1602855387024-3">
+    <changeSet author="igorch (generated)" id="1602924414014-3">
         <createTable tableName="time_check_task">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="time_check_taskPK"/>
             </column>
             <column name="date" type="date">
@@ -20,9 +20,9 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="igorch (generated)" id="1602855387024-4">
+    <changeSet author="igorch (generated)" id="1602924414014-4">
         <createTable tableName="time_log">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="time_logPK"/>
             </column>
             <column name="timestamp" type="TIMESTAMP">
@@ -34,33 +34,18 @@
             <column name="time_check_task_id" type="BIGINT"/>
         </createTable>
     </changeSet>
-    <changeSet author="igorch (generated)" id="1602855387024-5">
+    <changeSet author="igorch (generated)" id="1602924414014-5">
         <addColumn tableName="member">
             <column name="task_config_id" type="int8"/>
         </addColumn>
     </changeSet>
-    <changeSet author="igorch (generated)" id="1602855387024-6">
+    <changeSet author="igorch (generated)" id="1602924414014-6">
         <addForeignKeyConstraint baseColumnNames="task_config_id" baseTableName="member" constraintName="FK3wgybv1pcew1psk91g9td22sn" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="task_config" validate="true"/>
     </changeSet>
-    <changeSet author="igorch (generated)" id="1602855387024-7">
+    <changeSet author="igorch (generated)" id="1602924414014-7">
         <addForeignKeyConstraint baseColumnNames="time_check_task_id" baseTableName="time_log" constraintName="FKbs677tfn9jvps748kyc6dv4ti" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="time_check_task" validate="true"/>
     </changeSet>
-    <changeSet author="igorch (generated)" id="1602855387024-8">
+    <changeSet author="igorch (generated)" id="1602924414014-8">
         <addForeignKeyConstraint baseColumnNames="member_id" baseTableName="time_log" constraintName="FKt82mtbyk4mcgpgaaq6lrxy6md" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="member" validate="true"/>
-    </changeSet>
-    <changeSet author="igorch (generated)" id="1602855387024-9">
-        <dropForeignKeyConstraint baseTableName="JHI_PERSISTENT_AUDIT_EVT_DATA" constraintName="FK_EVT_PERS_AUDIT_EVT_DATA"/>
-    </changeSet>
-    <changeSet author="igorch (generated)" id="1602855387024-10">
-        <dropTable tableName="JHI_DATE_TIME_WRAPPER"/>
-    </changeSet>
-    <changeSet author="igorch (generated)" id="1602855387024-11">
-        <dropTable tableName="JHI_PERSISTENT_AUDIT_EVENT"/>
-    </changeSet>
-    <changeSet author="igorch (generated)" id="1602855387024-12">
-        <dropTable tableName="JHI_PERSISTENT_AUDIT_EVT_DATA"/>
-    </changeSet>
-    <changeSet author="igorch (generated)" id="1602855387024-1">
-        <alterSequence incrementBy="50" sequenceName="sequence_generator"/>
     </changeSet>
 </databaseChangeLog>
