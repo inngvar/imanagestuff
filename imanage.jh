@@ -29,8 +29,8 @@ relationship ManyToOne {
 
 entity TimeLog {
     date LocalDate required
-	checkIn ZonedDateTime required
-	checkOut ZonedDateTime required
+	checkIn ZonedDateTime
+	checkOut ZonedDateTime
 }
 
 relationship OneToMany {

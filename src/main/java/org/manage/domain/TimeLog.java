@@ -30,12 +30,10 @@ public class TimeLog extends PanacheEntityBase implements Serializable {
     @Column(name = "date", nullable = false)
     public LocalDate date;
 
-    @NotNull
-    @Column(name = "check_in", nullable = false)
+    @Column(name = "check_in")
     public ZonedDateTime checkIn;
 
-    @NotNull
-    @Column(name = "check_out", nullable = false)
+    @Column(name = "check_out")
     public ZonedDateTime checkOut;
 
     @ManyToOne(optional = false)

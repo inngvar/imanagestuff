@@ -22,10 +22,8 @@ public class TimeLogDTO implements Serializable {
     @JsonbDateFormat(value = Constants.LOCAL_DATE_FORMAT)
     public LocalDate date;
 
-    @NotNull
     public ZonedDateTime checkIn;
 
-    @NotNull
     public ZonedDateTime checkOut;
 
     public Long memberId;

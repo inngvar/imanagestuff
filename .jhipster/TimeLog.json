@@ -8,13 +8,11 @@
     },
     {
       "fieldName": "checkIn",
-      "fieldType": "ZonedDateTime",
-      "fieldValidateRules": ["required"]
+      "fieldType": "ZonedDateTime"
     },
     {
       "fieldName": "checkOut",
-      "fieldType": "ZonedDateTime",
-      "fieldValidateRules": ["required"]
+      "fieldType": "ZonedDateTime"
     }
   ],
   "relationships": [
