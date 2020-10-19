@@ -16,6 +16,7 @@ import {TimeEntryToDuration} from "app/entities/time-entry/time-to-total.tsx";
 export const ProjectReport = props => {
 
   const [projectStats, setProjectStats] = useState(null);
+  const [updating, setUpdating] = useState(false);
   useEffect(() => {
     if (!props.project) {
       return;
@@ -40,6 +41,10 @@ export const ProjectReport = props => {
     return result;
   }
 
+  function onUpdateTotalTime() {
+    setUpdating(!updating)
+  }
+
   return (
     <Row>
       <Col md="12">
@@ -47,7 +52,7 @@ export const ProjectReport = props => {
           projectStats?.membersReports ? (projectStats.membersReports.map((memberStats, i) => (
               <Row key={i}>
                 <h3>{memberStats.member.fio}</h3>
-                <TimeEntries entries={memberStats.entries}/>
+                <TimeEntries entries={memberStats.entries} onUpdate={onUpdateTotalTime}/>
               </Row>
             )))
             :

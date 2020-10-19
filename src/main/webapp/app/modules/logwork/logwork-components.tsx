@@ -83,6 +83,7 @@ export const TimeEntries = props => {
     axios.put('api/time-entries/', result)
     props.entries[num]=result
     setTotal();
+    props.onUpdate?props.onUpdate():'';
   }
 
 
