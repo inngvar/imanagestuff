@@ -12,7 +12,6 @@ import org.mapstruct.*;
 @Mapper(componentModel = "cdi", uses = {})
 public interface MemberMapper extends EntityMapper<MemberDTO, Member> {
 
-    @Mapping(source = "taskConfig.id", target = "taskConfigId")
     @Mapping(target = "fio", expression = "java(member.lastName +\" \"+ member.firstName)")
     MemberDTO toDto(Member member);
 
