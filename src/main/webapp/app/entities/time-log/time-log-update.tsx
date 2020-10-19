@@ -108,9 +108,6 @@ export const TimeLogUpdate = (props: ITimeLogUpdateProps) => {
                   name="checkIn"
                   placeholder={'YYYY-MM-DD HH:mm'}
                   value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.timeLogEntity.checkIn)}
-                  validate={{
-                    required: { value: true, errorMessage: translate('entity.validation.required') },
-                  }}
                 />
               </AvGroup>
               <AvGroup>
@@ -124,9 +121,6 @@ export const TimeLogUpdate = (props: ITimeLogUpdateProps) => {
                   name="checkOut"
                   placeholder={'YYYY-MM-DD HH:mm'}
                   value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.timeLogEntity.checkOut)}
-                  validate={{
-                    required: { value: true, errorMessage: translate('entity.validation.required') },
-                  }}
                 />
               </AvGroup>
               <AvGroup>
