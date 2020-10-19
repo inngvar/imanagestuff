@@ -1,6 +1,6 @@
 # imanagestuff
 
-This application was generated using JHipster 6.10.1 and JHipster Quarkus 0.1.6, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v6.10.1](https://www.jhipster.tech/documentation-archive/v6.10.1).
+This application was generated using JHipster 6.10.3 and JHipster Quarkus 0.1.6, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v6.10.3](https://www.jhipster.tech/documentation-archive/v6.10.3).
 
 ## Development
 
@@ -150,13 +150,13 @@ To stop it and remove the container, run:
     docker-compose -f src/main/docker/postgresql.yml down
 
 [jhipster homepage and latest documentation]: https://www.jhipster.tech
-[jhipster 6.10.1 archive]: https://www.jhipster.tech/documentation-archive/v6.10.1
-[using jhipster in development]: https://www.jhipster.tech/documentation-archive/v6.10.1/development/
-[using docker and docker-compose]: https://www.jhipster.tech/documentation-archive/v6.10.1/docker-compose
-[using jhipster in production]: https://www.jhipster.tech/documentation-archive/v6.10.1/production/
-[running tests page]: https://www.jhipster.tech/documentation-archive/v6.10.1/running-tests/
-[code quality page]: https://www.jhipster.tech/documentation-archive/v6.10.1/code-quality/
-[setting up continuous integration]: https://www.jhipster.tech/documentation-archive/v6.10.1/setting-up-ci/
+[jhipster 6.10.3 archive]: https://www.jhipster.tech/documentation-archive/v6.10.3
+[using jhipster in development]: https://www.jhipster.tech/documentation-archive/v6.10.3/development/
+[using docker and docker-compose]: https://www.jhipster.tech/documentation-archive/v6.10.3/docker-compose
+[using jhipster in production]: https://www.jhipster.tech/documentation-archive/v6.10.3/production/
+[running tests page]: https://www.jhipster.tech/documentation-archive/v6.10.3/running-tests/
+[code quality page]: https://www.jhipster.tech/documentation-archive/v6.10.3/code-quality/
+[setting up continuous integration]: https://www.jhipster.tech/documentation-archive/v6.10.3/setting-up-ci/
 [node.js]: https://nodejs.org/
 [yarn]: https://yarnpkg.org/
 [webpack]: https://webpack.github.io/

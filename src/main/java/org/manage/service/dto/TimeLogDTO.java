@@ -2,6 +2,9 @@ package org.manage.service.dto;
 
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import java.time.LocalDate;
+import org.manage.config.Constants;
+import javax.json.bind.annotation.JsonbDateFormat;
 import java.time.ZonedDateTime;
 import javax.validation.constraints.*;
 import java.io.Serializable;
@@ -16,11 +19,17 @@ public class TimeLogDTO implements Serializable {
     public Long id;
 
     @NotNull
-    public ZonedDateTime timestamp;
+    @JsonbDateFormat(value = Constants.LOCAL_DATE_FORMAT)
+    public LocalDate date;
+
+    @NotNull
+    public ZonedDateTime checkIn;
+
+    @NotNull
+    public ZonedDateTime checkOut;
 
     public Long memberId;
-    public String memberLogin;
-    public Long timeCheckTaskId;
+    public String memberLastName;
 
     @Override
     public boolean equals(Object o) {
@@ -43,10 +52,11 @@ public class TimeLogDTO implements Serializable {
     public String toString() {
         return "TimeLogDTO{" +
             "id=" + id +
-            ", timestamp='" + timestamp + "'" +
+            ", date='" + date + "'" +
+            ", checkIn='" + checkIn + "'" +
+            ", checkOut='" + checkOut + "'" +
             ", memberId=" + memberId +
-            ", memberLogin='" + memberLogin + "'" +
-            ", timeCheckTaskId=" + timeCheckTaskId +
+            ", memberLastName='" + memberLastName + "'" +
             "}";
     }
 }

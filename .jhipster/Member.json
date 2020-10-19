@@ -26,14 +26,7 @@
       "relationshipType": "one-to-many",
       "otherEntityName": "timeLog",
       "otherEntityRelationshipName": "member",
-      "relationshipName": "timeLogs"
-    },
-    {
-      "relationshipType": "many-to-one",
-      "otherEntityName": "taskConfig",
-      "otherEntityRelationshipName": "members",
-      "relationshipName": "taskConfig",
-      "otherEntityField": "id"
+      "relationshipName": "timeLog"
     },
     {
       "relationshipType": "many-to-many",
@@ -44,7 +37,7 @@
       "ownerSide": false
     }
   ],
-  "changelogDate": "20200828070841",
+  "changelogDate": "20201019053543",
   "entityTableName": "member",
   "dto": "mapstruct",
   "pagination": "pagination",

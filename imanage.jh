@@ -28,21 +28,13 @@ relationship ManyToOne {
 }
 
 entity TimeLog {
-	timestamp ZonedDateTime required
-}
-
-entity TimeCheckTask{
     date LocalDate required
-}
-
-entity TaskConfig{
-    name String required
+	checkIn ZonedDateTime required
+	checkOut ZonedDateTime required
 }
 
 relationship OneToMany {
-	Member{timeLogs(timestamp)} to TimeLog{member(login) required}
-	TaskConfig{members(login)} to Member
-    TimeCheckTask{checks(timestamp)} to TimeLog
+	Member to TimeLog{member(lastName) required}
 }
 
 // Set pagination options

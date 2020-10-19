@@ -49,11 +49,6 @@ public class Member extends PanacheEntityBase implements Serializable {
     @OneToMany(mappedBy = "member")
     public Set<TimeLog> timeLogs = new HashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "task_config_id")
-    @JsonbTransient
-    public TaskConfig taskConfig;
-
     @ManyToMany(mappedBy = "members")
     @JsonbTransient
     public Set<Project> projects = new HashSet<>();
@@ -110,7 +105,6 @@ public class Member extends PanacheEntityBase implements Serializable {
             entity.middleName = member.middleName;
             entity.lastName = member.lastName;
             entity.timeLogs = member.timeLogs;
-            entity.taskConfig = member.taskConfig;
             entity.projects = member.projects;
         }
         return entity;

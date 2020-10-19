@@ -16,9 +16,10 @@
       "detail": {
         "title": "Time Log"
       },
-      "timestamp": "Timestamp",
-      "member": "Member",
-      "timeCheckTask": "Time Check Task"
+      "date": "Date",
+      "checkIn": "Check In",
+      "checkOut": "Check Out",
+      "member": "Member"
     }
   }
 }

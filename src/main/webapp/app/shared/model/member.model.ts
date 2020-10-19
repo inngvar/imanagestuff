@@ -8,7 +8,6 @@ export interface IMember {
   middleName?: string;
   lastName?: string;
   timeLogs?: ITimeLog[];
-  taskConfigId?: number;
   projects?: IProject[];
 }
 

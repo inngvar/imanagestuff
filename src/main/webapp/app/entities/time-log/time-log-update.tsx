@@ -2,15 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, Label } from 'reactstrap';
-import { AvFeedback, AvForm, AvGroup, AvInput } from 'availity-reactstrap-validation';
+import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
 import { Translate, translate, ICrudGetAction, ICrudGetAllAction, ICrudPutAction } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 
 import { IMember } from 'app/shared/model/member.model';
 import { getEntities as getMembers } from 'app/entities/member/member.reducer';
-import { ITimeCheckTask } from 'app/shared/model/time-check-task.model';
-import { getEntities as getTimeCheckTasks } from 'app/entities/time-check-task/time-check-task.reducer';
 import { getEntity, updateEntity, createEntity, reset } from './time-log.reducer';
 import { ITimeLog } from 'app/shared/model/time-log.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
@@ -20,10 +18,9 @@ export interface ITimeLogUpdateProps extends StateProps, DispatchProps, RouteCom
 
 export const TimeLogUpdate = (props: ITimeLogUpdateProps) => {
   const [memberId, setMemberId] = useState('0');
-  const [timeCheckTaskId, setTimeCheckTaskId] = useState('0');
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
 
-  const { timeLogEntity, members, timeCheckTasks, loading, updating } = props;
+  const { timeLogEntity, members, loading, updating } = props;
 
   const handleClose = () => {
     props.history.push('/time-log' + props.location.search);
@@ -37,7 +34,6 @@ export const TimeLogUpdate = (props: ITimeLogUpdateProps) => {
     }
 
     props.getMembers();
-    props.getTimeCheckTasks();
   }, []);
 
   useEffect(() => {
@@ -47,7 +43,8 @@ export const TimeLogUpdate = (props: ITimeLogUpdateProps) => {
   }, [props.updateSuccess]);
 
   const saveEntity = (event, errors, values) => {
-    values.timestamp = convertDateTimeToServer(values.timestamp);
+    values.checkIn = convertDateTimeToServer(values.checkIn);
+    values.checkOut = convertDateTimeToServer(values.checkOut);
 
     if (errors.length === 0) {
       const entity = {
@@ -87,16 +84,46 @@ export const TimeLogUpdate = (props: ITimeLogUpdateProps) => {
                 </AvGroup>
               ) : null}
               <AvGroup>
-                <Label id="timestampLabel" for="time-log-timestamp">
-                  <Translate contentKey="imanagestuffApp.timeLog.timestamp">Timestamp</Translate>
+                <Label id="dateLabel" for="time-log-date">
+                  <Translate contentKey="imanagestuffApp.timeLog.date">Date</Translate>
+                </Label>
+                <AvField
+                  id="time-log-date"
+                  type="date"
+                  className="form-control"
+                  name="date"
+                  validate={{
+                    required: { value: true, errorMessage: translate('entity.validation.required') },
+                  }}
+                />
+              </AvGroup>
+              <AvGroup>
+                <Label id="checkInLabel" for="time-log-checkIn">
+                  <Translate contentKey="imanagestuffApp.timeLog.checkIn">Check In</Translate>
                 </Label>
                 <AvInput
-                  id="time-log-timestamp"
+                  id="time-log-checkIn"
                   type="datetime-local"
                   className="form-control"
-                  name="timestamp"
+                  name="checkIn"
                   placeholder={'YYYY-MM-DD HH:mm'}
-                  value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.timeLogEntity.timestamp)}
+                  value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.timeLogEntity.checkIn)}
+                  validate={{
+                    required: { value: true, errorMessage: translate('entity.validation.required') },
+                  }}
+                />
+              </AvGroup>
+              <AvGroup>
+                <Label id="checkOutLabel" for="time-log-checkOut">
+                  <Translate contentKey="imanagestuffApp.timeLog.checkOut">Check Out</Translate>
+                </Label>
+                <AvInput
+                  id="time-log-checkOut"
+                  type="datetime-local"
+                  className="form-control"
+                  name="checkOut"
+                  placeholder={'YYYY-MM-DD HH:mm'}
+                  value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.timeLogEntity.checkOut)}
                   validate={{
                     required: { value: true, errorMessage: translate('entity.validation.required') },
                   }}
@@ -110,7 +137,7 @@ export const TimeLogUpdate = (props: ITimeLogUpdateProps) => {
                   {members
                     ? members.map(otherEntity => (
                         <option value={otherEntity.id} key={otherEntity.id}>
-                          {otherEntity.login}
+                          {otherEntity.lastName}
                         </option>
                       ))
                     : null}
@@ -118,21 +145,6 @@ export const TimeLogUpdate = (props: ITimeLogUpdateProps) => {
                 <AvFeedback>
                   <Translate contentKey="entity.validation.required">This field is required.</Translate>
                 </AvFeedback>
-              </AvGroup>
-              <AvGroup>
-                <Label for="time-log-timeCheckTask">
-                  <Translate contentKey="imanagestuffApp.timeLog.timeCheckTask">Time Check Task</Translate>
-                </Label>
-                <AvInput id="time-log-timeCheckTask" type="select" className="form-control" name="timeCheckTaskId">
-                  <option value="" key="0" />
-                  {timeCheckTasks
-                    ? timeCheckTasks.map(otherEntity => (
-                        <option value={otherEntity.id} key={otherEntity.id}>
-                          {otherEntity.id}
-                        </option>
-                      ))
-                    : null}
-                </AvInput>
               </AvGroup>
               <Button tag={Link} id="cancel-save" to="/time-log" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
@@ -157,7 +169,6 @@ export const TimeLogUpdate = (props: ITimeLogUpdateProps) => {
 
 const mapStateToProps = (storeState: IRootState) => ({
   members: storeState.member.entities,
-  timeCheckTasks: storeState.timeCheckTask.entities,
   timeLogEntity: storeState.timeLog.entity,
   loading: storeState.timeLog.loading,
   updating: storeState.timeLog.updating,
@@ -166,7 +177,6 @@ const mapStateToProps = (storeState: IRootState) => ({
 
 const mapDispatchToProps = {
   getMembers,
-  getTimeCheckTasks,
   getEntity,
   updateEntity,
   createEntity,

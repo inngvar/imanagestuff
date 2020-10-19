@@ -54,7 +54,6 @@ public class MemberDTO implements Serializable {
             ", firstName='" + firstName + "'" +
             ", middleName='" + middleName + "'" +
             ", lastName='" + lastName + "'" +
-            ", taskConfigId=" + taskConfigId +
             "}";
     }
 }

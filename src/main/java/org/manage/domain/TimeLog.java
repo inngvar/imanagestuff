@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 /**
@@ -26,19 +27,22 @@ public class TimeLog extends PanacheEntityBase implements Serializable {
     public Long id;
 
     @NotNull
-    @Column(name = "timestamp", nullable = false)
-    public ZonedDateTime timestamp;
+    @Column(name = "date", nullable = false)
+    public LocalDate date;
+
+    @NotNull
+    @Column(name = "check_in", nullable = false)
+    public ZonedDateTime checkIn;
+
+    @NotNull
+    @Column(name = "check_out", nullable = false)
+    public ZonedDateTime checkOut;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "member_id")
     @NotNull
     @JsonbTransient
     public Member member;
-
-    @ManyToOne
-    @JoinColumn(name = "time_check_task_id")
-    @JsonbTransient
-    public TimeCheckTask timeCheckTask;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
@@ -62,7 +66,9 @@ public class TimeLog extends PanacheEntityBase implements Serializable {
     public String toString() {
         return "TimeLog{" +
             "id=" + id +
-            ", timestamp='" + timestamp + "'" +
+            ", date='" + date + "'" +
+            ", checkIn='" + checkIn + "'" +
+            ", checkOut='" + checkOut + "'" +
             "}";
     }
 
@@ -80,9 +86,10 @@ public class TimeLog extends PanacheEntityBase implements Serializable {
         }
         var entity = TimeLog.<TimeLog>findById(timeLog.id);
         if (entity != null) {
-            entity.timestamp = timeLog.timestamp;
+            entity.date = timeLog.date;
+            entity.checkIn = timeLog.checkIn;
+            entity.checkOut = timeLog.checkOut;
             entity.member = timeLog.member;
-            entity.timeCheckTask = timeLog.timeCheckTask;
         }
         return entity;
     }
