@@ -21,6 +21,11 @@ export const TimeEntryToDuration = props => {
     }
   }
 
+  if(minutes >= 60){
+    hours += Math.trunc( minutes / 60);
+    minutes = minutes % 60;
+  }
+
   let result = hours > 0 ? hours + ' ' + decOfNum(hours, ['час', 'часа', 'часов']) : '';
   result += minutes > 0 ? ' ' + minutes + ' ' + decOfNum(minutes, ['минута', 'минуты', 'минут']) : '';
 
