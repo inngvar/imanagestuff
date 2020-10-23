@@ -37,6 +37,10 @@ relationship OneToMany {
 	Member to TimeLog{member(lastName) required}
 }
 
+relationship OneToOne {
+	Member{defaultProject(name)} to Project
+}
+
 // Set pagination options
 paginate * with pagination
 dto * with mapstruct

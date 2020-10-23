@@ -17,6 +17,7 @@ import { mapIdList } from 'app/shared/util/entity-utils';
 export interface IMemberUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const MemberUpdate = (props: IMemberUpdateProps) => {
+  const [defaultProjectId, setDefaultProjectId] = useState('0');
   const [projectsId, setProjectsId] = useState('0');
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
 
@@ -124,6 +125,21 @@ export const MemberUpdate = (props: IMemberUpdateProps) => {
                     required: { value: true, errorMessage: translate('entity.validation.required') },
                   }}
                 />
+              </AvGroup>
+              <AvGroup>
+                <Label for="member-defaultProject">
+                  <Translate contentKey="imanagestuffApp.member.defaultProject">Default Project</Translate>
+                </Label>
+                <AvInput id="member-defaultProject" type="select" className="form-control" name="defaultProjectId">
+                  <option value="" key="0" />
+                  {projects
+                    ? projects.map(otherEntity => (
+                        <option value={otherEntity.id} key={otherEntity.id}>
+                          {otherEntity.name}
+                        </option>
+                      ))
+                    : null}
+                </AvInput>
               </AvGroup>
               <Button tag={Link} id="cancel-save" to="/member" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />

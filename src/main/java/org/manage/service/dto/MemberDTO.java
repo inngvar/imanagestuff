@@ -2,6 +2,7 @@ package org.manage.service.dto;
 
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
+
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -25,6 +26,8 @@ public class MemberDTO implements Serializable {
     @NotNull
     public String lastName;
 
+    public Long defaultProjectId;
+    public String defaultProjectName;
 
     @Override
     public boolean equals(Object o) {
@@ -51,6 +54,8 @@ public class MemberDTO implements Serializable {
             ", firstName='" + firstName + "'" +
             ", middleName='" + middleName + "'" +
             ", lastName='" + lastName + "'" +
+            ", defaultProjectId=" + defaultProjectId +
+            ", defaultProjectName='" + defaultProjectName + "'" +
             "}";
     }
 }

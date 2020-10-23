@@ -41,6 +41,10 @@ public class Member extends PanacheEntityBase implements Serializable {
     @Column(name = "last_name", nullable = false)
     public String lastName;
 
+    @OneToOne
+    @JoinColumn(unique = true)
+    public Project defaultProject;
+
     @OneToMany(mappedBy = "member")
     public Set<TimeLog> timeLogs = new HashSet<>();
 
@@ -95,6 +99,7 @@ public class Member extends PanacheEntityBase implements Serializable {
             entity.firstName = member.firstName;
             entity.middleName = member.middleName;
             entity.lastName = member.lastName;
+            entity.defaultProject = member.defaultProject;
             entity.timeLogs = member.timeLogs;
             entity.projects = member.projects;
         }

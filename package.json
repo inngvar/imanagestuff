@@ -36,11 +36,13 @@
     "redux-promise-middleware": "6.1.2",
     "redux-thunk": "2.3.0",
     "tslib": "1.11.1",
-    "uuid": "7.0.3"
+    "uuid": "7.0.3",
+    "iso8601-duration": "^1.2.0"
   },
   "devDependencies": {
+    "@types/cheerio": "^0.22.10",
+    "@types/enzyme": "3.10.7",
     "@openapitools/openapi-generator-cli": "1.0.13-4.3.1",
-    "@types/enzyme": "3.10.5",
     "@types/jest": "25.2.1",
     "@types/lodash": "4.14.150",
     "@types/node": "13.13.4",
@@ -72,7 +74,7 @@
     "file-loader": "6.0.0",
     "fork-ts-checker-webpack-plugin": "4.1.3",
     "friendly-errors-webpack-plugin": "1.7.0",
-    "generator-jhipster": "6.10.3",
+    "generator-jhipster": "6.10.1",
     "html-webpack-plugin": "4.3.0",
     "husky": "4.2.5",
     "identity-obj-proxy": "3.0.0",
@@ -86,7 +88,7 @@
     "moment-locales-webpack-plugin": "1.2.0",
     "optimize-css-assets-webpack-plugin": "5.0.3",
     "postcss-loader": "3.0.0",
-    "prettier": "2.1.2",
+    "prettier": "2.0.5",
     "react-infinite-scroller": "1.2.4",
     "redux-mock-store": "1.5.4",
     "rimraf": "3.0.2",

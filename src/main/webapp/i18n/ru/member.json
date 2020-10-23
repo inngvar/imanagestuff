@@ -20,6 +20,7 @@
       "firstName": "First Name",
       "middleName": "Middle Name",
       "lastName": "Last Name",
+      "defaultProject": "Default Project",
       "timeLog": "Time Log",
       "projects": "Projects"
     }

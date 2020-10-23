@@ -49,6 +49,10 @@ export const MemberDetail = (props: IMemberDetailProps) => {
             </span>
           </dt>
           <dd>{memberEntity.lastName}</dd>
+          <dt>
+            <Translate contentKey="imanagestuffApp.member.defaultProject">Default Project</Translate>
+          </dt>
+          <dd>{memberEntity.defaultProjectName ? memberEntity.defaultProjectName : ''}</dd>
         </dl>
         <Button tag={Link} to="/member" replace color="info">
           <FontAwesomeIcon icon="arrow-left" />{' '}
