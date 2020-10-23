@@ -140,7 +140,6 @@ export const deleteEntity: ICrudDeleteAction<IMember> = id => async dispatch => 
     type: ACTION_TYPES.DELETE_MEMBER,
     payload: axios.delete(requestUrl),
   });
-  dispatch(getEntities());
   return result;
 };
 

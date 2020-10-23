@@ -12,9 +12,12 @@ import org.mapstruct.*;
 @Mapper(componentModel = "cdi", uses = {})
 public interface MemberMapper extends EntityMapper<MemberDTO, Member> {
 
+    @Mapping(source = "defaultProject.id", target = "defaultProjectId")
+    @Mapping(source = "defaultProject.name", target = "defaultProjectName")
     @Mapping(target = "fio", expression = "java(member.lastName +\" \"+ member.firstName)")
     MemberDTO toDto(Member member);
 
+    @Mapping(source = "defaultProjectId", target = "defaultProject")
     @Mapping(target = "timeLogs", ignore = true)
     @Mapping(target = "projects", ignore = true)
     Member toEntity(MemberDTO memberDTO);
