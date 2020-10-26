@@ -1,13 +1,12 @@
 import axios from 'axios';
 import React, {useState, useEffect} from 'react';
-import {roundNumberToTwo} from 'app/shared/util/date-utils';
 import {
   Button,
   Row,
   Col,
-  Form,
-  FormGroup,
-  Label,
+  Modal,
+  ModalBody,
+  ModalFooter,
 } from 'reactstrap';
 import {TimeEntries} from "app/modules/logwork/logwork-components";
 import {TimeEntryToDuration} from "app/entities/time-entry/time-to-total.tsx";
@@ -17,6 +16,8 @@ export const ProjectReport = props => {
 
   const [projectStats, setProjectStats] = useState(null);
   const [updating, setUpdating] = useState(false);
+  const [modal, setModal] = useState(false);
+  const toggle = () => setModal(!modal);
   useEffect(() => {
     if (!props.project) {
       return;
@@ -27,12 +28,13 @@ export const ProjectReport = props => {
   }, [props.project, props.dateFrom, props.dateTo]);
 
   function sendReport() {
-    axios.post('api/reports/day-report/'+props.project.id + '?dateFrom=' + props.dateFrom + '&dateTo=' + props.dateTo);
+    axios.post('api/reports/day-report/' + props.project.id + '?dateFrom=' + props.dateFrom + '&dateTo=' + props.dateTo);
+    toggle()
   }
 
   const timeEntities = membersReports => {
     let result = [];
-    if(membersReports) {
+    if (membersReports) {
       for (let i = 0; i < membersReports.length; i++) {
         const res = result.concat(membersReports[i].entries);
         result = res;
@@ -59,12 +61,22 @@ export const ProjectReport = props => {
             (<p>noData</p>)
         }
         <Row>
-          <Button onClick={()=>sendReport()}>Отправить отчёт</Button>
+          <Button onClick={() => sendReport()}>Отправить отчёт</Button>
         </Row>
         <Row>
-          <h3><TimeEntryToDuration entities={timeEntities(projectStats?.membersReports)} added='Всего по проекту : '/></h3>
+          <h3><TimeEntryToDuration entities={timeEntities(projectStats?.membersReports)} added='Всего по проекту : '/>
+          </h3>
         </Row>
       </Col>
+      <Modal isOpen={modal} toggle={toggle}>
+        <ModalBody>
+        Отчёт отправлен
+        </ModalBody>
+        <ModalFooter>
+        <Button color="secondary" onClick={toggle}>Cancel</Button>
+        </ModalFooter>
+      </Modal>
     </Row>
+
   );
 }
