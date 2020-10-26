@@ -6,9 +6,10 @@ import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstr
 import { Translate, translate, ICrudGetAction, ICrudGetAllAction, ICrudPutAction } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
+import axios from 'axios'
 
 import { IProject } from 'app/shared/model/project.model';
-import { getEntities as getProjects } from 'app/entities/project/project.reducer';
+import { getEntity as getProjects } from 'app/entities/project/project.reducer';
 import { getEntity, updateEntity, createEntity, reset } from './member.reducer';
 import { IMember } from 'app/shared/model/member.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
@@ -19,9 +20,10 @@ export interface IMemberUpdateProps extends StateProps, DispatchProps, RouteComp
 export const MemberUpdate = (props: IMemberUpdateProps) => {
   const [defaultProjectId, setDefaultProjectId] = useState('0');
   const [projectsId, setProjectsId] = useState('0');
+  const [projects, setProjects] = useState([]);
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
 
-  const { memberEntity, projects, loading, updating } = props;
+  const { memberEntity, loading, updating } = props;
 
   const handleClose = () => {
     props.history.push('/member' + props.location.search);
@@ -34,8 +36,15 @@ export const MemberUpdate = (props: IMemberUpdateProps) => {
       props.getEntity(props.match.params.id);
     }
 
-    props.getProjects();
   }, []);
+
+  useEffect(() => {
+      axios.get("api/projects/memberid/" + props.match.params.id).then(response => {
+        setProjects(response.data)
+        }
+      )
+    }
+  )
 
   useEffect(() => {
     if (props.updateSuccess) {
@@ -163,7 +172,6 @@ export const MemberUpdate = (props: IMemberUpdateProps) => {
 };
 
 const mapStateToProps = (storeState: IRootState) => ({
-  projects: storeState.project.entities,
   memberEntity: storeState.member.entity,
   loading: storeState.member.loading,
   updating: storeState.member.updating,

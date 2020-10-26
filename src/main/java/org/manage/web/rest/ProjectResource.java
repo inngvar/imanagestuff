@@ -4,6 +4,7 @@ import static javax.ws.rs.core.UriBuilder.fromPath;
 
 import io.quarkus.security.identity.SecurityIdentity;
 import org.manage.domain.Member;
+import org.manage.service.MemberService;
 import org.manage.service.ProjectService;
 import org.manage.web.rest.errors.BadRequestAlertException;
 import org.manage.web.util.HeaderUtil;
@@ -46,6 +47,9 @@ public class ProjectResource {
 
     @Inject
     ProjectService projectService;
+
+    @Inject
+    MemberService memberService;
 
     /**
      * {@code POST  /projects} : Create a new project.
@@ -147,6 +151,19 @@ public class ProjectResource {
     @Path("current")
     public Response getUserProjects() {
         final String login = securityIdentity.getPrincipal().getName();
+        List<ProjectDTO> result = projectService.findByLogin(login);
+        return Response.ok(result).build();
+    }
+
+    /**
+     * Return list of projects by member
+     *
+     * @return
+     */
+    @GET
+    @Path("memberid/{id}")
+    public Response getProjectsForUserId(@PathParam("id") Long id) {
+        final String login = memberService.findOne(id).get().login;
         List<ProjectDTO> result = projectService.findByLogin(login);
         return Response.ok(result).build();
     }

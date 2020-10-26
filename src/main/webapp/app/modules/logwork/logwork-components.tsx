@@ -13,20 +13,29 @@ import {
 import TimeEntryUpdateModal from "app/entities/time-entry/time-entry-modal";
 
 
-
 export const ProjectList = props => {
+
+  const [defaultProject, setDefaultProjects] = useState(null);
 
   const onChange = event => {
     const te = props.projects.find(p => p.id.toString() === event.target.value)
     props.handler(te);
   }
 
+  useEffect(() => {
+    if (props?.value) {
+      setDefaultProjects(props.value)
+    }
+  })
+
   return (
     <FormGroup className="col-md-6">
       <Label for="project">Проект</Label>
       <Input type="select" name="project" id="project" onChange={onChange}>
         {props.projects.map((project, i) => (
-          <option key={i} value={project.id}>{project.name}</option>
+          project === defaultProject ?
+            <option key={i} value={project.id} selected>{project.name}</option> :
+            <option key={i} value={project.id}>{project.name}</option>
         ))}
       </Input>
     </FormGroup>
@@ -60,6 +69,7 @@ export const MemberList = props => {
 
 export const TimeEntries = props => {
   const [totalHours, setTotalHours] = useState(0);
+
   function setTotal() {
     let sum = 0;
     props.entries.forEach(e => {
@@ -67,6 +77,7 @@ export const TimeEntries = props => {
     });
     setTotalHours(sum);
   }
+
   useEffect(() => {
     if (!props.entries || props.entries.length < 1) {
       return;
@@ -74,7 +85,7 @@ export const TimeEntries = props => {
     setTotal()
   })
 
-  function saveEntity (event, errors, values, num) {
+  function saveEntity(event, errors, values, num) {
     const result = props.entries[num]
     result.duration = 'PT' + values.duration.toUpperCase();
     result.description = values.description
@@ -107,7 +118,7 @@ export const TimeEntries = props => {
             <td>{entry.shortDescription}</td>
             <td>{entry.date}</td>
             <td>
-              <div >
+              <div>
                 <TimeEntryUpdateModal entity={entry} saveEntity={saveEntity} num={i}/>
               </div>
             </td>

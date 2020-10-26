@@ -9,7 +9,7 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity {@link Member} and its DTO {@link MemberDTO}.
  */
-@Mapper(componentModel = "cdi", uses = {})
+@Mapper(componentModel = "cdi", uses = {ProjectMapper.class})
 public interface MemberMapper extends EntityMapper<MemberDTO, Member> {
 
     @Mapping(source = "defaultProject.id", target = "defaultProjectId")
