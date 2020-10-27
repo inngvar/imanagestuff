@@ -25,6 +25,7 @@ relationship ManyToMany {
 relationship ManyToOne {
 	TimeEntry{member(login) required} to Member
     TimeEntry{project(name) required} to Project
+    Project{projectManager(login)} to Member
 }
 
 entity TimeLog {

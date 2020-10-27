@@ -2,6 +2,7 @@ package org.manage.service.dto;
 
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
+
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -25,6 +26,8 @@ public class ProjectDTO implements Serializable {
     @Size(max = 4000)
     public String sendReports;
 
+    public Long projectManagerId;
+    public String projectManagerLogin;
     public Set<MemberDTO> members = new HashSet<>();
 
     @Override
@@ -51,6 +54,8 @@ public class ProjectDTO implements Serializable {
             ", name='" + name + "'" +
             ", description='" + description + "'" +
             ", sendReports='" + sendReports + "'" +
+            ", projectManagerId=" + projectManagerId +
+            ", projectManagerLogin='" + projectManagerLogin + "'" +
             ", members='" + members + "'" +
             "}";
     }

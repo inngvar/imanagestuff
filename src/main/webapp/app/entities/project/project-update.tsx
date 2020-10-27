@@ -18,6 +18,7 @@ export interface IProjectUpdateProps extends StateProps, DispatchProps, RouteCom
 
 export const ProjectUpdate = (props: IProjectUpdateProps) => {
   const [idsmembers, setIdsmembers] = useState([]);
+  const [projectManagerId, setProjectManagerId] = useState('0');
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
 
   const { projectEntity, members, loading, updating } = props;
@@ -119,6 +120,21 @@ export const ProjectUpdate = (props: IProjectUpdateProps) => {
                     maxLength: { value: 4000, errorMessage: translate('entity.validation.maxlength', { max: 4000 }) },
                   }}
                 />
+              </AvGroup>
+              <AvGroup>
+                <Label for="project-projectManager">
+                  <Translate contentKey="imanagestuffApp.project.projectManager">Project Manager</Translate>
+                </Label>
+                <AvInput id="project-projectManager" type="select" className="form-control" name="projectManagerId">
+                  <option value="" key="0" />
+                  {members
+                    ? members.map(otherEntity => (
+                        <option value={otherEntity.id} key={otherEntity.id}>
+                          {otherEntity.login}
+                        </option>
+                      ))
+                    : null}
+                </AvInput>
               </AvGroup>
               <AvGroup>
                 <Label for="project-members">

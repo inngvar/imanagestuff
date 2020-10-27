@@ -19,6 +19,7 @@
       "name": "Name",
       "description": "Description",
       "sendReports": "Send Reports",
+      "projectManager": "Project Manager",
       "members": "Members"
     }
   }

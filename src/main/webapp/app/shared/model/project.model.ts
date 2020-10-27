@@ -5,6 +5,8 @@ export interface IProject {
   name?: string;
   description?: string;
   sendReports?: string;
+  projectManagerLogin?: string;
+  projectManagerId?: number;
   members?: IMember[];
 }
 
