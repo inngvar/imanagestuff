@@ -1,12 +1,12 @@
 /* eslint react/no-multi-comp: 0, react/prop-types: 0 */
-import axios from 'axios';
+
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, Label, FormGroup, Link  } from 'reactstrap';
 import { AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
 import { Translate, translate, } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import {durationToHours} from "app/shared/util/date-utils";
+
 
 
 const TimeEntryUpdateModal = (props) => {
@@ -17,6 +17,19 @@ const TimeEntryUpdateModal = (props) => {
   } = props;
 
   const [modal, setModal] = useState(false);
+  const [member, setMember] = useState(null);
+  const [currentMember, setCurrentMember] = useState(null);
+
+  useEffect(() => {
+    if (props.member !== null) {
+      setMember(props.member);
+    }
+  })
+  useEffect(() => {
+    if (props.currentMember !== null) {
+      setCurrentMember(props.currentMember);
+    }
+  })
 
   const toggle = () => {
     setModal(!modal)
@@ -29,7 +42,9 @@ const TimeEntryUpdateModal = (props) => {
 
   return (
     <div>
-      <Button color="primary" onClick={toggle}>Изменить</Button>
+      <Button color="primary"
+              onClick={toggle}
+              disabled={member?.login !== currentMember?.login}>Изменить</Button>
       <Modal isOpen={modal} toggle={toggle} className={className}>
         <ModalHeader toggle={toggle}>Введите изменения</ModalHeader>
         <ModalBody>

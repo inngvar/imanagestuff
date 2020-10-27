@@ -2,6 +2,9 @@ package org.manage.web.rest;
 
 import static javax.ws.rs.core.UriBuilder.fromPath;
 
+import io.quarkus.security.identity.SecurityIdentity;
+import org.manage.domain.Member;
+import org.manage.security.AuthoritiesConstants;
 import org.manage.service.MemberService;
 import org.manage.web.rest.errors.BadRequestAlertException;
 import org.manage.web.util.HeaderUtil;
@@ -39,6 +42,8 @@ public class MemberResource {
     @ConfigProperty(name = "application.name")
     String applicationName;
 
+    @Inject
+    SecurityIdentity securityIdentity;
 
     @Inject
     MemberService memberService;
@@ -127,4 +132,30 @@ public class MemberResource {
         Optional<MemberDTO> memberDTO = memberService.findOne(id);
         return ResponseUtil.wrapOrNotFound(memberDTO);
     }
+
+    /**
+     * Return current user as a member
+     *
+     * @return
+     */
+    @GET
+    @Path("current")
+    public Response getCurrentMember() {
+        final String login = securityIdentity.getPrincipal().getName();
+        Optional<Member> currentMember = Member.findByLogin(login);
+        Optional<MemberDTO> memberDTO = memberService.findOne(currentMember.get().id);
+        return Response.ok(memberDTO).build();
+    }
+
+    /**
+     * Return current user as a member
+     *
+     * @return
+     */
+    @GET
+    @Path("isAdmin")
+    public Response isAdmin() {
+        return Response.ok(securityIdentity.getRoles().contains(AuthoritiesConstants.ADMIN)).build();
+    }
+
 }

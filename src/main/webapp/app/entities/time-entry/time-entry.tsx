@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Col, Row, Table } from 'reactstrap';
-import { Translate, ICrudGetAllAction, TextFormat, getSortState, IPaginationBaseState, JhiPagination, JhiItemCount } from 'react-jhipster';
+import { Button, Row, Table } from 'reactstrap';
+import { Translate,  TextFormat, getSortState, JhiPagination, JhiItemCount } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntities } from './time-entry.reducer';
-import { ITimeEntry } from 'app/shared/model/time-entry.model';
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
+import axios from 'axios';
 
 export interface ITimeEntryProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
@@ -63,6 +63,21 @@ export const TimeEntry = (props: ITimeEntryProps) => {
       ...paginationState,
       activePage: currentPage,
     });
+
+  const [currentMember, setCurrentMember] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    axios.get("/api/members/current/").then(response => {
+      setCurrentMember(response.data);
+    })
+  })
+
+  useEffect(() => {
+    axios.get("/api/members/isAdmin/").then(response => {
+      setIsAdmin(response.data);
+    })
+  })
 
   const { timeEntryList, match, loading, totalItems } = props;
   return (
@@ -132,6 +147,7 @@ export const TimeEntry = (props: ITimeEntryProps) => {
                         to={`${match.url}/${timeEntry.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
                         color="primary"
                         size="sm"
+                        disabled={!(isAdmin || currentMember?.login === timeEntry?.memberLogin)}
                       >
                         <FontAwesomeIcon icon="pencil-alt" />{' '}
                         <span className="d-none d-md-inline">
@@ -143,6 +159,7 @@ export const TimeEntry = (props: ITimeEntryProps) => {
                         to={`${match.url}/${timeEntry.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
                         color="danger"
                         size="sm"
+                        disabled={!(isAdmin || currentMember?.login === timeEntry?.memberLogin)}
                       >
                         <FontAwesomeIcon icon="trash" />{' '}
                         <span className="d-none d-md-inline">

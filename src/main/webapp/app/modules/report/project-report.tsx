@@ -1,13 +1,9 @@
 import axios from 'axios';
 import React, {useState, useEffect} from 'react';
-import {roundNumberToTwo} from 'app/shared/util/date-utils';
 import {
   Button,
   Row,
-  Col,
-  Form,
-  FormGroup,
-  Label,
+  Col
 } from 'reactstrap';
 import {TimeEntries} from "app/modules/logwork/logwork-components";
 import {TimeEntryToDuration} from "app/entities/time-entry/time-to-total.tsx";
@@ -52,7 +48,7 @@ export const ProjectReport = props => {
           projectStats?.membersReports ? (projectStats.membersReports.map((memberStats, i) => (
               <Row key={i}>
                 <h3>{memberStats.member.fio}</h3>
-                <TimeEntries entries={memberStats.entries} onUpdate={onUpdateTotalTime}/>
+                <TimeEntries entries={memberStats.entries} onUpdate={onUpdateTotalTime} member={memberStats.member}/>
               </Row>
             )))
             :

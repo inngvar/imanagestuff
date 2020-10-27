@@ -2,6 +2,8 @@ package org.manage.web.rest;
 
 import static javax.ws.rs.core.UriBuilder.fromPath;
 
+import io.quarkus.security.identity.SecurityIdentity;
+import org.manage.security.AuthoritiesConstants;
 import org.manage.service.TimeEntryService;
 import org.manage.web.rest.errors.BadRequestAlertException;
 import org.manage.web.util.HeaderUtil;
@@ -39,6 +41,8 @@ public class TimeEntryResource {
     @ConfigProperty(name = "application.name")
     String applicationName;
 
+    @Inject
+    SecurityIdentity securityIdentity;
 
     @Inject
     TimeEntryService timeEntryService;
@@ -106,7 +110,13 @@ public class TimeEntryResource {
     public Response getAllTimeEntries(@BeanParam PageRequestVM pageRequest, @Context UriInfo uriInfo) {
         log.debug("REST request to get a page of TimeEntries");
         var page = pageRequest.toPage();
-        Paged<TimeEntryDTO> result = timeEntryService.findAll(page);
+        Paged<TimeEntryDTO> result;
+        if(securityIdentity.getRoles().contains(AuthoritiesConstants.ADMIN)){
+            result = timeEntryService.findAll(page);
+        }else{
+            final String login = securityIdentity.getPrincipal().getName();
+            result = timeEntryService.findByParticipatingProjects(login, page);
+        }
         var response = Response.ok().entity(result.content);
         response = PaginationUtil.withPaginationInfo(response, uriInfo, result);
         return response.build();

@@ -5,6 +5,7 @@ import org.manage.domain.Member;
 import org.manage.domain.Project;
 import org.manage.domain.TimeEntry;
 import org.manage.service.dto.TimeEntryDTO;
+import org.manage.service.mapper.ProjectMapper;
 import org.manage.service.mapper.TimeEntryMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,12 @@ public class TimeEntryService {
 
     @Inject
     TimeEntryMapper timeEntryMapper;
+
+    @Inject
+    ProjectMapper projectMapper;
+
+    @Inject
+    ProjectService projectService;
 
     @Transactional
     public TimeEntryDTO persistOrUpdate(TimeEntryDTO timeEntryDTO) {
@@ -78,5 +85,12 @@ public class TimeEntryService {
         return TimeEntry.getAllByDateBetweenAndMemberAndProject(dateFrom, dateTo, Member.findById(memberId), Project.findById(projectId))
             .map(t -> timeEntryMapper.toDto(t))
             .collect(Collectors.toList());
+    }
+
+    public Paged<TimeEntryDTO> findByParticipatingProjects(String login, Page page) {
+        log.debug("Request to find all TimeEntries by member{}", login);
+        return new Paged<>(TimeEntry.find("From TimeEntry e WHERE e.project in ?1"
+            ,projectService.findByLogin(login).stream().map(p ->projectMapper.toEntity(p)).collect(Collectors.toList())).page(page))
+            .map(timeEntry -> timeEntryMapper.toDto((TimeEntry) timeEntry));
     }
 }

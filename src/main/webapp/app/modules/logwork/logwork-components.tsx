@@ -1,14 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
-import {durationToHours} from 'app/shared/util/date-utils';
 import {TimeEntryToDuration} from "app/entities/time-entry/time-to-total.tsx";
 import {
   Table,
   FormGroup,
   Input,
-  Label,
-  Button,
-  FontAwesomeIcon
+  Label
 } from 'reactstrap';
 import TimeEntryUpdateModal from "app/entities/time-entry/time-entry-modal";
 
@@ -59,20 +56,20 @@ export const MemberList = props => {
 }
 
 export const TimeEntries = props => {
-  const [totalHours, setTotalHours] = useState(0);
-  function setTotal() {
-    let sum = 0;
-    props.entries.forEach(e => {
-      sum = sum + durationToHours(e.duration);
-    });
-    setTotalHours(sum);
-  }
+  const [member, setMember] = useState(null);
+  const [currentMember, setCurrentMember] = useState(null);
+
   useEffect(() => {
-    if (!props.entries || props.entries.length < 1) {
-      return;
+    if (props.member !== null) {
+      setMember(props.member);
     }
-    setTotal()
   })
+  useEffect(() => {
+    axios.get("/api/members/current/").then(response => {
+      setCurrentMember(response.data);
+    })
+  })
+
 
   function saveEntity (event, errors, values, num) {
     const result = props.entries[num]
@@ -82,7 +79,6 @@ export const TimeEntries = props => {
     result.date = values.date
     axios.put('api/time-entries/', result)
     props.entries[num] = result
-    setTotal();
     props.onUpdate ? props.onUpdate() : '';
   }
 
@@ -108,7 +104,11 @@ export const TimeEntries = props => {
             <td>{entry.date}</td>
             <td>
               <div >
-                <TimeEntryUpdateModal entity={entry} saveEntity={saveEntity} num={i}/>
+                <TimeEntryUpdateModal entity={entry}
+                                      saveEntity={saveEntity}
+                                      num={i}
+                                      member={member}
+                                      currentMember={currentMember}/>
               </div>
             </td>
           </tr>
