@@ -76,4 +76,10 @@ public class MemberService {
         Project pr= Project.findById(projectDto.id);
         return pr.members.stream().map(m->memberMapper.toDto(m));
     }
+
+    public Optional<MemberDTO> findByLogin(String login) {
+        log.debug("Request to get Member : {}", login);
+        return Member.findByLogin(login)
+            .map(member -> memberMapper.toDto(member));
+    }
 }
