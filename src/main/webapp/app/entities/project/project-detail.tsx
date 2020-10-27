@@ -44,6 +44,10 @@ export const ProjectDetail = (props: IProjectDetailProps) => {
           </dt>
           <dd>{projectEntity.sendReports}</dd>
           <dt>
+            <Translate contentKey="imanagestuffApp.project.projectManager">Project Manager</Translate>
+          </dt>
+          <dd>{projectEntity.projectManagerLogin ? projectEntity.projectManagerLogin : ''}</dd>
+          <dt>
             <Translate contentKey="imanagestuffApp.project.members">Members</Translate>
           </dt>
           <dd>
@@ -51,7 +55,7 @@ export const ProjectDetail = (props: IProjectDetailProps) => {
               ? projectEntity.members.map((val, i) => (
                   <span key={val.id}>
                     <a>{val.login}</a>
-                    {projectEntity.members && i === projectEntity.members.length - 1 ? '' : ', '}
+                    {i === projectEntity.members.length - 1 ? '' : ', '}
                   </span>
                 ))
               : null}

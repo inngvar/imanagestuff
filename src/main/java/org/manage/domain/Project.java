@@ -39,6 +39,10 @@ public class Project extends PanacheEntityBase implements Serializable {
     @Column(name = "send_reports", length = 4000)
     public String sendReports;
 
+    @OneToOne
+    @JoinColumn(unique = true)
+    public Member projectManager;
+
     @ManyToMany
     @JoinTable(name = "project_members",
                joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
@@ -91,6 +95,7 @@ public class Project extends PanacheEntityBase implements Serializable {
             entity.name = project.name;
             entity.description = project.description;
             entity.sendReports = project.sendReports;
+            entity.projectManager = project.projectManager;
             entity.members = project.members;
         }
         return entity;
