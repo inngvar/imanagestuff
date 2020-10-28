@@ -31,6 +31,7 @@ export type ILogWorkProp = StateProps;
 export const LogWork = (props: ILogWorkProp) => {
   const {account} = props;
   const [projects, setProjects] = useState([]);
+  const [isDefaultProject, setIsDefaultProject] = useState(false);
   const [currentProject, setCurrentProject] = useState(null);
   const [currentMember, setCurrentMember] = useState(null);
   const [reportDate, setReportDate] = useState(new Date().toISOString().substr(0, 10));
@@ -45,11 +46,16 @@ export const LogWork = (props: ILogWorkProp) => {
     }
     axios.get("api/projects/current").then(response => {
       setProjects(response.data);
-      setCurrentProject(response.data[0]);
       const mem = response.data[0].members.find(m => m.login === account.login);
+      const dProject = response.data.find(p => p.id === mem.defaultProjectId)
+      setCurrentProject(dProject ? dProject : response.data[0]);
       setCurrentMember(mem);
     })
   }, [account])
+
+  useEffect(() =>{
+    setIsDefaultProject(currentProject?.id === currentMember?.defaultProjectId)
+  })
 
   function updateEntries() {
     axios.get("api/time-entries/of/" + currentMember.id + '/in/' + currentProject.id + '?date=' + reportDate).then(response => {
@@ -112,6 +118,15 @@ export const LogWork = (props: ILogWorkProp) => {
     });
   }
 
+  const updateDefaultProjectForMembers = () => {
+    const mem = currentMember
+    mem.defaultProjectId = currentProject.id
+    mem.defaultProjectName = currentProject.name
+    axios.put('/api/members', mem)
+    setIsDefaultProject(true)
+  };
+
+
   return (
     <Row>
       <Col md="9">
@@ -124,9 +139,12 @@ export const LogWork = (props: ILogWorkProp) => {
         {currentMember ? (
           <h5>{currentMember?.firstName + ' ' + currentMember?.lastName + '(' + currentMember.login + ')'}</h5>) : (
           <p></p>)}
-        <Form>
           <Row class="form-row">
-            <ProjectList projects={projects} value={currentProject} handler={updateCurrentProject}/>
+            <ProjectList projects={projects} value={currentProject}
+                         handler={updateCurrentProject}
+                         isDefaultProject={isDefaultProject}
+                         updateDefaultProject={updateDefaultProjectForMembers}
+                         showButton={true}/>
             <MemberList project={currentProject} value={currentMember} handler={updateCurrentMember}/>
           </Row>
           <FormGroup>
@@ -134,7 +152,6 @@ export const LogWork = (props: ILogWorkProp) => {
             <input type="date" name="reportDate" class-name="form-control" defaultValue={reportDate} value={reportDate}
                    onChange={event => setReportDate(event.target.value)}/>
           </FormGroup>
-        </Form>
         <Row>
           <Form className="jumbotron">
             <h3>Добавить задачу</h3>

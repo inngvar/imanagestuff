@@ -7,6 +7,8 @@ export interface IMember {
   firstName?: string;
   middleName?: string;
   lastName?: string;
+  defaultProjectName?: string;
+  defaultProjectId?: number;
   timeLogs?: ITimeLog[];
   projects?: IProject[];
 }

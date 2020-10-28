@@ -6,9 +6,10 @@ import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstr
 import { Translate, translate, ICrudGetAction, ICrudGetAllAction, ICrudPutAction } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
+import axios from 'axios'
 
 import { IProject } from 'app/shared/model/project.model';
-import { getEntities as getProjects } from 'app/entities/project/project.reducer';
+import { getEntity as getProjects } from 'app/entities/project/project.reducer';
 import { getEntity, updateEntity, createEntity, reset } from './member.reducer';
 import { IMember } from 'app/shared/model/member.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
@@ -17,10 +18,12 @@ import { mapIdList } from 'app/shared/util/entity-utils';
 export interface IMemberUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const MemberUpdate = (props: IMemberUpdateProps) => {
+  const [defaultProjectId, setDefaultProjectId] = useState('0');
   const [projectsId, setProjectsId] = useState('0');
+  const [projects, setProjects] = useState([]);
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
 
-  const { memberEntity, projects, loading, updating } = props;
+  const { memberEntity, loading, updating } = props;
 
   const handleClose = () => {
     props.history.push('/member' + props.location.search);
@@ -33,8 +36,15 @@ export const MemberUpdate = (props: IMemberUpdateProps) => {
       props.getEntity(props.match.params.id);
     }
 
-    props.getProjects();
   }, []);
+
+  useEffect(() => {
+      axios.get("api/projects/memberid/" + props.match.params.id).then(response => {
+        setProjects(response.data)
+        }
+      )
+    }
+  )
 
   useEffect(() => {
     if (props.updateSuccess) {
@@ -125,6 +135,21 @@ export const MemberUpdate = (props: IMemberUpdateProps) => {
                   }}
                 />
               </AvGroup>
+              <AvGroup>
+                <Label for="member-defaultProject">
+                  <Translate contentKey="imanagestuffApp.member.defaultProject">Default Project</Translate>
+                </Label>
+                <AvInput id="member-defaultProject" type="select" className="form-control" name="defaultProjectId">
+                  <option value="" key="0" />
+                  {projects
+                    ? projects.map(otherEntity => (
+                        <option value={otherEntity.id} key={otherEntity.id}>
+                          {otherEntity.name}
+                        </option>
+                      ))
+                    : null}
+                </AvInput>
+              </AvGroup>
               <Button tag={Link} id="cancel-save" to="/member" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;
@@ -147,7 +172,6 @@ export const MemberUpdate = (props: IMemberUpdateProps) => {
 };
 
 const mapStateToProps = (storeState: IRootState) => ({
-  projects: storeState.project.entities,
   memberEntity: storeState.member.entity,
   loading: storeState.member.loading,
   updating: storeState.member.updating,
