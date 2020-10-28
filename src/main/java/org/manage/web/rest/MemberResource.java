@@ -150,15 +150,5 @@ public class MemberResource {
         return ResponseUtil.wrapOrNotFound(memberDTO);
     }
 
-    /**
-     * Return current user as a member
-     *
-     * @return
-     */
-    @GET
-    @Path("isAdmin")
-    public Response isAdmin() {
-        return Response.ok(securityIdentity.getRoles().contains(AuthoritiesConstants.ADMIN)).build();
-    }
 
 }
