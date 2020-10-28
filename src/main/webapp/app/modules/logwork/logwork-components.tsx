@@ -7,8 +7,9 @@ import {
   FormGroup,
   Input,
   Label,
-  Button,
-  FontAwesomeIcon
+  InputGroup,
+  InputGroupAddon,
+  Button
 } from 'reactstrap';
 import TimeEntryUpdateModal from "app/entities/time-entry/time-entry-modal";
 
@@ -29,16 +30,25 @@ export const ProjectList = props => {
   })
 
   return (
-    <FormGroup className="col-md-6">
+    <div className="col-md-6">
       <Label for="project">Проект</Label>
-      <Input type="select" name="project" id="project" onChange={onChange}>
+      <InputGroup >
+        { props?.showButton ? <InputGroupAddon addonType="prepend">
+          <Button color="info"
+                  disabled={props.isDefaultProject}
+                  onClick={props.updateDefaultProject}>
+            По умолчанию
+          </Button>
+        </InputGroupAddon> : ''}
+        <Input type="select" name="project" id="project" onChange={onChange}>
         {props.projects.map((project, i) => (
           project === defaultProject ?
             <option key={i} value={project.id} selected>{project.name}</option> :
             <option key={i} value={project.id}>{project.name}</option>
         ))}
       </Input>
-    </FormGroup>
+      </InputGroup>
+    </div>
   );
 }
 

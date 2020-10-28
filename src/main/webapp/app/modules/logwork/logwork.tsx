@@ -140,12 +140,11 @@ export const LogWork = (props: ILogWorkProp) => {
           <h5>{currentMember?.firstName + ' ' + currentMember?.lastName + '(' + currentMember.login + ')'}</h5>) : (
           <p></p>)}
           <Row class="form-row">
-            <ProjectList projects={projects} value={currentProject} handler={updateCurrentProject}/>
-              <Button color="info"
-                      disabled={isDefaultProject}
-                      onClick={updateDefaultProjectForMembers}>
-                Установить как<br/>проект по умолчанию
-              </Button>
+            <ProjectList projects={projects} value={currentProject}
+                         handler={updateCurrentProject}
+                         isDefaultProject={isDefaultProject}
+                         updateDefaultProject={updateDefaultProjectForMembers}
+                         showButton={true}/>
             <MemberList project={currentProject} value={currentMember} handler={updateCurrentMember}/>
           </Row>
           <FormGroup>
