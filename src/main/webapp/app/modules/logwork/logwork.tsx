@@ -143,8 +143,7 @@ export const LogWork = (props: ILogWorkProp) => {
             <ProjectList projects={projects} value={currentProject}
                          handler={updateCurrentProject}
                          isDefaultProject={isDefaultProject}
-                         updateDefaultProject={updateDefaultProjectForMembers}
-                         showButton={true}/>
+                         updateDefaultProject={updateDefaultProjectForMembers}/>
             <MemberList project={currentProject} value={currentMember} handler={updateCurrentMember}/>
           </Row>
           <FormGroup>
