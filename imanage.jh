@@ -40,7 +40,6 @@ relationship OneToMany {
 
 relationship OneToOne {
 	Member{defaultProject(name)} to Project
-	Project{projectManager(login)} to Member
 }
 
 // Set pagination options
