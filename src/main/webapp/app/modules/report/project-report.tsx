@@ -1,13 +1,6 @@
 import axios from 'axios';
-import React, {useState, useEffect} from 'react';
-import {
-  Button,
-  Row,
-  Col,
-  Modal,
-  ModalBody,
-  ModalFooter,
-} from 'reactstrap';
+import React, {useEffect, useState} from 'react';
+import {Button, Col, Row} from 'reactstrap';
 import {TimeEntries} from "app/modules/logwork/logwork-components";
 import {TimeEntryToDuration} from "app/entities/time-entry/time-to-total.tsx";
 
@@ -16,8 +9,6 @@ export const ProjectReport = props => {
 
   const [projectStats, setProjectStats] = useState(null);
   const [updating, setUpdating] = useState(false);
-  const [modal, setModal] = useState(false);
-  const toggle = () => setModal(!modal);
   useEffect(() => {
     if (!props.project) {
       return;
@@ -28,16 +19,20 @@ export const ProjectReport = props => {
   }, [props.project, props.dateFrom, props.dateTo]);
 
   function sendReport() {
-    axios.post('api/reports/day-report/' + props.project.id + '?dateFrom=' + props.dateFrom + '&dateTo=' + props.dateTo);
-    toggle()
+    axios.post('api/reports/day-report/' + props.project.id + '?dateFrom=' + props.dateFrom + '&dateTo=' + props.dateTo).then(response =>{
+      if(response.status === 202){
+        alert("Отчет отправлен")
+      } else{
+        alert("Ошибка отправления")
+      }
+    });
   }
 
   const timeEntities = membersReports => {
     let result = [];
     if (membersReports) {
       for (let i = 0; i < membersReports.length; i++) {
-        const res = result.concat(membersReports[i].entries);
-        result = res;
+        result = result.concat(membersReports[i].entries);
       }
     }
     return result;
@@ -68,14 +63,6 @@ export const ProjectReport = props => {
           </h3>
         </Row>
       </Col>
-      <Modal isOpen={modal} toggle={toggle}>
-        <ModalBody>
-        Отчёт отправлен
-        </ModalBody>
-        <ModalFooter>
-        <Button color="secondary" onClick={toggle}>Cancel</Button>
-        </ModalFooter>
-      </Modal>
     </Row>
 
   );
