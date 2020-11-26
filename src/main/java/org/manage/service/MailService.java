@@ -1,10 +1,12 @@
 package org.manage.service;
 
+import org.jsoup.internal.StringUtil;
 import org.manage.config.JHipsterProperties;
 import org.manage.domain.User;
 import io.quarkus.mailer.MailTemplate;
 import io.quarkus.qute.api.ResourcePath;
 
+import java.util.Arrays;
 import java.util.concurrent.CompletionStage;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -78,10 +80,12 @@ public class MailService {
 
     public CompletionStage<Void> sendDayReport(DayReportDTO dayReportDTO){
         return dayReport
-            .to(dayReportDTO.project.sendReports.split(","))
+            .to(Arrays.stream(dayReportDTO.project.sendReports.split(",|;|:|\\s"))
+                .filter(a -> !StringUtil.isBlank(a))
+                .map(String::trim)
+                .toArray(String[]::new))
             .subject(dayReportDTO.subject)
             .data("report", dayReportDTO)
             .send();
-
     }
 }
