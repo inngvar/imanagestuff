@@ -2,25 +2,17 @@ import axios from 'axios';
 import '../home/home.scss';
 import './logwork.scss';
 import React, {useState, useEffect} from 'react';
-import {Link} from 'react-router-dom';
 import {durationToHours} from 'app/shared/util/date-utils';
-import {ITimeEntry} from 'app/shared/model/time-entry.model';
 import {Translate} from 'react-jhipster';
 import {connect} from 'react-redux';
 import {MemberList, ProjectList, TimeEntries} from "app/modules/logwork/logwork-components";
 import {
   Button,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
-  DropdownToggle,
   Row,
   Col,
   Form,
   FormGroup,
-  Input,
-  Label,
-  Container
+  Label
 } from 'reactstrap';
 import {IRootState} from 'app/shared/reducers';
 import project from "app/entities/project/project";
@@ -187,7 +179,7 @@ export const LogWork = (props: ILogWorkProp) => {
           </Form>
         </Row>
         <Row>
-          <TimeEntries entries={entries}/>
+          <TimeEntries entries={entries} member={currentMember}/>
         </Row>
       </Col>
     </Row>

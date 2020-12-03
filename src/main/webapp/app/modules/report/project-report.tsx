@@ -49,7 +49,7 @@ export const ProjectReport = props => {
           projectStats?.membersReports ? (projectStats.membersReports.map((memberStats, i) => (
               <Row key={i}>
                 <h3>{memberStats.member.fio}</h3>
-                <TimeEntries entries={memberStats.entries} onUpdate={onUpdateTotalTime}/>
+                <TimeEntries entries={memberStats.entries} onUpdate={onUpdateTotalTime} member={memberStats.member}/>
               </Row>
             )))
             :

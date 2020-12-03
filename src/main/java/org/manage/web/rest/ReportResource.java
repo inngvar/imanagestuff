@@ -1,13 +1,13 @@
 package org.manage.web.rest;
 
+import org.manage.security.AuthoritiesConstants;
 import org.manage.service.MailService;
 import org.manage.service.ReportService;
 import org.manage.service.dto.DayReportDTO;
-import org.manage.service.dto.ReportSingleDayRequestModel;
 
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -31,6 +31,7 @@ public class ReportResource {
 
     @POST
     @Path("day-report/{id}")
+    @RolesAllowed({AuthoritiesConstants.ADMIN,AuthoritiesConstants.USER})
     public CompletionStage<Response> sendDayReport(@PathParam("id") Long projectId, @QueryParam("dateFrom") LocalDate dateFrom, @QueryParam("dateTo") LocalDate dateTo) {
         final DayReportDTO dayReportDTO = reportService.generateReport(projectId, dateFrom, dateTo);
         return mailService.sendDayReport(dayReportDTO)
@@ -39,6 +40,7 @@ public class ReportResource {
 
     @GET
     @Path("project/{id}")
+    @RolesAllowed({AuthoritiesConstants.ADMIN,AuthoritiesConstants.USER})
     public Response projectReport(@PathParam("id") Long projectId, @QueryParam("dateFrom") LocalDate dateFrom, @QueryParam("dateTo") LocalDate dateTo) {
         return Response.ok(reportService.generateReport(projectId, dateFrom, dateTo))
             .build();

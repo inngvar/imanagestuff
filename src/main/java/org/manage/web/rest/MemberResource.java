@@ -2,6 +2,9 @@ package org.manage.web.rest;
 
 import static javax.ws.rs.core.UriBuilder.fromPath;
 
+import io.quarkus.security.identity.SecurityIdentity;
+import org.manage.domain.Member;
+import org.manage.security.AuthoritiesConstants;
 import org.manage.service.MemberService;
 import org.manage.web.rest.errors.BadRequestAlertException;
 import org.manage.web.util.HeaderUtil;
@@ -15,12 +18,12 @@ import org.manage.service.Paged;
 import org.manage.web.rest.vm.PageRequestVM;
 import org.manage.web.util.PaginationUtil;
 
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -39,6 +42,8 @@ public class MemberResource {
     @ConfigProperty(name = "application.name")
     String applicationName;
 
+    @Inject
+    SecurityIdentity securityIdentity;
 
     @Inject
     MemberService memberService;
@@ -49,6 +54,7 @@ public class MemberResource {
      * @return the {@link Response} with status {@code 201 (Created)} and with body the new memberDTO, or with status {@code 400 (Bad Request)} if the member has already an ID.
      */
     @POST
+    @RolesAllowed({AuthoritiesConstants.ADMIN,AuthoritiesConstants.USER})
     public Response createMember(@Valid MemberDTO memberDTO, @Context UriInfo uriInfo) {
         log.debug("REST request to save Member : {}", memberDTO);
         if (memberDTO.id != null) {
@@ -69,6 +75,7 @@ public class MemberResource {
      * or with status {@code 500 (Internal Server Error)} if the memberDTO couldn't be updated.
      */
     @PUT
+    @RolesAllowed({AuthoritiesConstants.ADMIN,AuthoritiesConstants.USER})
     public Response updateMember(@Valid MemberDTO memberDTO) {
         log.debug("REST request to update Member : {}", memberDTO);
         if (memberDTO.id == null) {
@@ -88,6 +95,7 @@ public class MemberResource {
      */
     @DELETE
     @Path("/{id}")
+    @RolesAllowed({AuthoritiesConstants.ADMIN,AuthoritiesConstants.USER})
     public Response deleteMember(@PathParam("id") Long id) {
         log.debug("REST request to delete Member : {}", id);
         memberService.delete(id);
@@ -103,6 +111,7 @@ public class MemberResource {
      * @return the {@link Response} with status {@code 200 (OK)} and the list of members in body.
      */
     @GET
+    @RolesAllowed({AuthoritiesConstants.ADMIN,AuthoritiesConstants.USER})
     public Response getAllMembers(@BeanParam PageRequestVM pageRequest, @Context UriInfo uriInfo) {
         log.debug("REST request to get a page of Members");
         var page = pageRequest.toPage();
@@ -121,10 +130,25 @@ public class MemberResource {
      */
     @GET
     @Path("/{id}")
-
+    @RolesAllowed({AuthoritiesConstants.ADMIN,AuthoritiesConstants.USER})
     public Response getMember(@PathParam("id") Long id) {
         log.debug("REST request to get Member : {}", id);
         Optional<MemberDTO> memberDTO = memberService.findOne(id);
         return ResponseUtil.wrapOrNotFound(memberDTO);
     }
+
+    /**
+     * Return current user as a member
+     *
+     * @return
+     */
+    @GET
+    @Path("current")
+    public Response getCurrentMember() {
+        final String login = securityIdentity.getPrincipal().getName();
+        Optional<MemberDTO> memberDTO  = memberService.findByLogin(login);
+        return ResponseUtil.wrapOrNotFound(memberDTO);
+    }
+
+
 }

@@ -4,6 +4,7 @@ import static javax.ws.rs.core.UriBuilder.fromPath;
 
 import io.quarkus.security.identity.SecurityIdentity;
 import org.manage.domain.Member;
+import org.manage.security.AuthoritiesConstants;
 import org.manage.service.MemberService;
 import org.manage.service.ProjectService;
 import org.manage.web.rest.errors.BadRequestAlertException;
@@ -18,6 +19,7 @@ import org.manage.service.Paged;
 import org.manage.web.rest.vm.PageRequestVM;
 import org.manage.web.util.PaginationUtil;
 
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -58,6 +60,7 @@ public class ProjectResource {
      * @return the {@link Response} with status {@code 201 (Created)} and with body the new projectDTO, or with status {@code 400 (Bad Request)} if the project has already an ID.
      */
     @POST
+    @RolesAllowed({AuthoritiesConstants.ADMIN,AuthoritiesConstants.USER})
     public Response createProject(@Valid ProjectDTO projectDTO, @Context UriInfo uriInfo) {
         log.debug("REST request to save Project : {}", projectDTO);
         if (projectDTO.id != null) {
@@ -78,6 +81,7 @@ public class ProjectResource {
      * or with status {@code 500 (Internal Server Error)} if the projectDTO couldn't be updated.
      */
     @PUT
+    @RolesAllowed({AuthoritiesConstants.ADMIN,AuthoritiesConstants.USER})
     public Response updateProject(@Valid ProjectDTO projectDTO) {
         log.debug("REST request to update Project : {}", projectDTO);
         if (projectDTO.id == null) {
@@ -97,6 +101,7 @@ public class ProjectResource {
      */
     @DELETE
     @Path("/{id}")
+    @RolesAllowed({AuthoritiesConstants.ADMIN,AuthoritiesConstants.USER})
     public Response deleteProject(@PathParam("id") Long id) {
         log.debug("REST request to delete Project : {}", id);
         projectService.delete(id);
@@ -113,6 +118,7 @@ public class ProjectResource {
      * @return the {@link Response} with status {@code 200 (OK)} and the list of projects in body.
      */
     @GET
+    @RolesAllowed({AuthoritiesConstants.ADMIN,AuthoritiesConstants.USER})
     public Response getAllProjects(@BeanParam PageRequestVM pageRequest, @Context UriInfo uriInfo, @QueryParam(value = "eagerload") boolean eagerload) {
         log.debug("REST request to get a page of Projects");
         var page = pageRequest.toPage();
@@ -123,8 +129,8 @@ public class ProjectResource {
             result = projectService.findAll(page);
         }
         var response = Response.ok().entity(result.content);
-        response = PaginationUtil.withPaginationInfo(response, uriInfo, result);
-        return response.build();
+        var response1 = PaginationUtil.withPaginationInfo(response, uriInfo, result);
+        return response1.build();
     }
 
 
@@ -136,6 +142,7 @@ public class ProjectResource {
      */
     @GET
     @Path("/{id}")
+    @RolesAllowed({AuthoritiesConstants.ADMIN,AuthoritiesConstants.USER})
     public Response getProject(@PathParam("id") Long id) {
         log.debug("REST request to get Project : {}", id);
         Optional<ProjectDTO> projectDTO = projectService.findOne(id);
@@ -149,6 +156,7 @@ public class ProjectResource {
      */
     @GET
     @Path("current")
+    @RolesAllowed({AuthoritiesConstants.ADMIN,AuthoritiesConstants.USER})
     public Response getUserProjects() {
         final String login = securityIdentity.getPrincipal().getName();
         List<ProjectDTO> result = projectService.findByLogin(login);
