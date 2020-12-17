@@ -12,6 +12,10 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class ReportService {
 
+    public static final String SUBJECT_DAY_REPORT_TEMPLATE = "Отчёт по проекту %s за %s";
+
+    public static final String SUBJECT_PERIOD_REPORT_TEMPLATE = "Отчёт по проекту %s за период с %s по %s";
+
     @Inject
     public ProjectService projectService;
 
@@ -33,10 +37,14 @@ public class ReportService {
         dayReportDTO.membersReports = membersReports;
         dayReportDTO.project = projectDto;
         dayReportDTO.totalHours = dayReportDTO.membersReports.stream().collect(Collectors.summingDouble(r -> r.totalHours));
-        dayReportDTO.subject = fromDate.equals(toDate) ?
-            LocalDateProvider.dateFormatter.format(fromDate) :
-            "период с "+ LocalDateProvider.dateFormatter.format(fromDate) + " по " + LocalDateProvider.dateFormatter.format(toDate);
+        dayReportDTO.subject = generateSubject(projectDto,fromDate, toDate);
         return dayReportDTO;
+    }
+
+    private String generateSubject(ProjectDTO projectDTO, LocalDate fromDate, LocalDate toDate) {
+        return fromDate.equals(toDate) ?
+            String.format(SUBJECT_DAY_REPORT_TEMPLATE, projectDTO.name,LocalDateProvider.formatDate(fromDate)) :
+            String.format(SUBJECT_PERIOD_REPORT_TEMPLATE, projectDTO.name, fromDate,toDate);
     }
 
     private MemberReportInfoDTO toMemberReportInfoDTO(MemberDTO m, LocalDate fromDate, LocalDate toDate,  Long projectId) {
