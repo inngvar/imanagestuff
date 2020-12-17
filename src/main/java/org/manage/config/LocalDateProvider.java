@@ -30,4 +30,8 @@ public class LocalDateProvider implements ParamConverterProvider {
             }
         };
     }
+
+    public static String formatDate(LocalDate date){
+        return  dateFormatter.format(date);
+    }
 }
