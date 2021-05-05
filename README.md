@@ -29,26 +29,26 @@ Add the `help` flag on any command to see how you can use it. For example, `npm 
 The `npm run` command will list all of the scripts available to run for this project.
 
 #### How to add new entity or change exist entity
+
 switch to branch jhipster
 describe you changes in imange.jh
-* regenerate application with 
 
+- regenerate application with
 
-    jhipser import-jdl --skip-db-changelog imange.jh
-    
-* commit changes
-* switch to yours feature branch
-* merge changes from jhipster
-* generate diff changelog
-  * start application, this will create database with current scheme
-  * stop application
-  * run command `./gradlew liquibaseDiffChangelog`   
-  * changelog file will be generated under `resources/config/liquibase/changelog`
-  * check content of generated file
-  * add the file to `resources/config/liquibase/master.xml`
-  * lunch application and check all is working fine
-* push changes 
+  jhipster import-jdl --skip-db-changelog imanage.jh
 
+- commit changes
+- switch to yours feature branch
+- merge changes from jhipster
+- generate diff changelog
+  - start application, this will create database with current scheme
+  - stop application
+  - run command `./gradlew liquibaseDiffChangelog`
+  - changelog file will be generated under `resources/config/liquibase/changelog`
+  - check content of generated file
+  - add the file to `resources/config/liquibase/master.xml`
+  - lunch application and check all is working fine
+- push changes
 
 ### PWA Support
 
