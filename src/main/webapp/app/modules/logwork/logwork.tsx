@@ -76,8 +76,6 @@ export const LogWork = (props: ILogWorkProp) => {
 
   const updateCurrentProject = selectedProject => {
     setCurrentProject(selectedProject);
-    const mem = selectedProject.members.find(member => member.login === account.login);
-    setCurrentMember(mem);
   }
 
   const updateCurrentMember = member => {

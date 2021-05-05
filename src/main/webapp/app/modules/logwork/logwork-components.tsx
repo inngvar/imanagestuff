@@ -12,7 +12,7 @@ import {
   Button
 } from 'reactstrap';
 import TimeEntryUpdateModal from "app/entities/time-entry/time-entry-modal";
-
+import PropTypes from 'prop-types';
 
 export const ProjectList = props => {
 
@@ -50,6 +50,15 @@ export const ProjectList = props => {
       </InputGroup>
     </div>
   );
+}
+
+ProjectList.propTypes = {
+  isDefaultProject: PropTypes.bool,
+  updateDefaultProject: PropTypes.func,
+  projects: PropTypes.arrayOf(PropTypes.object),
+  value: PropTypes.object,
+  handler: PropTypes.func,
+  showButton: PropTypes.bool
 }
 
 export const MemberList = props => {

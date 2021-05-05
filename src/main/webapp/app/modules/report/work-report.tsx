@@ -1,19 +1,15 @@
 import axios from 'axios';
 import '../home/home.scss';
 import React, {useState, useEffect} from 'react';
-import {durationToHours} from 'app/shared/util/date-utils';
-import {Translate} from 'react-jhipster';
 import {connect} from 'react-redux';
-import {MemberList, ProjectList, TimeEntries} from "app/modules/logwork/logwork-components";
+import {ProjectList} from "app/modules/logwork/logwork-components";
 import {
-  Button,
   Row,
   Col,
   Form,
   FormGroup,
   Label,
 } from 'reactstrap';
-import {cleanEntity} from "app/shared/util/entity-utils";
 import {ProjectReport} from "app/modules/report/project-report";
 
 export type ILogWorkProp = StateProps;
@@ -31,7 +27,9 @@ export const WorkReport = (props: ILogWorkProp) => {
     }
     axios.get("api/projects/current").then(response => {
       setProjects(response.data);
-      setCurrentProject(response.data[0]);
+      const mem = response.data[0].members.find(m => m.login === account.login);
+      const dProject = response.data.find(p => p.id === mem.defaultProjectId)
+      setCurrentProject(dProject ? dProject : response.data[0]);
     })
   }, [account])
 

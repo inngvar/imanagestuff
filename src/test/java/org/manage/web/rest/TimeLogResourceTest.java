@@ -1,14 +1,5 @@
 package org.manage.web.rest;
 
-import static io.restassured.RestAssured.given;
-import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.Response.Status.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.*;
-
-import org.manage.TestUtil;
-import org.manage.service.dto.TimeLogDTO;
 import io.quarkus.liquibase.LiquibaseFactory;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -17,17 +8,21 @@ import liquibase.Liquibase;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.manage.TestUtil;
+import org.manage.service.dto.TimeLogDTO;
 
 import javax.inject.Inject;
-
-    import java.time.LocalDate;
-import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.time.ZoneOffset;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import static org.manage.TestUtil.sameInstant;
+
+import static io.restassured.RestAssured.given;
+import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.Response.Status.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
 
 @QuarkusTest
 public class TimeLogResourceTest {
@@ -490,7 +485,7 @@ public class TimeLogResourceTest {
             .statusCode(OK.getStatusCode())
             .contentType(APPLICATION_JSON)
             .body("id", is(timeLogDTO.id.intValue()))
-            
+
                 .body("date", is(TestUtil.formatDateTime(DEFAULT_DATE)))
                 .body("checkIn", is(TestUtil.formatDateTime(DEFAULT_CHECK_IN)))
                 .body("checkOut", is(TestUtil.formatDateTime(DEFAULT_CHECK_OUT)));

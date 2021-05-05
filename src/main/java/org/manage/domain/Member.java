@@ -47,7 +47,7 @@ public class Member extends PanacheEntityBase implements Serializable {
     public String lastName;
 
     @OneToOne
-    @JoinColumn(unique = true)
+    @JoinColumn
     public Project defaultProject;
 
     @OneToMany(mappedBy = "member")
