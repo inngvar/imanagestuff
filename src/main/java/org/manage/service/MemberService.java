@@ -62,6 +62,7 @@ public class MemberService {
 
     /**
      * Get all the members.
+     *
      * @param page the pagination information.
      * @return the list of entities.
      */
@@ -72,9 +73,9 @@ public class MemberService {
     }
 
 
-    public Stream<MemberDTO>    findAllByProject(ProjectDTO projectDto) {
-        Project pr= Project.findById(projectDto.id);
-        return pr.members.stream().map(m->memberMapper.toDto(m));
+    public Stream<MemberDTO> findAllByProject(ProjectDTO projectDto) {
+        Project pr = Project.findById(projectDto.id);
+        return pr.members.stream().map(m -> memberMapper.toDto(m));
     }
 
     public Optional<MemberDTO> findByLogin(String login) {

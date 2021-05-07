@@ -54,3 +54,14 @@ export  const ReportMenu = props =>(
     </NavLink>
   </NavItem>
 );
+
+export const LogTimeMenuItem = props => (
+  <NavItem>
+    <NavLink tag={Link} to="/logtime" className="d-flex align-items-center">
+      <FontAwesomeIcon icon="user-clock"/>
+      <span>
+          <Translate contentKey="global.menu.checkin">TimeLog</Translate>
+      </span>
+    </NavLink>
+  </NavItem>
+);

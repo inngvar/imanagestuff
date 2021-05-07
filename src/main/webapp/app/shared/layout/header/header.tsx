@@ -8,7 +8,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {NavLink as Link} from 'react-router-dom';
 import LoadingBar from 'react-redux-loading-bar';
 
-import {Home, Brand, LogWork, ReportMenu} from './header-components';
+import {Home, Brand, LogWork, ReportMenu, LogTimeMenuItem} from './header-components';
 import {AdminMenu, EntitiesMenu, AccountMenu, LocaleMenu} from '../menus';
 
 export interface IHeaderProps {
@@ -55,6 +55,7 @@ const Header = (props: IHeaderProps) => {
             <Home/>
             {props.isAuthenticated && <ReportMenu/>}
             {props.isAuthenticated && <LogWork/>}
+            {props.isAuthenticated && <LogTimeMenuItem/>}
             {props.isAuthenticated && <EntitiesMenu/>}
             {props.isAuthenticated && props.isAdmin && (
               <AdminMenu showSwagger={props.isSwaggerEnabled} showDatabase={!props.isInProduction}/>

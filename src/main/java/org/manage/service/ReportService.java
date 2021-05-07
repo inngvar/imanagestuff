@@ -1,12 +1,15 @@
 package org.manage.service;
 
 import org.manage.config.LocalDateProvider;
+import org.manage.domain.Member;
 import org.manage.service.dto.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -16,6 +19,10 @@ public class ReportService {
 
     public static final String SUBJECT_PERIOD_REPORT_TEMPLATE = "Отчёт по проекту %s за период с %s по %s";
 
+    public static final String SUBJECT_DAY_TIME_LOG_REPORT_TEMPLATE = "Отчёт по отметке времени за %s";
+
+    public static final String SUBJECT_PERIOD_TIME_LOG_REPORT_TEMPLATE = "Отчёт по отметке времени за период с %s по %s";
+
     @Inject
     public ProjectService projectService;
 
@@ -24,6 +31,9 @@ public class ReportService {
 
     @Inject
     public TimeEntryService timeEntryService;
+
+    @Inject
+    public TimeLogService timeLogService;
 
     public DayReportDTO generateReport(final Long projectId, final LocalDate fromDate, final LocalDate toDate) {
         final ProjectDTO projectDto = projectService.findOne(projectId).orElseThrow();
@@ -36,22 +46,58 @@ public class ReportService {
         dayReportDTO.toDate = toDate;
         dayReportDTO.membersReports = membersReports;
         dayReportDTO.project = projectDto;
-        dayReportDTO.totalHours = dayReportDTO.membersReports.stream().collect(Collectors.summingDouble(r -> r.totalHours));
-        dayReportDTO.subject = generateSubject(projectDto,fromDate, toDate);
+        dayReportDTO.totalHours = dayReportDTO.membersReports.stream().mapToDouble(r -> r.totalHours).sum();
+        dayReportDTO.subject = generateSubject(projectDto, fromDate, toDate);
         return dayReportDTO;
+    }
+
+    public TimeLogReportDTO generateTimeLogReport(final LocalDate fromDate, final LocalDate toDate) {
+        List<TimeLogDTO> logDTOS = timeLogService.findByDateBetween(fromDate, toDate);
+
+        Map<Long, List<TimeLogDTO>> groupByMembers = logDTOS.stream()
+            .filter(dto -> dto.checkIn != null && dto.checkOut != null)
+            .collect(Collectors.groupingBy(d -> d.memberId));
+
+        TimeLogReportDTO reportDTO = new TimeLogReportDTO();
+
+        for (Map.Entry<Long, List<TimeLogDTO>> entry : groupByMembers.entrySet()) {
+
+            MemberTimeLogReportInfoDTO memDTO = new MemberTimeLogReportInfoDTO();
+            memDTO.member = memberService.findOne(entry.getKey()).orElse(null);
+            memDTO.entries = entry.getValue();
+
+            double memTotalSeconds = 0;
+            for (TimeLogDTO dto : entry.getValue()) {
+                memTotalSeconds += Duration.between(dto.checkIn, dto.checkOut).getSeconds();
+            }
+            memDTO.totalHours = memTotalSeconds / 60.0 / 60.0;
+
+            reportDTO.membersReports.add(memDTO);
+        }
+
+        reportDTO.totalHours = reportDTO.membersReports.stream().mapToDouble(r -> r.totalHours).sum();
+        reportDTO.subject = generateTimeLogSubject(fromDate, toDate);
+
+        return reportDTO;
+    }
+
+    private String generateTimeLogSubject(LocalDate fromDate, LocalDate toDate) {
+        return fromDate.equals(toDate) ?
+            String.format(SUBJECT_DAY_TIME_LOG_REPORT_TEMPLATE, LocalDateProvider.formatDate(fromDate)) :
+            String.format(SUBJECT_PERIOD_TIME_LOG_REPORT_TEMPLATE, fromDate, toDate);
     }
 
     private String generateSubject(ProjectDTO projectDTO, LocalDate fromDate, LocalDate toDate) {
         return fromDate.equals(toDate) ?
-            String.format(SUBJECT_DAY_REPORT_TEMPLATE, projectDTO.name,LocalDateProvider.formatDate(fromDate)) :
-            String.format(SUBJECT_PERIOD_REPORT_TEMPLATE, projectDTO.name, fromDate,toDate);
+            String.format(SUBJECT_DAY_REPORT_TEMPLATE, projectDTO.name, LocalDateProvider.formatDate(fromDate)) :
+            String.format(SUBJECT_PERIOD_REPORT_TEMPLATE, projectDTO.name, fromDate, toDate);
     }
 
-    private MemberReportInfoDTO toMemberReportInfoDTO(MemberDTO m, LocalDate fromDate, LocalDate toDate,  Long projectId) {
+    private MemberReportInfoDTO toMemberReportInfoDTO(MemberDTO m, LocalDate fromDate, LocalDate toDate, Long projectId) {
         MemberReportInfoDTO dto = new MemberReportInfoDTO();
         dto.member = m;
         dto.entries = timeEntryService.findByMemberAndDateAndProject(m.id, fromDate, toDate, projectId);
-        Double totalSeconds = dto.entries.stream().collect(Collectors.summingLong(e -> e.duration.toSeconds())).doubleValue();
+        double totalSeconds = ((Long) dto.entries.stream().mapToLong(e -> e.duration.toSeconds()).sum()).doubleValue();
         dto.totalHours = totalSeconds / 60.0 / 60.0;
         return dto;
     }

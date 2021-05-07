@@ -10,6 +10,7 @@ import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.stream.Stream;
 
 /**
  * A TimeLog.
@@ -76,6 +77,16 @@ public class TimeLog extends PanacheEntityBase implements Serializable {
 
     public TimeLog persistOrUpdate() {
         return persistOrUpdate(this);
+    }
+
+    public static Stream<TimeLog> getAllByDateBetween(LocalDate dateFrom, LocalDate dateTo) {
+        return find("From TimeLog e WHERE e.date >= ?1 AND e.date<=?2", dateFrom, dateTo)
+            .stream();
+    }
+
+    public static Stream<TimeLog> getAllByDateBetweenAndMember(LocalDate dateFrom, LocalDate dateTo, Member member) {
+        return find("From TimeLog e WHERE e.member=?1 AND (e.date >= ?2 AND e.date<=?3)", member, dateFrom, dateTo)
+            .stream();
     }
 
     public static TimeLog update(TimeLog timeLog) {

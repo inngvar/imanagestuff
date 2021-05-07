@@ -1,27 +1,31 @@
 package org.manage.web.rest;
 
-import static javax.ws.rs.core.UriBuilder.fromPath;
-
-import org.manage.service.TimeLogService;
-import org.manage.web.rest.errors.BadRequestAlertException;
-import org.manage.web.util.HeaderUtil;
-import org.manage.web.util.ResponseUtil;
-import org.manage.service.dto.TimeLogDTO;
-
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.manage.service.Paged;
+import org.manage.service.TimeLogService;
+import org.manage.service.dto.TimeLogDTO;
+import org.manage.web.rest.errors.BadRequestAlertException;
+import org.manage.web.rest.vm.PageRequestVM;
+import org.manage.web.util.HeaderUtil;
+import org.manage.web.util.PaginationUtil;
+import org.manage.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.manage.service.Paged;
-import org.manage.web.rest.vm.PageRequestVM;
-import org.manage.web.util.PaginationUtil;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
-import javax.ws.rs.core.*;
-import java.util.List;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Optional;
+
+import static javax.ws.rs.core.UriBuilder.fromPath;
 
 /**
  * REST controller for managing {@link org.manage.domain.TimeLog}.
@@ -108,7 +112,7 @@ public class TimeLogResource {
         var page = pageRequest.toPage();
         Paged<TimeLogDTO> result = timeLogService.findAll(page);
         var response = Response.ok().entity(result.content);
-        response = PaginationUtil.withPaginationInfo(response, uriInfo, result);
+        PaginationUtil.withPaginationInfo(response, uriInfo, result);
         return response.build();
     }
 
@@ -126,5 +130,43 @@ public class TimeLogResource {
         log.debug("REST request to get TimeLog : {}", id);
         Optional<TimeLogDTO> timeLogDTO = timeLogService.findOne(id);
         return ResponseUtil.wrapOrNotFound(timeLogDTO);
+    }
+
+    @POST
+    @Path("/{memberId}/checkin")
+    public Response checkin(@PathParam("memberId") Long memberId, @Context UriInfo uriInfo) {
+        TimeLogDTO timeLogDTO = makeCheckInDTO(memberId);
+
+        var result = timeLogService.updateCheckIn(timeLogDTO);
+        var response = Response.created(fromPath(uriInfo.getPath()).path(result.id.toString()).build()).entity(result);
+        HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.id.toString()).forEach(response::header);
+        return response.build();
+    }
+
+    @POST
+    @Path("/{memberId}/checkout")
+    public Response checkout(@PathParam("memberId") Long memberId, @Context UriInfo uriInfo) {
+        TimeLogDTO timeLogDTO = mackCheckOutDTO(memberId);
+
+        var result = timeLogService.updateCheckOut(timeLogDTO);
+        var response = Response.created(fromPath(uriInfo.getPath()).path(result.id.toString()).build()).entity(result);
+        HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.id.toString()).forEach(response::header);
+        return response.build();
+    }
+
+    private TimeLogDTO makeCheckInDTO(Long memberId) {
+        TimeLogDTO timeLogDTO = new TimeLogDTO();
+        timeLogDTO.date = LocalDate.now(ZoneId.systemDefault());
+        timeLogDTO.checkIn = ZonedDateTime.now(ZoneId.systemDefault());
+        timeLogDTO.memberId = memberId;
+        return timeLogDTO;
+    }
+
+    private TimeLogDTO mackCheckOutDTO(Long memberId) {
+        TimeLogDTO timeLogDTO = new TimeLogDTO();
+        timeLogDTO.date = LocalDate.now(ZoneId.systemDefault());
+        timeLogDTO.checkOut = ZonedDateTime.now(ZoneId.systemDefault());
+        timeLogDTO.memberId = memberId;
+        return timeLogDTO;
     }
 }
