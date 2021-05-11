@@ -81,3 +81,45 @@ LogTimeModal.propTypes = {
   toggle: PropTypes.func,
   onSave: PropTypes.func
 }
+
+export const LogTimeReportModal = props => {
+
+  return (
+    <Modal key="logModal" isOpen={props.isShow} toggle={props.toggle}>
+      <ModalHeader toggle={props.toggle}>{translate("imanagestuffApp.timeLog.report.params")}</ModalHeader>
+      <ModalBody>
+        <AvForm onSubmit={props.onSend}>
+          <AvGroup>
+            <Label id="emailsLabel" for="time-log-emails">
+              <Translate contentKey="imanagestuffApp.timeLog.report.addresses">Addresses</Translate>
+            </Label>
+            <AvField
+              id="time-log-emails"
+              type="text"
+              name="addresses"
+              validate={{
+                maxLength: { value: 256, errorMessage: translate('entity.validation.maxlength', { max: 256 }) },
+                required: { value: true, errorMessage: translate('entity.validation.required') }
+              }}
+            />
+          </AvGroup>
+          <FormGroup>
+            <Button onClick={props.toggle} id="cancel-send" replace color="link">
+              <Translate contentKey="entity.action.back">Back</Translate>
+            </Button>
+            &nbsp;&nbsp;
+            <Button color="success" id="send-report" type="submit" >
+              <Translate contentKey="imanagestuffApp.timeLog.report.send">Send</Translate>
+            </Button>
+          </FormGroup>
+        </AvForm>
+      </ModalBody>
+    </Modal>
+  )
+}
+
+LogTimeReportModal.propTypes = {
+  isShow: PropTypes.bool,
+  toggle: PropTypes.func,
+  onSend: PropTypes.func
+}

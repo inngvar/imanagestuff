@@ -1,5 +1,6 @@
 package org.manage.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.internal.StringUtil;
 import org.manage.config.JHipsterProperties;
 import org.manage.domain.User;
@@ -7,11 +8,13 @@ import io.quarkus.mailer.MailTemplate;
 import io.quarkus.qute.api.ResourcePath;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.concurrent.CompletionStage;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.manage.service.dto.DayReportDTO;
+import org.manage.service.dto.TimeLogReportDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +37,7 @@ public class MailService {
 
     final MailTemplate passwordResetEmail;
     private final MailTemplate dayReport;
+    private final MailTemplate timeReport;
 
     @Inject
     public MailService(
@@ -41,12 +45,14 @@ public class MailService {
         @ResourcePath("mail/activationEmail") MailTemplate activationEmail,
         @ResourcePath("mail/creationEmail") MailTemplate creationEmail,
         @ResourcePath("mail/passwordResetEmail") MailTemplate passwordResetEmail,
-        @ResourcePath("mail/dayReport") MailTemplate dayReport) {
+        @ResourcePath("mail/dayReport") MailTemplate dayReport,
+        @ResourcePath("mail/timeReport") MailTemplate timeReport) {
         this.jHipsterProperties = jHipsterProperties;
         this.activationEmail = activationEmail;
         this.creationEmail = creationEmail;
         this.passwordResetEmail = passwordResetEmail;
         this.dayReport = dayReport;
+        this.timeReport = timeReport;
     }
 
     public CompletionStage<Void> sendEmailFromTemplate(User user, MailTemplate template, String subject) {
@@ -78,7 +84,7 @@ public class MailService {
         return sendEmailFromTemplate(user, passwordResetEmail, "jhipsterSampleApplication password reset");
     }
 
-    public CompletionStage<Void> sendDayReport(DayReportDTO dayReportDTO){
+    public CompletionStage<Void> sendDayReport(DayReportDTO dayReportDTO) {
         return dayReport
             .to(Arrays.stream(dayReportDTO.project.sendReports.split(",|;|:|\\s"))
                 .filter(a -> !StringUtil.isBlank(a))
@@ -86,6 +92,16 @@ public class MailService {
                 .toArray(String[]::new))
             .subject(dayReportDTO.subject)
             .data("report", dayReportDTO)
+            .send();
+    }
+
+    public CompletionStage<Void> sendTimeReport(TimeLogReportDTO dto, Collection<String> addresses) {
+        return timeReport.to(addresses
+            .stream().filter(StringUtils::isNotBlank)
+            .map(String::trim)
+            .toArray(String[]::new))
+            .subject(dto.subject)
+            .data("report", dto)
             .send();
     }
 }

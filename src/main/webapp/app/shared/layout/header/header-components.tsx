@@ -1,11 +1,13 @@
 import React from 'react';
-import {Translate} from 'react-jhipster';
+import {translate, Translate} from 'react-jhipster';
 
 import {NavItem, NavLink, NavbarBrand} from 'reactstrap';
 import {NavLink as Link} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import appConfig from 'app/config/constants';
+import {NavDropdown} from "app/shared/layout/menus/menu-components";
+import MenuItem from "app/shared/layout/menus/menu-item";
 
 export const BrandIcon = props => (
   <div {...props} className="brand-icon">
@@ -44,15 +46,25 @@ export const LogWork = props => (
     </NavLink>
   </NavItem>
 );
-export  const ReportMenu = props =>(
-  <NavItem>
-    <NavLink tag={Link} to="/report" className="d-flex align-items-center">
+export const ReportMenu = props => (
+  <NavDropdown
+    name={translate("global.menu.reports")}
+    id="reports-menu"
+    style={{maxHeight: '80vh', overflow: 'auto'}}
+  >
+    <MenuItem icon="asterisk" to="/report">
       <FontAwesomeIcon icon="info"/>
       <span>
           <Translate contentKey="global.menu.report">WorkLog</Translate>
       </span>
-    </NavLink>
-  </NavItem>
+    </MenuItem>
+    <MenuItem icon="asterisk" to="/time-report">
+      <FontAwesomeIcon icon="info"/>
+      <span>
+          <Translate contentKey="global.menu.time-report">TimeLog</Translate>
+      </span>
+    </MenuItem>
+  </NavDropdown>
 );
 
 export const LogTimeMenuItem = props => (

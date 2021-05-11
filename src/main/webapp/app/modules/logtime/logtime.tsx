@@ -9,6 +9,7 @@ import {
 import {Translate, translate} from 'react-jhipster';
 import {toast} from 'react-toastify';
 import {LogTimeTable} from "app/modules/logtime/logtime-components";
+import { NavLink as Link } from 'react-router-dom';
 
 export type ILogTimeProp = StateProps;
 
@@ -111,21 +112,15 @@ export const LogTime = (props: ILogTimeProp) => {
           &nbsp;&nbsp;&nbsp;&nbsp;
           <Button color="success" onClick={sendCheckOut} disabled={!isEnableButtons}>Отметить убытие</Button>
           &nbsp;&nbsp;&nbsp;&nbsp;
-          <Button color="warning" disabled={!isEnableButtons}>Сформировать отчет</Button>
+          <Button color="link" tag={Link} to={"/time-report"} replace>Сформировать отчет</Button>
         </Col>
       </Row>
       <br/>
       <LogTimeTable
         entries={entries}
       />
-      {/*<LogTimeModal
-        toggle={toggleLogModal}
-        onSave={saveLog}
-        isShow={isShowLogModal}
-      />*/}
     </div>
   )
-
 }
 
 const mapStateToProps = storeState => ({

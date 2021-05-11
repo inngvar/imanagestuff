@@ -1,6 +1,7 @@
 package org.manage.template;
 
 import io.quarkus.qute.TemplateExtension;
+import org.apache.commons.lang3.StringUtils;
 
 import java.text.DecimalFormat;
 import java.time.Duration;
@@ -25,6 +26,17 @@ public class DurationExtension {
         String result = hours > 0 ? hours + " " + decOfNum(hours, new String[]{"час", "часа", "часов"}) : "";
         result += minutes > 0 ? " " + minutes + " " + decOfNum(minutes, new String[]{"минута", "минуты", "минут"}) : "";
         return result.trim();
+    }
+
+    public static String roundWithSeconds(Double totalHours){
+        String result = round(totalHours);
+        if (StringUtils.isBlank(result)) {
+            int seconds = (int) Math.round(60 * 60 * totalHours);
+            String unitString = seconds > 0 ? decOfNum(seconds, new String[]{"секунда", "секунды", "секунд"}) : "";
+            result += seconds + " " + unitString;
+            return result.trim();
+        }
+        return result;
     }
 
 }

@@ -6,7 +6,9 @@
       "home": "Главная",
       "worklog": "Отметка времени",
       "checkin": "Прибытие/убытие",
+      "reports": "Отчёты",
       "report": "Отчёт",
+      "time-report": "Отчёт о прибытии/убытии",
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Сущности",
