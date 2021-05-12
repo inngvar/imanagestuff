@@ -19,7 +19,12 @@
       "date": "Date",
       "checkIn": "Check In",
       "checkOut": "Check Out",
-      "member": "Member"
+      "member": "Member",
+      "report": {
+        "send": "Отправить",
+        "addresses": "Адресаты",
+        "params": "Параметры отчета"
+      }
     }
   }
 }

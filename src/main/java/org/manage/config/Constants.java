@@ -14,5 +14,7 @@ public final class Constants {
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
     public static final String LOCAL_DATE_FORMAT = "yyyy-MM-dd";
+
+    public static final String ISO_ZONED_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZZ";
     private Constants() {}
 }

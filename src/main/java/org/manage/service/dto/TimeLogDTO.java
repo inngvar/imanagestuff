@@ -8,22 +8,21 @@ import javax.json.bind.annotation.JsonbDateFormat;
 import java.time.ZonedDateTime;
 import javax.validation.constraints.*;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * A DTO for the {@link org.manage.domain.TimeLog} entity.
  */
 @RegisterForReflection
 public class TimeLogDTO implements Serializable {
-    
+
     public Long id;
 
     @NotNull
     @JsonbDateFormat(value = Constants.LOCAL_DATE_FORMAT)
     public LocalDate date;
-
+    @JsonbDateFormat(value = Constants.ISO_ZONED_DATE_TIME_FORMAT)
     public ZonedDateTime checkIn;
-
+    @JsonbDateFormat(value = Constants.ISO_ZONED_DATE_TIME_FORMAT)
     public ZonedDateTime checkOut;
 
     public Long memberId;

@@ -11,7 +11,12 @@ import { IMember } from 'app/shared/model/member.model';
 import { getEntities as getMembers } from 'app/entities/member/member.reducer';
 import { getEntity, updateEntity, createEntity, reset } from './time-log.reducer';
 import { ITimeLog } from 'app/shared/model/time-log.model';
-import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
+import {
+  convertDateTimeFromServer,
+  convertDateTimeToServer,
+  displayDefaultDateTime,
+  formatDateTimeWithZone
+} from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 
 export interface ITimeLogUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
@@ -43,8 +48,8 @@ export const TimeLogUpdate = (props: ITimeLogUpdateProps) => {
   }, [props.updateSuccess]);
 
   const saveEntity = (event, errors, values) => {
-    values.checkIn = convertDateTimeToServer(values.checkIn);
-    values.checkOut = convertDateTimeToServer(values.checkOut);
+    values.checkIn = formatDateTimeWithZone(values.checkIn);
+    values.checkOut = formatDateTimeWithZone(values.checkOut);
 
     if (errors.length === 0) {
       const entity = {

@@ -5,7 +5,10 @@
     "menu": {
       "home": "Главная",
       "worklog": "Отметка времени",
+      "checkin": "Прибытие/убытие",
+      "reports": "Отчёты",
       "report": "Отчёт",
+      "time-report": "Отчёт о прибытии/убытии",
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Сущности",
@@ -141,5 +144,5 @@
       "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""
     }
   },
-  "footer": "Это ваш футтер"
+  "footer": "Это ваш футер"
 }

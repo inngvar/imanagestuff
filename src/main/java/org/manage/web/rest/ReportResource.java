@@ -4,6 +4,7 @@ import org.manage.security.AuthoritiesConstants;
 import org.manage.service.MailService;
 import org.manage.service.ReportService;
 import org.manage.service.dto.DayReportDTO;
+import org.manage.service.dto.TimeLogReportDTO;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.ApplicationScoped;
@@ -12,6 +13,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 @Path("/api/reports")
@@ -31,7 +33,7 @@ public class ReportResource {
 
     @POST
     @Path("day-report/{id}")
-    @RolesAllowed({AuthoritiesConstants.ADMIN,AuthoritiesConstants.USER})
+    @RolesAllowed({AuthoritiesConstants.ADMIN, AuthoritiesConstants.USER})
     public CompletionStage<Response> sendDayReport(@PathParam("id") Long projectId, @QueryParam("dateFrom") LocalDate dateFrom, @QueryParam("dateTo") LocalDate dateTo) {
         final DayReportDTO dayReportDTO = reportService.generateReport(projectId, dateFrom, dateTo);
         return mailService.sendDayReport(dayReportDTO)
@@ -40,10 +42,27 @@ public class ReportResource {
 
     @GET
     @Path("project/{id}")
-    @RolesAllowed({AuthoritiesConstants.ADMIN,AuthoritiesConstants.USER})
+    @RolesAllowed({AuthoritiesConstants.ADMIN, AuthoritiesConstants.USER})
     public Response projectReport(@PathParam("id") Long projectId, @QueryParam("dateFrom") LocalDate dateFrom, @QueryParam("dateTo") LocalDate dateTo) {
         return Response.ok(reportService.generateReport(projectId, dateFrom, dateTo))
             .build();
+    }
+
+    @GET
+    @Path("time-logs")
+    @RolesAllowed({AuthoritiesConstants.ADMIN, AuthoritiesConstants.USER})
+    public Response timeLogReport(@QueryParam("dateFrom") LocalDate dateFrom, @QueryParam("dateTo") LocalDate dateTo) {
+        return Response.ok(reportService.generateTimeLogReport(dateFrom, dateTo))
+            .build();
+    }
+
+    @POST
+    @Path("time-report")
+    @RolesAllowed({AuthoritiesConstants.ADMIN, AuthoritiesConstants.USER})
+    public CompletionStage<Response> sendTimeReport(@QueryParam("to") List<String> to, @QueryParam("dateFrom") LocalDate dateFrom, @QueryParam("dateTo") LocalDate dateTo) {
+        final TimeLogReportDTO reportDTO = reportService.generateTimeLogReport(dateFrom, dateTo);
+        return mailService.sendTimeReport(reportDTO, to)
+            .thenApply(x -> Response.accepted().build());
     }
 
 

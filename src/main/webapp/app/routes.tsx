@@ -16,6 +16,8 @@ import PageNotFound from 'app/shared/error/page-not-found';
 import { AUTHORITIES } from 'app/config/constants';
 import LogWork from 'app/modules/logwork/logwork';
 import WorkReport from 'app/modules/report/work-report';
+import LogTime from "app/modules/logtime/logtime";
+import TimeReport from "app/modules/report/time-report";
 
 const Account = Loadable({
   loader: () => import(/* webpackChunkName: "account" */ 'app/modules/account'),
@@ -34,6 +36,8 @@ const Routes = () => (
       <ErrorBoundaryRoute path="/logout" component={Logout} />
       <ErrorBoundaryRoute path="/logwork" component={LogWork} />
       <ErrorBoundaryRoute path="/report" component={WorkReport} />
+      <ErrorBoundaryRoute path="/time-report" component={TimeReport} />
+      <ErrorBoundaryRoute path="/logtime" component={LogTime} />
       <ErrorBoundaryRoute path="/account/register" component={Register} />
       <ErrorBoundaryRoute path="/account/activate/:key?" component={Activate} />
       <ErrorBoundaryRoute path="/account/reset/request" component={PasswordResetInit} />
