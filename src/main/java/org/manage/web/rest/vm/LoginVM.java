@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
  */
 @RegisterForReflection
 public class LoginVM {
+
     @NotNull
     @Size(min = 1, max = 50)
     public String username;

@@ -7,6 +7,7 @@ import org.manage.domain.Member;
 import org.manage.security.AuthoritiesConstants;
 import org.manage.service.MemberService;
 import org.manage.web.rest.errors.BadRequestAlertException;
+import org.manage.web.rest.vm.MemberCreateVM;
 import org.manage.web.util.HeaderUtil;
 import org.manage.web.util.ResponseUtil;
 import org.manage.service.dto.MemberDTO;
@@ -50,17 +51,17 @@ public class MemberResource {
     /**
      * {@code POST  /members} : Create a new member.
      *
-     * @param memberDTO the memberDTO to create.
+     * @param memberVM the memberDTO to create.
      * @return the {@link Response} with status {@code 201 (Created)} and with body the new memberDTO, or with status {@code 400 (Bad Request)} if the member has already an ID.
      */
     @POST
     @RolesAllowed({AuthoritiesConstants.ADMIN,AuthoritiesConstants.USER})
-    public Response createMember(@Valid MemberDTO memberDTO, @Context UriInfo uriInfo) {
-        log.debug("REST request to save Member : {}", memberDTO);
-        if (memberDTO.id != null) {
+    public Response createMember(@Valid MemberCreateVM memberVM, @Context UriInfo uriInfo) {
+        log.debug("REST request to save Member : {}", memberVM);
+        if (memberVM.id != null) {
             throw new BadRequestAlertException("A new member cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        var result = memberService.persistOrUpdate(memberDTO);
+        var result = memberService.createMember(memberVM);
         var response = Response.created(fromPath(uriInfo.getPath()).path(result.id.toString()).build()).entity(result);
         HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.id.toString()).forEach(response::header);
         return response.build();

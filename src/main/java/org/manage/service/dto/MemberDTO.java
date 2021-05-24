@@ -28,6 +28,7 @@ public class MemberDTO implements Serializable {
     public String fio;
 
     public Long defaultProjectId;
+
     public String defaultProjectName;
 
     @Override

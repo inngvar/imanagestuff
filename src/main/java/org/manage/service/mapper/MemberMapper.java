@@ -4,6 +4,7 @@ package org.manage.service.mapper;
 import org.manage.domain.*;
 import org.manage.service.dto.MemberDTO;
 
+import org.manage.web.rest.vm.MemberCreateVM;
 import org.mapstruct.*;
 
 /**
@@ -30,4 +31,6 @@ public interface MemberMapper extends EntityMapper<MemberDTO, Member> {
         member.id = id;
         return member;
     }
+
+    Member toEntity(MemberCreateVM memberCreateVM);
 }

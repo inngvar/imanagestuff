@@ -7,6 +7,7 @@ import org.manage.service.dto.MemberDTO;
 import org.manage.service.dto.ProjectDTO;
 import org.manage.service.mapper.MemberMapper;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import org.manage.web.rest.vm.MemberCreateVM;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +27,15 @@ public class MemberService {
 
     @Inject
     MemberMapper memberMapper;
+
+
+    @Transactional
+    public MemberDTO createMember(MemberCreateVM memberCreateVM){
+        log.debug("Request to createMember Member : {}", memberCreateVM);
+        var member = memberMapper.toEntity(memberCreateVM);
+        member = Member.persistOrUpdate(member);
+        return memberMapper.toDto(member);
+    }
 
     @Transactional
     public MemberDTO persistOrUpdate(MemberDTO memberDTO) {
