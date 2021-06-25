@@ -2,6 +2,7 @@ package org.manage.service;
 
 import org.manage.config.Constants;
 import org.manage.domain.Authority;
+import org.manage.domain.Member;
 import org.manage.domain.User;
 import org.manage.security.AuthoritiesConstants;
 import org.manage.security.BCryptPasswordHasher;
@@ -121,7 +122,20 @@ public class UserService {
         User.persist(newUser);
         //        this.clearUserCaches(newUser);
         log.debug("Created Information for User: {}", newUser);
+
+        Member.persist(userDtoToMember(userDTO));
         return newUser;
+    }
+
+    private Member userDtoToMember(UserDTO userDTO) {
+        Member newMember = new Member();
+        newMember.login = userDTO.login.toLowerCase();
+        newMember.firstName = userDTO.firstName == null ? "" : userDTO.firstName;
+        newMember.middleName = null;
+        newMember.lastName = userDTO.lastName == null ? "" : userDTO.lastName;
+        newMember.defaultProject = null;
+        log.debug("Created Information for Member: {}", newMember);
+        return newMember;
     }
 
     private boolean removeNonActivatedUser(User existingUser) {
