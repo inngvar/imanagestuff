@@ -5,6 +5,7 @@ import org.manage.service.MailService;
 import org.manage.service.ReportService;
 import org.manage.service.dto.DayReportDTO;
 import org.manage.service.dto.TimeLogReportDTO;
+import org.manage.web.util.ResponseUtil;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.ApplicationScoped;
@@ -65,5 +66,11 @@ public class ReportResource {
             .thenApply(x -> Response.accepted().build());
     }
 
-
+    @GET
+    @Path("two-week-registered-time-report/{user}")
+    public Response twoWeekRegisteredTimeReport(@PathParam("user") String login) {
+        final LocalDate from = LocalDate.now().minusDays(14);
+        final LocalDate to = LocalDate.now();
+        return ResponseUtil.wrapOrNotFound(reportService.getRegisteredTimeReport(login, from, to));
+    }
 }

@@ -4,9 +4,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.json.bind.annotation.JsonbTransient;
 
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import org.manage.service.Paged;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -14,6 +12,7 @@ import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Duration;
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -62,6 +61,10 @@ public class TimeEntry extends PanacheEntityBase implements Serializable {
     public static Stream<TimeEntry> getAllByDateBetweenAndMemberAndProject(LocalDate dateFrom, LocalDate dateTo, Member member, Project project) {
         return find("From TimeEntry e WHERE e.member=?1 AND e.project = ?2 AND (e.date >= ?3 AND e.date<=?4)", member, project, dateFrom, dateTo)
             .stream();
+    }
+
+    public static List<TimeEntry> getAllByDateBetweenAndMember(LocalDate dateFrom, LocalDate dateTo, Member member) {
+        return find("From TimeEntry e WHERE e.member=?1 AND (e.date >= ?2 AND e.date<=?3)", member, dateFrom, dateTo).list();
     }
 
 
