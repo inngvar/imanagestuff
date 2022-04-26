@@ -113,13 +113,12 @@ public class ReportService {
      */
     public Optional<List<DayRegisteredTimeDTO>> getRegisteredTimeReport(final String login, final LocalDate fromDate, final LocalDate toDate) {
         Member member = Member.findByLogin(login).orElseThrow();
-        List<TimeEntry> timeEntries = TimeEntry.getAllByDateBetweenAndMember(fromDate, toDate.minusDays(1), member);
+        List<TimeEntry> timeEntries = TimeEntry.getAllByDateBetweenAndMember(fromDate, toDate, member);
 
         List<DayRegisteredTimeDTO> timeReport = new ArrayList<>();
         for (LocalDate date = LocalDate.from(fromDate);
-             date.isBefore(toDate);
-             date = date.plusDays(1)
-        ){
+             date.isBefore(toDate) || date.equals(toDate);
+             date = date.plusDays(1)){
             final LocalDate finalDate = LocalDate.from(date);
             DayRegisteredTimeDTO dayRegisteredTimeDTO = new DayRegisteredTimeDTO();
             dayRegisteredTimeDTO.date = date;

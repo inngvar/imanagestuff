@@ -67,9 +67,9 @@ public class ReportResource {
     }
 
     @GET
-    @Path("two-week-registered-time-report/{user}")
-    public Response twoWeekRegisteredTimeReport(@PathParam("user") String login) {
-        final LocalDate from = LocalDate.now().minusDays(14);
+    @Path("missed-worklog-report/{user}/{numberofdays}")
+    public Response twoWeekRegisteredTimeReport(@PathParam("user") String login, @PathParam("numberofdays") int nDays) {
+        final LocalDate from = LocalDate.now().minusDays(nDays);
         final LocalDate to = LocalDate.now();
         return ResponseUtil.wrapOrNotFound(reportService.getRegisteredTimeReport(login, from, to));
     }
