@@ -97,4 +97,8 @@ public class ProjectService {
             .map(p -> projectMapper.toDto(p))
             .collect(Collectors.toList());
     }
+
+    public ProjectDTO toDTO(Project project) {
+        return projectMapper.toDto(project);
+    }
 }

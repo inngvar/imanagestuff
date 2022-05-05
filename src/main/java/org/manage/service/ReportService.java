@@ -2,14 +2,17 @@ package org.manage.service;
 
 import org.manage.config.LocalDateProvider;
 import org.manage.domain.Member;
+import org.manage.domain.TimeEntry;
 import org.manage.service.dto.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -100,6 +103,33 @@ public class ReportService {
         double totalSeconds = ((Long) dto.entries.stream().mapToLong(e -> e.duration.toSeconds()).sum()).doubleValue();
         dto.totalHours = totalSeconds / 60.0 / 60.0;
         return dto;
+    }
+
+    /**
+     * returns a report of registered time and corresponding projects for period fromDate to toDate for member.
+     * Reports for days in which daily goal of 8h was reached are excluded.
+     * @param fromDate - inclusive
+     * @param toDate - exclusive
+     */
+    public Optional<List<DayRegisteredTimeDTO>> getRegisteredTimeReport(final String login, final LocalDate fromDate, final LocalDate toDate) {
+        Member member = Member.findByLogin(login).orElseThrow();
+        List<TimeEntry> timeEntries = TimeEntry.getAllByDateBetweenAndMember(fromDate, toDate, member);
+
+        List<DayRegisteredTimeDTO> timeReport = new ArrayList<>();
+        for (LocalDate date = LocalDate.from(fromDate);
+             date.isBefore(toDate) || date.equals(toDate);
+             date = date.plusDays(1)){
+            final LocalDate finalDate = LocalDate.from(date);
+            DayRegisteredTimeDTO dayRegisteredTimeDTO = new DayRegisteredTimeDTO();
+            dayRegisteredTimeDTO.date = date;
+            timeEntries.stream().filter(entry -> entry.date.isEqual(finalDate))
+                .forEach(entry -> dayRegisteredTimeDTO.addProjectDuration(projectService.toDTO(entry.project), entry.duration));
+
+            if (dayRegisteredTimeDTO.unregisteredDuration().toMinutes() > 0) {
+                timeReport.add(dayRegisteredTimeDTO);
+            }
+        }
+        return Optional.of(timeReport);
     }
 
 }

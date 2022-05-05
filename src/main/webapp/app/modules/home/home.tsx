@@ -1,17 +1,30 @@
 import './home.scss';
 
-import React from 'react';
+import axios from 'axios';
+import React, {useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
 import { Row, Col, Alert } from 'reactstrap';
 
-import { IRootState } from 'app/shared/reducers';
+import {IDayRegisteredTime} from "app/shared/model/day-registered-time.model";
+import {MissedWorkTable} from "app/modules/home/init/missed-work-table";
 
 export type IHomeProp = StateProps;
 
 export const Home = (props: IHomeProp) => {
   const { account } = props;
+  const [missedWorkLog, setMissedWorkLog] = useState<Array<IDayRegisteredTime>>([]);
+  const NUMBER_OF_DAYS = 14;
+
+  useEffect(() => {
+    if (account && account.login) {
+      const url = "api/reports/missed-work-log-report/" + account.login + '/' + NUMBER_OF_DAYS;
+      axios.get(url).then(response => {
+        setMissedWorkLog(response.data);
+      });
+    }
+  }, [account]);
 
   return (
     <Row>
@@ -24,11 +37,17 @@ export const Home = (props: IHomeProp) => {
         </p>
         {account && account.login ? (
           <div>
-            <Alert color="success">
-              <Translate contentKey="home.logged.message" interpolate={{ username: account.login }}>
-                You are logged in as user {account.login}.
-              </Translate>
-            </Alert>
+            <div>
+              <Alert color="success">
+                <Translate contentKey="home.logged.message" interpolate={{username: account.login}}>
+                  You are logged in as user {account.login}.
+                </Translate>
+              </Alert>
+            </div>
+            <div>
+              <h1>Потерянное время</h1>
+              <MissedWorkTable dayRegisteredTimes={missedWorkLog}></MissedWorkTable>
+            </div>
           </div>
         ) : (
           <div>
