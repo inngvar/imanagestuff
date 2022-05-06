@@ -7,6 +7,7 @@ import org.manage.service.dto.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -111,6 +112,7 @@ public class ReportService {
      * @param fromDate - inclusive
      * @param toDate - exclusive
      */
+    @Transactional
     public Optional<List<DayRegisteredTimeDTO>> getRegisteredTimeReport(final String login, final LocalDate fromDate, final LocalDate toDate) {
         Member member = Member.findByLogin(login).orElseThrow();
         List<TimeEntry> timeEntries = TimeEntry.getAllByDateBetweenAndMember(fromDate, toDate, member);

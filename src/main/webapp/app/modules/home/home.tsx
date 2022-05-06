@@ -19,7 +19,7 @@ export const Home = (props: IHomeProp) => {
 
   useEffect(() => {
     if (account && account.login) {
-      const url = "api/reports/missed-work-log-report/" + account.login + '/' + NUMBER_OF_DAYS;
+      const url = "api/reports/registered-time-report/" + account.login + '/' + NUMBER_OF_DAYS;
       axios.get(url).then(response => {
         setMissedWorkLog(response.data);
       });

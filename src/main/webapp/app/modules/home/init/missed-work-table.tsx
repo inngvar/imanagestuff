@@ -20,11 +20,17 @@ export class MissedWorkTable extends React.Component<IRegisteredTime> {
 
   formTableBody(){
     const tableBody = [];
-    this.props.dayRegisteredTimes.forEach((day) => {
-      const spanLen = day.projectDurations.length + 1;
+    this.props.dayRegisteredTimes
+      .sort((a,b) => {
+        const aDate = new Date(a.date);
+        const bDate = new Date(b.date);
+        return a.date === b.date ? 0 : aDate.getTime() < bDate.getTime() ? 1 : -1;
+      })
+      .forEach((day) => {
+      const spanLen = day.projectDurations.length;
       tableBody.push(<tr>
-        <td rowSpan={spanLen}>{day.date}</td>
-        <td rowSpan={spanLen}>{this.parseDuration(day.totalDuration)}</td>
+        <td rowSpan={spanLen + 1}>{day.date}</td>
+        <td rowSpan={spanLen + 1}>{this.parseDuration(day.totalDuration)}</td>
         {spanLen === 0 ? <td></td> : <span hidden={true}></span>}
         {spanLen === 0 ? <td></td> : <span hidden={true}></span>}
       </tr>)
