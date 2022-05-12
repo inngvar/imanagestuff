@@ -14,8 +14,6 @@ import {
   FormGroup,
   Label
 } from 'reactstrap';
-import {IRootState} from 'app/shared/reducers';
-import project from "app/entities/project/project";
 import {cleanEntity} from "app/shared/util/entity-utils";
 
 export type ILogWorkProp = StateProps;
@@ -31,6 +29,7 @@ export const LogWork = (props: ILogWorkProp) => {
   const [duration, setDuration] = useState(null);
   const [entryDescription, setEntryDescription] = useState(null);
   const [totalHours, setTotalHours] = useState(0);
+  const queryParams = getQueryParams();
 
   useEffect(() => {
     if (!account.login) {
@@ -40,7 +39,12 @@ export const LogWork = (props: ILogWorkProp) => {
       setProjects(response.data);
       const mem = response.data[0].members.find(m => m.login === account.login);
       const dProject = response.data.find(p => p.id === mem.defaultProjectId)
-      setCurrentProject(dProject ? dProject : response.data[0]);
+      if (queryParams["project"] && queryParams["date"]) {
+        setCurrentProject(response.data.find((p) => p.id == parseInt(queryParams["project"])));
+        setReportDate(new Date(queryParams["date"]).toISOString().substr(0, 10));
+      } else {
+        setCurrentProject(dProject ? dProject : response.data[0]);
+      }
       setCurrentMember(mem);
     })
   }, [account])
@@ -183,6 +187,17 @@ export const LogWork = (props: ILogWorkProp) => {
     </Row>
   );
 };
+
+function getQueryParams() {
+  let query = window.location.search.substring(1);
+  let vars = query.split('&');
+  let result = {};
+  for (let i = 0; i < vars.length; i++) {
+    let pair = vars[i].split('=');
+    result[pair[0]] = pair[1];
+  }
+  return result;
+}
 
 const mapStateToProps = storeState => ({
   account: storeState.authentication.account,
