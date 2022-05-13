@@ -9,6 +9,7 @@ export const ProjectReport = props => {
 
   const [projectStats, setProjectStats] = useState(null);
   const [updating, setUpdating] = useState(false);
+  const [currentMember, setCurrentMember] = useState(null);
   useEffect(() => {
     if (!props.project) {
       return;
@@ -17,6 +18,12 @@ export const ProjectReport = props => {
       setProjectStats(response.data);
     });
   }, [props.project, props.dateFrom, props.dateTo]);
+
+  useEffect(() => {
+    axios.get("api/members/current").then(response => {
+      setCurrentMember(response.data);
+    });
+  }, [])
 
   function sendReport() {
     axios.post('api/reports/day-report/' + props.project.id + '?dateFrom=' + props.dateFrom + '&dateTo=' + props.dateTo).then(response =>{
@@ -46,14 +53,22 @@ export const ProjectReport = props => {
     <Row>
       <Col md="12">
         {
-          projectStats?.membersReports ? (projectStats.membersReports.map((memberStats, i) => (
-              <Row key={i}>
-                <h3>{memberStats.member.fio}</h3>
-                <TimeEntries entries={memberStats.entries} onUpdate={onUpdateTotalTime} member={memberStats.member}/>
-              </Row>
-            )))
-            :
-            (<p>noData</p>)
+          projectStats?.membersReports ? (projectStats.membersReports
+              .sort((a, b) => {
+                if (a.member.id === currentMember.id)
+                  return -1;
+                if (b.member.id === currentMember.id)
+                  return 1;
+                return 0;
+              })
+              .map((memberStats, i) => (
+                <Row key={i}>
+                  <h3>{memberStats.member.fio}</h3>
+                  <TimeEntries entries={memberStats.entries} onUpdate={onUpdateTotalTime} member={memberStats.member}/>
+                </Row>
+              )))
+              :
+              (<p>noData</p>)
         }
         <Row>
           <Button onClick={() => sendReport()}>Отправить отчёт</Button>
