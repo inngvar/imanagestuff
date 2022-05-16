@@ -1,7 +1,8 @@
 import React from "react";
 import {Table} from 'reactstrap';
-
+import {Link} from "react-router-dom";
 import {IRegisteredTime} from "app/shared/model/day-registered-time.model";
+import {IProject} from "app/shared/model/project.model";
 
 export class MissedWorkTable extends React.Component<IRegisteredTime> {
   render() {
@@ -13,6 +14,7 @@ export class MissedWorkTable extends React.Component<IRegisteredTime> {
           <th>Потеряно</th>
           <th>Проект</th>
           <th>По проекту</th>
+          <th>Найти</th>
         </tr>
         {this.formTableBody()}
       </Table>
@@ -33,13 +35,15 @@ export class MissedWorkTable extends React.Component<IRegisteredTime> {
           <td rowSpan={spanLen + 1}>{day.date}</td>
           <td rowSpan={spanLen + 1}>{this.parseDuration(day.totalDuration)}</td>
           <td rowSpan={spanLen + 1}>{this.getMissedTime(day.totalDuration)}</td>
-          {spanLen === 0 ? <td>-</td> : <span hidden={true}></span>}
-          {spanLen === 0 ? <td>-</td> : <span hidden={true}></span>}
+          {spanLen === 0 && <td>-</td>}
+          {spanLen === 0 && <td>-</td>}
+          {spanLen === 0 && <td>-</td>}
         </tr>)
         day.projectDurations.forEach((proj) => {
           tableBody.push(<tr>
             <td>{proj.project.name}</td>
             <td>{this.parseDuration(proj.duration)}</td>
+            {this.projectTimeLogLink(proj.project, day.date)}
           </tr>)
         })
       });
@@ -67,5 +71,13 @@ export class MissedWorkTable extends React.Component<IRegisteredTime> {
       result = missedHours + "H";
     }
     return result;
+  }
+
+  projectTimeLogLink(project: IProject, date: Date) {
+    return (
+      <td>
+        <Link to={"/logwork?project=" + project.id + "&date=" + date}>link</Link>
+      </td>
+    )
   }
 }
