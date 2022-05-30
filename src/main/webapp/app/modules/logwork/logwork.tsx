@@ -29,8 +29,7 @@ export const LogWork = (props: ILogWorkProp) => {
   const [duration, setDuration] = useState(null);
   const [entryDescription, setEntryDescription] = useState(null);
   const [totalHours, setTotalHours] = useState(0);
-
-  function getQueryParams() {
+  const queryParams = (() => {
     const query = window.location.search.substring(1);
     const vars = query.split('&');
     const result = {};
@@ -39,9 +38,7 @@ export const LogWork = (props: ILogWorkProp) => {
       result[pair[0]] = pair[1];
     }
     return result;
-  }
-
-  const queryParams = getQueryParams();
+  })();
 
   useEffect(() => {
     if (!account.login) {
@@ -52,7 +49,7 @@ export const LogWork = (props: ILogWorkProp) => {
       const mem = response.data[0].members.find(m => m.login === account.login);
       const dProject = response.data.find(p => p.id === mem.defaultProjectId)
       if (queryParams["project"] && queryParams["date"]) {
-        setCurrentProject(response.data.find((p) => p.id === parseInt(queryParams["project"],10)));
+        setCurrentProject(response.data.find((p) => p.id === parseInt(queryParams["project"], 10)));
         setReportDate(new Date(queryParams["date"]).toISOString().substr(0, 10));
       } else {
         setCurrentProject(dProject ? dProject : response.data[0]);
@@ -61,7 +58,7 @@ export const LogWork = (props: ILogWorkProp) => {
     })
   }, [account])
 
-  useEffect(() =>{
+  useEffect(() => {
     setIsDefaultProject(currentProject?.id === currentMember?.defaultProjectId)
   })
 
@@ -142,22 +139,20 @@ export const LogWork = (props: ILogWorkProp) => {
         <p className="lead">
           <Translate contentKey="logwork.subtitle">This is your duty</Translate>
         </p>
-        {currentMember ? (
-          <h5>{currentMember?.firstName + ' ' + currentMember?.lastName + '(' + currentMember.login + ')'}</h5>) : (
-          <p></p>)}
-          <Row class="form-row">
-            <ProjectList projects={projects} value={currentProject}
-                         handler={updateCurrentProject}
-                         isDefaultProject={isDefaultProject}
-                         updateDefaultProject={updateDefaultProjectForMembers}
-                         showButton={true}/>
-            <MemberList project={currentProject} value={currentMember} handler={updateCurrentMember}/>
-          </Row>
-          <FormGroup>
-            <Label>Дата:</Label>
-            <input type="date" name="reportDate" class-name="form-control" defaultValue={reportDate} value={reportDate}
-                   onChange={event => setReportDate(event.target.value)}/>
-          </FormGroup>
+        {currentMember && <h5>{currentMember?.firstName + ' ' + currentMember?.lastName + '(' + currentMember.login + ')'}</h5>}
+        <Row class="form-row">
+          <ProjectList projects={projects} value={currentProject}
+                       handler={updateCurrentProject}
+                       isDefaultProject={isDefaultProject}
+                       updateDefaultProject={updateDefaultProjectForMembers}
+                       showButton={true}/>
+          <MemberList project={currentProject} value={currentMember} handler={updateCurrentMember}/>
+        </Row>
+        <FormGroup>
+          <Label>Дата:</Label>
+          <input type="date" name="reportDate" class-name="form-control" defaultValue={reportDate} value={reportDate}
+                 onChange={event => setReportDate(event.target.value)}/>
+        </FormGroup>
         <Row>
           <Form className="jumbotron">
             <h3>Добавить задачу</h3>
@@ -199,8 +194,6 @@ export const LogWork = (props: ILogWorkProp) => {
     </Row>
   );
 };
-
-
 
 const mapStateToProps = storeState => ({
   account: storeState.authentication.account,
