@@ -11,6 +11,7 @@ export class MissedWorkTable extends React.Component<IRegisteredTime> {
         <tr>
           <th>Дата</th>
           <th>Всего за день</th>
+          <th>Потеряно</th>
           <th>Проект</th>
           <th>По проекту</th>
           <th>Найти</th>
@@ -33,6 +34,7 @@ export class MissedWorkTable extends React.Component<IRegisteredTime> {
         tableBody.push(<tr>
           <td rowSpan={spanLen + 1}>{day.date}</td>
           <td rowSpan={spanLen + 1}>{this.parseDuration(day.totalDuration)}</td>
+          <td rowSpan={spanLen + 1}>{this.getMissedTime(day.totalDuration)}</td>
           {spanLen === 0 && <td>-</td>}
           {spanLen === 0 && <td>-</td>}
           {spanLen === 0 && <td>-</td>}
@@ -55,6 +57,20 @@ export class MissedWorkTable extends React.Component<IRegisteredTime> {
     if (" " === result)
       return "-";
     return result.trim();
+  }
+
+  getMissedTime(dur: string) {
+    const minutes = /([0-9]{1,2})M/.exec(dur) || ["", "0"];
+    const hours = /([0-9]{1})H/.exec(dur) || ["", "0"];
+    const missedHours = 8 - Number(hours[1]);
+    const missedMinutes = (60 - Number(minutes[1])) % 60;
+    let result;
+    if (missedMinutes !== 0) {
+      result = (missedHours - 1) + "H " + missedMinutes + "M";
+    } else {
+      result = missedHours + "H";
+    }
+    return result;
   }
 
   projectTimeLogLink(project: IProject, date: Date) {
