@@ -41,9 +41,9 @@ export class MissedWorkTable extends React.Component<IRegisteredTime> {
         </tr>)
         day.projectDurations.forEach((proj) => {
           tableBody.push(<tr>
-            <td>{proj.project.name}</td>
+            <td>{proj?.project?.name}</td>
             <td>{this.parseDuration(proj.duration)}</td>
-            {this.projectTimeLogLink(proj.project, day.date)}
+            {this.projectTimeLogLink(proj?.project, day.date)}
           </tr>)
         })
       });

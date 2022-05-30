@@ -19,7 +19,9 @@ public class DayRegisteredTimeDTO implements Serializable {
     @NotNull
     @JsonbDateFormat(value = Constants.LOCAL_DATE_FORMAT)
     public LocalDate date;
+
     public Duration totalDuration = Duration.ZERO;
+
     public final List<ProjectDuration> projectDurations = Lists.newArrayList();
 
     public void addProjectDuration(ProjectDTO project, Duration duration) {
@@ -45,8 +47,4 @@ public class DayRegisteredTimeDTO implements Serializable {
         return pd;
     }
 
-    public static class ProjectDuration {
-        public ProjectDTO project;
-        public Duration duration;
-    }
 }

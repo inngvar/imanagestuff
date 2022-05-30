@@ -29,6 +29,18 @@ export const LogWork = (props: ILogWorkProp) => {
   const [duration, setDuration] = useState(null);
   const [entryDescription, setEntryDescription] = useState(null);
   const [totalHours, setTotalHours] = useState(0);
+
+  function getQueryParams() {
+    const query = window.location.search.substring(1);
+    const vars = query.split('&');
+    const result = {};
+    for (let i = 0; i < vars.length; i++) {
+      const pair = vars[i].split('=');
+      result[pair[0]] = pair[1];
+    }
+    return result;
+  }
+
   const queryParams = getQueryParams();
 
   useEffect(() => {
@@ -40,7 +52,7 @@ export const LogWork = (props: ILogWorkProp) => {
       const mem = response.data[0].members.find(m => m.login === account.login);
       const dProject = response.data.find(p => p.id === mem.defaultProjectId)
       if (queryParams["project"] && queryParams["date"]) {
-        setCurrentProject(response.data.find((p) => p.id == parseInt(queryParams["project"])));
+        setCurrentProject(response.data.find((p) => p.id === parseInt(queryParams["project"],10)));
         setReportDate(new Date(queryParams["date"]).toISOString().substr(0, 10));
       } else {
         setCurrentProject(dProject ? dProject : response.data[0]);
@@ -188,16 +200,7 @@ export const LogWork = (props: ILogWorkProp) => {
   );
 };
 
-function getQueryParams() {
-  let query = window.location.search.substring(1);
-  let vars = query.split('&');
-  let result = {};
-  for (let i = 0; i < vars.length; i++) {
-    let pair = vars[i].split('=');
-    result[pair[0]] = pair[1];
-  }
-  return result;
-}
+
 
 const mapStateToProps = storeState => ({
   account: storeState.authentication.account,
