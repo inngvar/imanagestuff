@@ -2,7 +2,7 @@ import axios from 'axios';
 import '../home/home.scss';
 import './logwork.scss';
 import React, {useState, useEffect} from 'react';
-import {durationToHours} from 'app/shared/util/date-utils';
+import {durationToHours, formatDuration} from 'app/shared/util/date-utils';
 import {Translate} from 'react-jhipster';
 import {connect} from 'react-redux';
 import {MemberList, ProjectList, TimeEntries} from "app/modules/logwork/logwork-components";
@@ -93,17 +93,6 @@ export const LogWork = (props: ILogWorkProp) => {
 
   const updateCurrentMember = member => {
     setCurrentMember(member);
-  }
-
-  function formatDuration(durationToFormat) {
-    return durationToFormat.toUpperCase()
-      .replace(/ /g, '')
-      .replace(/В/g, 'D')
-      .replace(/Д/g, 'D')
-      .replace(/Р/g, 'H')
-      .replace(/Ч/g, 'H')
-      .replace(/Ь/g, 'M')
-      .replace(/М/g, 'M')
   }
 
   const addNewEntry = () => {

@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
-import {durationToHours} from 'app/shared/util/date-utils';
+import {durationToHours, parseTime} from 'app/shared/util/date-utils';
 import {TimeEntryToDuration} from "app/entities/time-entry/time-to-total.tsx";
 import {
   Table,
@@ -106,7 +106,7 @@ export const TimeEntries = props => {
 
   function saveEntity(event, errors, values, num) {
     const result = props.entries[num]
-    result.duration = 'PT' + values.duration.toUpperCase();
+    result.duration = parseTime(values.duration);
     result.description = values.description
     result.shortDescription = values.shortDescription
     result.date = values.date

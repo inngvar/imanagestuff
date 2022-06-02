@@ -18,3 +18,34 @@ export const durationToHours = duration => roundToTwo(toSeconds(parse(duration))
 export const roundNumberToTwo = num => roundToTwo(num);
 
 export const formatDateTimeWithZone = date => moment(date).format(APP_LOCAL_DATETIME_FORMAT_ZONED);
+
+export const formatDuration = durationToFormat => {
+  return durationToFormat
+    .toUpperCase()
+    .replace(/\s/g, '')
+    .replace(/В/g, 'D')
+    .replace(/Д/g, 'D')
+    .replace(/Р/g, 'H')
+    .replace(/Ч/g, 'H')
+    .replace(/Ь/g, 'M')
+    .replace(/М/g, 'M');
+};
+
+export const parseDuration = (dur: string) => {
+  if (!dur) return '-';
+  const minutes = /[0-9]{1,2}M/.exec(dur) || [''];
+  const hours = /[0-9]{1}H/.exec(dur) || [''];
+  const days = /[0-9]{1}D/.exec(dur) || [''];
+  const result = days[0] + ' ' + hours[0] + ' ' + minutes[0];
+  if (' ' === result) return '-';
+  return result.trim();
+};
+
+export const parseTime = (time: string) => {
+  time = formatDuration(time);
+  const minutes = /[0-9]{1,2}M/.exec(time) || [''];
+  const hours = /[0-9]{1}H/.exec(time) || [''];
+  const days = /[0-9]{1}D/.exec(time) || [''];
+  const result = (days[0] && '8H') || hours[0] + ' ' + minutes[0] || '0S';
+  return 'PT' + result.trim();
+};
