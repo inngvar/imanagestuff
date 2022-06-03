@@ -1,9 +1,11 @@
 package org.manage.service;
 
 import io.quarkus.panache.common.Page;
+import io.quarkus.security.identity.SecurityIdentity;
 import org.manage.domain.Member;
 import org.manage.domain.Project;
 import org.manage.domain.TimeEntry;
+import org.manage.service.dto.MemberDTO;
 import org.manage.service.dto.TimeEntryDTO;
 import org.manage.service.mapper.ProjectMapper;
 import org.manage.service.mapper.TimeEntryMapper;
@@ -13,9 +15,12 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -34,9 +39,20 @@ public class TimeEntryService {
     @Inject
     ProjectService projectService;
 
+    @Inject
+    MemberService memberService;
+
+    @Inject
+    SecurityIdentity securityIdentity;
+
     @Transactional
     public TimeEntryDTO persistOrUpdate(TimeEntryDTO timeEntryDTO) {
         log.debug("Request to save TimeEntry : {}", timeEntryDTO);
+        final String login = securityIdentity.getPrincipal().getName();
+        MemberDTO currentMember = memberService.findByLogin(login).orElse(null);
+        if (currentMember != null && !Objects.equals(timeEntryDTO.memberId, currentMember.id)) {
+            throw new WebApplicationException(Response.status(403).entity("Specified user doesn't match current user").build());
+        }
         var timeEntry = timeEntryMapper.toEntity(timeEntryDTO);
         timeEntry = TimeEntry.persistOrUpdate(timeEntry);
         return timeEntryMapper.toDto(timeEntry);

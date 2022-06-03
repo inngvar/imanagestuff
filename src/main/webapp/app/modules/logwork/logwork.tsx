@@ -29,6 +29,7 @@ export const LogWork = (props: ILogWorkProp) => {
   const [duration, setDuration] = useState(null);
   const [entryDescription, setEntryDescription] = useState(null);
   const [totalHours, setTotalHours] = useState(0);
+  const [errorMessage, setErrorMessage] = useState(null);
   const queryParams = (() => {
     const query = window.location.search.substring(1);
     const vars = query.split('&');
@@ -114,10 +115,15 @@ export const LogWork = (props: ILogWorkProp) => {
       memberId: currentMember.id,
       date: reportDate
     };
-    axios.post('api/time-entries/', cleanEntity(entity)).then(result => {
-      updateEntries();
-      setEntryDescription("");
-      setDuration("");
+    axios.post('api/time-entries/', cleanEntity(entity))
+      .then(result => {
+        updateEntries();
+        setEntryDescription("");
+        setDuration("");
+      }).catch((error) => {
+        if (error.response) {
+         setErrorMessage(error.response.data);
+        }
     });
   }
 
@@ -148,45 +154,53 @@ export const LogWork = (props: ILogWorkProp) => {
                        showButton={true}/>
           <MemberList project={currentProject} value={currentMember} handler={updateCurrentMember}/>
         </Row>
-        <FormGroup>
-          <Label>Дата:</Label>
-          <input type="date" name="reportDate" class-name="form-control" defaultValue={reportDate} value={reportDate}
-                 onChange={event => setReportDate(event.target.value)}/>
-        </FormGroup>
-        <Row>
-          <Form className="jumbotron">
-            <h3>Добавить задачу</h3>
-            <Row className='align-items-center'>
-              <FormGroup className='col-auto'>
-                <Label className="sr-only" for='description'>Описание</Label>
-                <textarea name='description'
-                          id="description"
-                          className='form-control logwork'
-                          placeholder="Описание"
-                          value={entryDescription}
-                          onChange={event => setEntryDescription(event.target.value)}>
-                </textarea>
-              </FormGroup>
-              <FormGroup className='col-auto'>
-                <Label className="sr-only" for={'logwork'}>Время</Label>
-                <input type="text"
-                       name='logwork'
-                       className='form-control'
-                       id="logwork"
-                       placeholder="Время"
-                       value={duration}
-                       onChange={e => setDuration(e.target.value)}
-                />
-              </FormGroup>
-              <FormGroup className='col-auto'>
-                <Button className='btn-primary' onClick={event => {
-                  addNewEntry();
-                  return false;
-                }}>+</Button>
-              </FormGroup>
+        {currentMember?.login === account?.login &&
+          <Col>
+            <FormGroup>
+              <Label>Дата:</Label>
+              <input type="date" name="reportDate" class-name="form-control" defaultValue={reportDate}
+                     value={reportDate}
+                     onChange={event => setReportDate(event.target.value)}/>
+            </FormGroup>
+            <Row>
+              <Form className="jumbotron">
+                <h3>Добавить задачу</h3>
+                <Row className='align-items-center'>
+                  <FormGroup className='col-auto'>
+                    <Label className="sr-only" for='description'>Описание</Label>
+                    <textarea name='description'
+                              id="description"
+                              className='form-control logwork'
+                              placeholder="Описание"
+                              value={entryDescription}
+                              onChange={event => setEntryDescription(event.target.value)}>
+                    </textarea>
+                  </FormGroup>
+                  <FormGroup className='col-auto'>
+                    <Label className="sr-only" for={'logwork'}>Время</Label>
+                    <input type="text"
+                           name='logwork'
+                           className='form-control'
+                           id="logwork"
+                           placeholder="Время"
+                           value={duration}
+                           onChange={e => setDuration(e.target.value)}
+                    />
+                  </FormGroup>
+                  <FormGroup className='col-auto'>
+                    <Button className='btn-primary' onClick={event => {
+                      addNewEntry();
+                      return false;
+                    }}>+</Button>
+                  </FormGroup>
+                </Row>
+                <Row>
+                  <div>{errorMessage}</div>
+                </Row>
+              </Form>
             </Row>
-          </Form>
-        </Row>
+          </Col>
+        }
         <Row>
           <TimeEntries entries={entries} member={currentMember}/>
         </Row>
