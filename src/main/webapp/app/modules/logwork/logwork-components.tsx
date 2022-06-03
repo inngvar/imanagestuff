@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
-import {durationToHours, parseTime} from 'app/shared/util/date-utils';
+import {parseTime} from 'app/shared/util/date-utils';
 import {TimeEntryToDuration} from "app/entities/time-entry/time-to-total.tsx";
 import {
   Table,
@@ -86,37 +86,37 @@ export const MemberList = props => {
   );
 }
 
-export const TimeEntries = props => {
-  const [totalHours, setTotalHours] = useState(0);
-
-  function setTotal() {
-    let sum = 0;
-    props.entries.forEach(e => {
-      sum = sum + durationToHours(e.duration);
-    });
-    setTotalHours(sum);
-  }
-
-  useEffect(() => {
-    if (!props.entries || props.entries.length < 1) {
-      return;
-    }
-    setTotal()
-  })
+export const TimeEntry = props => {
+  const [entry, setEntry] = useState(props.entry);
 
   function saveEntity(event, errors, values, num) {
-    const result = props.entries[num]
-    result.duration = parseTime(values.duration);
-    result.description = values.description
-    result.shortDescription = values.shortDescription
-    result.date = values.date
-    axios.put('api/time-entries/', result)
-    props.entries[num] = result
-    setTotal();
+    props.entry.duration = parseTime(values.duration);
+    props.entry.description = values.description;
+    props.entry.shortDescription = values.shortDescription;
+    props.entry.date = values.date;
+    axios.put('api/time-entries/', props.entry);
+    const clone = JSON.parse(JSON.stringify(props.entry));
+    setEntry(clone);
     props.onUpdate ? props.onUpdate() : '';
   }
 
+  return (
+    <tr key={props.i}>
+      <td>
+        <TimeEntryToDuration entities={[entry]}/>
+      </td>
+      <td>{entry.shortDescription}</td>
+      <td>{entry.date}</td>
+      <td>
+        <div>
+          <TimeEntryUpdateModal entity={entry} saveEntity={saveEntity} num={props.i}/>
+        </div>
+      </td>
+    </tr>
+  )
+}
 
+export const TimeEntries = props => {
   return (
     <Table className="table-striped table-hover table-sm">
       <thead className="thead-dark">
@@ -129,20 +129,7 @@ export const TimeEntries = props => {
       </thead>
       <tbody>
       {props.entries ? (
-        props.entries.map((entry, i) => (
-          <tr key={i}>
-            <td>
-              <TimeEntryToDuration entities={[entry]}/>
-            </td>
-            <td>{entry.shortDescription}</td>
-            <td>{entry.date}</td>
-            <td>
-              <div>
-                <TimeEntryUpdateModal entity={entry} saveEntity={saveEntity} num={i}/>
-              </div>
-            </td>
-          </tr>
-        ))
+        props.entries.map((entry, i) => TimeEntry({entry, i}))
       ) : (
         <p>No Tasks</p>
       )}
