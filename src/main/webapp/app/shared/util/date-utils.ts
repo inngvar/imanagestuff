@@ -31,16 +31,6 @@ export const formatDuration = durationToFormat => {
     .replace(/М/g, 'M');
 };
 
-export const parseDuration = (dur: string) => {
-  if (!dur) return '-';
-  const minutes = /[0-9]{1,2}M/.exec(dur) || [''];
-  const hours = /[0-9]{1}H/.exec(dur) || [''];
-  const days = /[0-9]{1}D/.exec(dur) || [''];
-  const result = days[0] + ' ' + hours[0] + ' ' + minutes[0];
-  if (' ' === result) return '-';
-  return result.trim();
-};
-
 export const parseTime = (time: string) => {
   time = formatDuration(time);
   const minutes = /[0-9]{1,2}M/.exec(time) || [''];
