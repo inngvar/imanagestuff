@@ -101,7 +101,7 @@ export const TimeEntry = props => {
   }
 
   return (
-    <tr key={props.i}>
+    <tr key={props.key}>
       <td>
         <TimeEntryToDuration entities={[entry]}/>
       </td>
@@ -109,7 +109,7 @@ export const TimeEntry = props => {
       <td>{entry.date}</td>
       <td>
         <div>
-          <TimeEntryUpdateModal entity={entry} saveEntity={saveEntity} num={props.i}/>
+          <TimeEntryUpdateModal entity={entry} saveEntity={saveEntity} num={props.key}/>
         </div>
       </td>
     </tr>
@@ -129,7 +129,7 @@ export const TimeEntries = props => {
       </thead>
       <tbody>
       {props.entries ? (
-        props.entries.map((entry, i) => TimeEntry({entry, i}))
+        props.entries.map((entry, i) => <TimeEntry entry={entry} key={i}/>)
       ) : (
         <p>No Tasks</p>
       )}
