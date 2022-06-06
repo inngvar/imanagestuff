@@ -69,7 +69,7 @@ export const MemberList = props => {
   }
 
   return (
-    <FormGroup className="col-md-6">
+    <FormGroup className="col-sm">
       <Label for="member">Участник</Label>
       {props.value ? (
           <Input type="select" name="member" id="member" value={props.value.login} onChange={onChange}>
@@ -89,15 +89,17 @@ export const MemberList = props => {
 export const TimeEntry = props => {
   const [entry, setEntry] = useState(props.entry);
 
-  function saveEntity(event, errors, values, num) {
+  useEffect(() => {
+    setEntry(props.entry)
+  }, [props.entry]);
+
+  function saveEntry(event, errors, values, num) {
     props.entry.duration = parseTime(values.duration);
-    props.entry.description = values.description;
     props.entry.shortDescription = values.shortDescription;
     props.entry.date = values.date;
-    axios.put('api/time-entries/', props.entry);
-    const clone = JSON.parse(JSON.stringify(props.entry));
-    setEntry(clone);
-    props.onUpdate ? props.onUpdate() : '';
+    axios.put('api/time-entries/', props.entry).then((response) => {
+      setEntry(response.data)
+    });
   }
 
   return (
@@ -109,7 +111,7 @@ export const TimeEntry = props => {
       <td>{entry.date}</td>
       <td>
         <div>
-          <TimeEntryUpdateModal entity={entry} saveEntity={saveEntity} num={props.key}/>
+          <TimeEntryUpdateModal entity={props.entry} saveEntity={saveEntry} num={props.key}/>
         </div>
       </td>
     </tr>
