@@ -69,7 +69,7 @@ export const MemberList = props => {
   }
 
   return (
-    <FormGroup className="col-md-6">
+    <FormGroup className="col-sm">
       <Label for="member">Участник</Label>
       {props.value ? (
           <Input type="select" name="member" id="member" value={props.value.login} onChange={onChange}>

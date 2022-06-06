@@ -12,7 +12,8 @@ import {
   Col,
   Form,
   FormGroup,
-  Label
+  Label,
+  Input
 } from 'reactstrap';
 import {cleanEntity} from "app/shared/util/entity-utils";
 
@@ -142,15 +143,15 @@ export const LogWork = (props: ILogWorkProp) => {
                        updateDefaultProject={updateDefaultProjectForMembers}
                        showButton={true}/>
           <MemberList project={currentProject} value={currentMember} handler={updateCurrentMember}/>
+          <FormGroup className="col-sm">
+            <Label>Дата:</Label>
+            <Input type="date" name="reportDate" class-name="form-control" defaultValue={reportDate}
+                   value={reportDate}
+                   onChange={event => setReportDate(event.target.value)}/>
+          </FormGroup>
         </Row>
         {currentMember?.login === account?.login &&
           <Col>
-            <FormGroup>
-              <Label>Дата:</Label>
-              <input type="date" name="reportDate" class-name="form-control" defaultValue={reportDate}
-                     value={reportDate}
-                     onChange={event => setReportDate(event.target.value)}/>
-            </FormGroup>
             <Row>
               <Form className="jumbotron">
                 <h3>Добавить задачу</h3>
