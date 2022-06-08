@@ -29,7 +29,6 @@ export const LogWork = (props: ILogWorkProp) => {
   const [entries, setEntries] = useState(null);
   const [duration, setDuration] = useState(null);
   const [entryDescription, setEntryDescription] = useState(null);
-  const [totalHours, setTotalHours] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
   const queryParams = (() => {
     const query = window.location.search.substring(1);
@@ -77,17 +76,6 @@ export const LogWork = (props: ILogWorkProp) => {
     updateEntries();
 
   }, [currentMember, currentProject, reportDate])
-
-  useEffect(() => {
-    if (!entries || entries.length < 1) {
-      return;
-    }
-    let sum = 0;
-    entries.forEach(e => {
-      sum = sum + durationToHours(e.duration);
-    });
-    setTotalHours(sum);
-  }, [entries])
 
   const updateCurrentProject = selectedProject => {
     setCurrentProject(selectedProject);
