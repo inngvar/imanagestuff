@@ -192,7 +192,7 @@ export const LogWork = (props: ILogWorkProp) => {
           </Col>
         }
         <Row>
-          <TimeEntries entries={entries} member={currentMember}/>
+          <TimeEntries entries={entries}/>
         </Row>
       </Col>
     </Row>
