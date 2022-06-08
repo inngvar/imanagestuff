@@ -89,19 +89,21 @@ export const MemberList = props => {
 export const TimeEntry = props => {
   const [entry, setEntry] = useState(props.entry);
 
-  function saveEntity(event, errors, values, num) {
+  useEffect(() => {
+    setEntry(props.entry)
+  }, [props.entry]);
+
+  function saveEntry(event, errors, values, num) {
     props.entry.duration = parseTime(values.duration);
-    props.entry.description = values.description;
     props.entry.shortDescription = values.shortDescription;
     props.entry.date = values.date;
-    axios.put('api/time-entries/', props.entry);
-    const clone = JSON.parse(JSON.stringify(props.entry));
-    setEntry(clone);
-    props.onUpdate ? props.onUpdate() : '';
+    axios.put('api/time-entries/', props.entry).then((response) => {
+      setEntry(response.data)
+    });
   }
 
   return (
-    <tr key={props.key}>
+    <tr key={props.key} style={entry.date !== props.date ? {display: "none"} : {}}>
       <td>
         <TimeEntryToDuration entities={[entry]}/>
       </td>
@@ -109,7 +111,7 @@ export const TimeEntry = props => {
       <td>{entry.date}</td>
       <td>
         <div>
-          <TimeEntryUpdateModal entity={entry} saveEntity={saveEntity} num={props.key}/>
+          <TimeEntryUpdateModal entity={props.entry} saveEntity={saveEntry} num={props.key}/>
         </div>
       </td>
     </tr>
@@ -129,7 +131,7 @@ export const TimeEntries = props => {
       </thead>
       <tbody>
       {props.entries ? (
-        props.entries.map((entry, i) => <TimeEntry entry={entry} key={i}/>)
+        props.entries.map((entry, i) => <TimeEntry entry={entry} key={i} date={entry.date}/>)
       ) : (
         <p>No Tasks</p>
       )}
