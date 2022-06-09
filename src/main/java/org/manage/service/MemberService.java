@@ -1,12 +1,12 @@
 package org.manage.service;
 
 import io.quarkus.panache.common.Page;
+import io.quarkus.security.identity.SecurityIdentity;
 import org.manage.domain.Member;
 import org.manage.domain.Project;
 import org.manage.service.dto.MemberDTO;
 import org.manage.service.dto.ProjectDTO;
 import org.manage.service.mapper.MemberMapper;
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import org.manage.web.rest.vm.MemberCreateVM;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -28,6 +27,8 @@ public class MemberService {
     @Inject
     MemberMapper memberMapper;
 
+    @Inject
+    SecurityIdentity securityIdentity;
 
     @Transactional
     public MemberDTO createMember(MemberCreateVM memberCreateVM){
@@ -92,5 +93,17 @@ public class MemberService {
         log.debug("Request to get Member : {}", login);
         return Member.findByLogin(login)
             .map(member -> memberMapper.toDto(member));
+    }
+
+    public MemberDTO findCurrent() {
+        return findByLogin(securityIdentity.getPrincipal().getName()).orElse(null);
+    }
+
+    public boolean matchesLoggedInMember(Long id) {
+        MemberDTO currentMember = findCurrent();
+        if (currentMember != null && currentMember.id == id) {
+            return true;
+        }
+        return false;
     }
 }

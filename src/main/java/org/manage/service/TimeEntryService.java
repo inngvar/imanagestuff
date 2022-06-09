@@ -1,11 +1,10 @@
 package org.manage.service;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.panache.common.Page;
-import io.quarkus.security.identity.SecurityIdentity;
 import org.manage.domain.Member;
 import org.manage.domain.Project;
 import org.manage.domain.TimeEntry;
-import org.manage.service.dto.MemberDTO;
 import org.manage.service.dto.TimeEntryDTO;
 import org.manage.service.mapper.ProjectMapper;
 import org.manage.service.mapper.TimeEntryMapper;
@@ -42,15 +41,10 @@ public class TimeEntryService {
     @Inject
     MemberService memberService;
 
-    @Inject
-    SecurityIdentity securityIdentity;
-
     @Transactional
     public TimeEntryDTO persistOrUpdate(TimeEntryDTO timeEntryDTO) {
         log.debug("Request to save TimeEntry : {}", timeEntryDTO);
-        final String login = securityIdentity.getPrincipal().getName();
-        MemberDTO currentMember = memberService.findByLogin(login).orElse(null);
-        if (currentMember != null && !Objects.equals(timeEntryDTO.memberId, currentMember.id)) {
+        if (!memberService.matchesLoggedInMember(timeEntryDTO.memberId)) {
             throw new WebApplicationException(Response.status(403).entity("Specified user doesn't match current user").build());
         }
         var timeEntry = timeEntryMapper.toEntity(timeEntryDTO);
@@ -66,9 +60,10 @@ public class TimeEntryService {
     @Transactional
     public void delete(Long id) {
         log.debug("Request to delete TimeEntry : {}", id);
-        TimeEntry.findByIdOptional(id).ifPresent(timeEntry -> {
-            timeEntry.delete();
-        });
+        if (!memberService.matchesLoggedInMember(id)) {
+            throw new WebApplicationException(Response.status(403).entity("Specified user doesn't match current user").build());
+        }
+        TimeEntry.findByIdOptional(id).ifPresent(PanacheEntityBase::delete);
     }
 
     /**
