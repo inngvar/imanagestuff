@@ -13,6 +13,7 @@ import {
 } from 'reactstrap';
 import TimeEntryUpdateModal from "app/entities/time-entry/time-entry-modal";
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 
 export const ProjectList = props => {
 
@@ -110,15 +111,18 @@ export const TimeEntry = props => {
       <td>{entry.shortDescription}</td>
       <td>{entry.date}</td>
       <td>
-        <div>
-          <TimeEntryUpdateModal entity={props.entry} saveEntity={saveEntry} num={props.key}/>
-        </div>
+        {props.changable &&
+          <div>
+            <TimeEntryUpdateModal entity={props.entry} saveEntity={saveEntry} num={props.key}/>
+          </div>
+        }
       </td>
     </tr>
   )
 }
 
 export const TimeEntries = props => {
+  const account = useSelector((state) => state.authentication.account)
   return (
     <Table className="table-striped table-hover table-sm">
       <thead className="thead-dark">
@@ -131,7 +135,8 @@ export const TimeEntries = props => {
       </thead>
       <tbody>
       {props.entries ? (
-        props.entries.map((entry, i) => <TimeEntry entry={entry} key={i} date={entry.date}/>)
+        props.entries.map((entry, i) => <TimeEntry entry={entry} key={i} date={entry.date}
+                                                   changable={account.login === entry.memberLogin}/>)
       ) : (
         <p>No Tasks</p>
       )}
