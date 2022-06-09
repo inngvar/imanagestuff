@@ -60,10 +60,14 @@ public class TimeEntryService {
     @Transactional
     public void delete(Long id) {
         log.debug("Request to delete TimeEntry : {}", id);
-        if (!memberService.matchesLoggedInMember(id)) {
+        TimeEntry entry = TimeEntry.findById(id);
+        if (entry == null) {
+            throw new WebApplicationException(Response.status(400).entity("Time entry with id=" + id + " not found").build());
+        }
+        if (!memberService.matchesLoggedInMember(entry.member.id)) {
             throw new WebApplicationException(Response.status(403).entity("Specified user doesn't match current user").build());
         }
-        TimeEntry.findByIdOptional(id).ifPresent(PanacheEntityBase::delete);
+        entry.delete();
     }
 
     /**
