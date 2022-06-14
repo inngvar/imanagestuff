@@ -71,7 +71,7 @@ export const TimeEntry = (props: ITimeEntryProps) => {
     axios.get("/api/members/current/").then(response => {
       setCurrentMember(response.data);
     })
-  })
+  }, [])
 
 
   const { timeEntryList, match, loading, totalItems } = props;
