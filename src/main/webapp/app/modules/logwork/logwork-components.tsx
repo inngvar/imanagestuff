@@ -137,7 +137,7 @@ export const TimeEntry = props => {
 }
 
 export const TimeEntries = props => {
-  const account = useSelector((state) => state.authentication.account)
+  const account = useSelector((state) => state["authentication"].account)
   return (
     <Table className="table-striped table-hover table-sm">
       <thead className="thead-dark">
