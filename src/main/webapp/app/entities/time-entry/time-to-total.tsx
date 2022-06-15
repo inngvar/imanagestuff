@@ -30,6 +30,6 @@ export const TimeEntryToDuration = props => {
   result += minutes > 0 ? ' ' + minutes + ' ' + decOfNum(minutes, ['минута', 'минуты', 'минут']) : '';
 
   return (
-    <p>{added}&nbsp;{result ?result.trim() : '0 часов и 0 минут' }</p>
+    <span>{added}&nbsp;{result ?result.trim() : '0 часов и 0 минут' }</span>
   );
 }

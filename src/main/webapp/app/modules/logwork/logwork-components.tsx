@@ -117,15 +117,15 @@ export const TimeEntry = props => {
         <TimeEntryToDuration entities={[entry]}/>
       </td>
       <td>{entry.shortDescription}</td>
-      <td>{entry.date}</td>
-      <td>
+      <td style={{textAlign: "center"}}>{entry.date}</td>
+      <td style={{textAlign: "center"}}>
         {props.changable &&
           <div>
             <TimeEntryUpdateModal entity={props.entry} saveEntity={saveEntry} num={props.key}/>
           </div>
         }
       </td>
-      <td>
+      <td style={{textAlign: "center"}}>
         {props.changable &&
           <div>
             <Button color="primary" onClick={deleteEntry}>Удалить</Button>
@@ -139,14 +139,14 @@ export const TimeEntry = props => {
 export const TimeEntries = props => {
   const account = useSelector((state) => state["authentication"].account)
   return (
-    <Table className="table-striped table-hover table-sm">
+    <Table className="table-striped table-hover table-sm" responsive>
       <thead className="thead-dark">
       <tr>
-        <th scope="col">Часы</th>
-        <th scope="col">Описание</th>
-        <th scope="col">Дата</th>
-        <th scope="col"/>
-        <th scope="col"/>
+        <th scope="col" style={{width:"150px", textAlign: "center"}}>Часы</th>
+        <th scope="col" style={{width:"50%", textAlign: "center"}}>Описание</th>
+        <th scope="col" style={{width:"100px", textAlign: "center"}}>Дата</th>
+        <th scope="col" style={{width:"100px"}}/>
+        <th scope="col" style={{width:"100px"}}/>
       </tr>
       </thead>
       <tbody>
@@ -157,9 +157,9 @@ export const TimeEntries = props => {
         <p>No Tasks</p>
       )}
       </tbody>
-      <tr>
-        <h5><TimeEntryToDuration entities={props.entries} added='Всего : '/></h5>
-      </tr>
+      <tfoot>
+        <td colSpan={2}><h5>Всего : <TimeEntryToDuration entities={props.entries}/></h5></td>
+      </tfoot>
     </Table>
   );
 }
