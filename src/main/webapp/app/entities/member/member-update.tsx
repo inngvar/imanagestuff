@@ -44,7 +44,7 @@ export const MemberUpdate = (props: IMemberUpdateProps) => {
         }
       )
     }
-  )
+  , [])
 
   useEffect(() => {
     if (props.updateSuccess) {
