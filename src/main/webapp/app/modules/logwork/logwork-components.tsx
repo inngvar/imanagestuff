@@ -158,7 +158,9 @@ export const TimeEntries = props => {
       )}
       </tbody>
       <tfoot>
-        <td colSpan={2}><h5>Всего : <TimeEntryToDuration entities={props.entries}/></h5></td>
+        <td colSpan={2}>
+          <h5>Всего : <TimeEntryToDuration entities={props.entries}/></h5>
+        </td>
       </tfoot>
     </Table>
   );

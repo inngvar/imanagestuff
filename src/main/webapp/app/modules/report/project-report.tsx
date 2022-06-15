@@ -69,7 +69,8 @@ export const ProjectReport = props => {
           <Button onClick={() => sendReport()}>Отправить отчёт</Button>
         </Row>
         <Row>
-          <h3><TimeEntryToDuration entities={timeEntities(projectStats?.membersReports)} added='Всего по проекту : '/>
+          <h3>
+            Всего по проекту : <TimeEntryToDuration entities={timeEntities(projectStats?.membersReports)}/>
           </h3>
         </Row>
       </Col>
