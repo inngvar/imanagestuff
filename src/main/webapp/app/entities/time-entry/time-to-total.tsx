@@ -3,7 +3,7 @@ import { parse, end, toSeconds, pattern } from 'iso8601-duration';
 
 
 export const TimeEntryToDuration = props => {
-  const { entities, added } = props;
+  const { entities } = props;
 
   function decOfNum(number, titles) {
     const cases = [2, 0, 1, 1, 1, 2];
@@ -30,6 +30,6 @@ export const TimeEntryToDuration = props => {
   result += minutes > 0 ? ' ' + minutes + ' ' + decOfNum(minutes, ['минута', 'минуты', 'минут']) : '';
 
   return (
-    <p>{added}&nbsp;{result ?result.trim() : '0 часов и 0 минут' }</p>
+    <span>{result ?result.trim() : '0 часов и 0 минут' }</span>
   );
 }
