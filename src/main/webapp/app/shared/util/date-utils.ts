@@ -36,6 +36,6 @@ export const parseTime = (time: string) => {
   const minutes = /[0-9]{1,2}M/.exec(time) || [''];
   const hours = /[0-9]{1}H/.exec(time) || [''];
   const days = /[0-9]{1}D/.exec(time) || [''];
-  const result = (days[0] && '8H') || hours[0] + ' ' + minutes[0] || '0S';
+  const result = (days[0] && '8H') || hours[0] + minutes[0] || '0S';
   return 'PT' + result.trim();
 };
