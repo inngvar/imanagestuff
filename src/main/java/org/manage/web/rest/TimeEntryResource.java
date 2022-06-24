@@ -60,7 +60,7 @@ public class TimeEntryResource {
         if (timeEntryDTO.id != null) {
             throw new BadRequestAlertException("A new timeEntry cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        var result = timeEntryService.persistOrUpdate(timeEntryDTO);
+        var result = timeEntryService.persistOrUpdate(timeEntryDTO, securityIdentity);
         var response = Response.created(fromPath(uriInfo.getPath()).path(result.id.toString()).build()).entity(result);
         HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.id.toString()).forEach(response::header);
         return response.build();
@@ -81,7 +81,7 @@ public class TimeEntryResource {
         if (timeEntryDTO.id == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        var result = timeEntryService.persistOrUpdate(timeEntryDTO);
+        var result = timeEntryService.persistOrUpdate(timeEntryDTO, securityIdentity);
         var response = Response.ok().entity(result);
         HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, timeEntryDTO.id.toString()).forEach(response::header);
         return response.build();
@@ -98,7 +98,7 @@ public class TimeEntryResource {
     @RolesAllowed({AuthoritiesConstants.ADMIN,AuthoritiesConstants.USER})
     public Response deleteTimeEntry(@PathParam("id") Long id) {
         log.debug("REST request to delete TimeEntry : {}", id);
-        timeEntryService.delete(id);
+        timeEntryService.delete(id, securityIdentity);
         var response = Response.noContent();
         HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()).forEach(response::header);
         return response.build();

@@ -95,15 +95,8 @@ public class MemberService {
             .map(member -> memberMapper.toDto(member));
     }
 
-    public MemberDTO findCurrent() {
-        return findByLogin(securityIdentity.getPrincipal().getName()).orElse(null);
-    }
-
-    public boolean matchesLoggedInMember(Long id) {
-        MemberDTO currentMember = findCurrent();
-        if (currentMember != null && currentMember.id == id) {
-            return true;
-        }
-        return false;
+    public boolean matchesLoggedInMember(Long id, String currentUserLogin) {
+        MemberDTO currentMember = findByLogin(currentUserLogin).orElse(null);
+        return currentMember != null && currentMember.id.equals(id);
     }
 }
