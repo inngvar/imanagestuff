@@ -43,7 +43,7 @@ class LoginModal extends React.Component<ILoginModalProps> {
                   label={translate('global.form.username.label')}
                   placeholder={translate('global.form.username.placeholder')}
                   required
-                  errorMessage="Username cannot be empty!"
+                  errorMessage="Имя пользователя не может быть пустым!"
                   autoFocus
                 />
                 <AvField
@@ -52,7 +52,7 @@ class LoginModal extends React.Component<ILoginModalProps> {
                   label={translate('login.form.password')}
                   placeholder={translate('login.form.password.placeholder')}
                   required
-                  errorMessage="Password cannot be empty!"
+                  errorMessage="Пароль не может быть пустым!"
                 />
                 <AvGroup check inline>
                   <Label className="form-check-label">
@@ -62,17 +62,18 @@ class LoginModal extends React.Component<ILoginModalProps> {
               </Col>
             </Row>
             <div className="mt-1">&nbsp;</div>
-            <Alert color="warning">
+            <Alert>
+              Если вы забыли пароль, то можете его &nbsp;
               <Link to="/account/reset/request">
-                <Translate contentKey="login.password.forgot">Did you forget your password?</Translate>
+                Восстановить
               </Link>
             </Alert>
-            <Alert color="warning">
+            <Alert>
               <span>
                 <Translate contentKey="global.messages.info.register.noaccount">You don&apos;t have an account yet?</Translate>
               </span>{' '}
               <Link to="/account/register">
-                <Translate contentKey="global.messages.info.register.link">Register a new account</Translate>
+                Зарегистрироваться
               </Link>
             </Alert>
           </ModalBody>
