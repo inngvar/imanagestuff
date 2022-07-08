@@ -1,6 +1,6 @@
 {
   "login": {
-    "title": "Авторизация",
+    "title": "Вход на сайт",
     "form": {
       "password": "Пароль",
       "password.placeholder": "Ваш пароль",

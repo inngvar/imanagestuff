@@ -3,7 +3,9 @@ import { toast } from 'react-toastify';
 
 const addErrorAlert = (message, key?, data?) => {
   key = key ? key : message;
-  toast.error(translate(key, data));
+  if(key !== '') {
+    toast.error(translate(key, data));
+  }
 };
 export default () => next => action => {
   // If not a promise, continue on

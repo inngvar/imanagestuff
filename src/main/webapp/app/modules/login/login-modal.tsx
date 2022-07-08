@@ -62,20 +62,20 @@ class LoginModal extends React.Component<ILoginModalProps> {
               </Col>
             </Row>
             <div className="mt-1">&nbsp;</div>
-            <Alert>
+            <div>
               Если вы забыли пароль, то можете его &nbsp;
               <Link to="/account/reset/request">
                 Восстановить
               </Link>
-            </Alert>
-            <Alert>
+            </div>
+            <div>
               <span>
                 <Translate contentKey="global.messages.info.register.noaccount">You don&apos;t have an account yet?</Translate>
               </span>{' '}
               <Link to="/account/register">
-                Зарегистрироваться
+                Зарегистрируйтесь
               </Link>
-            </Alert>
+            </div>
           </ModalBody>
           <ModalFooter>
             <Button color="secondary" onClick={handleClose} tabIndex="1">
