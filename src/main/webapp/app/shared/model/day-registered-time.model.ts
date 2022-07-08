@@ -5,12 +5,13 @@ export interface IRegisteredTime {
 }
 
 export interface IDayRegisteredTime {
-  date?: Date;
-  totalDuration?: string;
+  date: Date;
+  totalDuration: number;
   projectDurations?: Array<IProjectDuration>;
+  unregisteredDuration: number;
 }
 
 export interface IProjectDuration {
-  project?: IProject;
-  duration?: string;
+  project: IProject;
+  duration: number;
 }

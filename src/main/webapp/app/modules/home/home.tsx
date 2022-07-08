@@ -1,7 +1,7 @@
 import './home.scss';
 
-import axios from 'axios';
-import React, {useEffect, useState} from 'react';
+
+import React, {useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import {Translate} from 'react-jhipster';
 import {connect} from 'react-redux';
@@ -14,17 +14,10 @@ export type IHomeProp = StateProps;
 
 export const Home = (props: IHomeProp) => {
   const {account} = props;
-  const [missedWorkLog, setMissedWorkLog] = useState<Array<IDayRegisteredTime>>([]);
-  const NUMBER_OF_DAYS = 14;
 
-  useEffect(() => {
-    if (account && account.login) {
-      const url = "api/reports/registered-time-report/" + account.login + '/' + NUMBER_OF_DAYS;
-      axios.get(url).then(response => {
-        setMissedWorkLog(response.data);
-      });
-    }
-  }, [account]);
+
+
+
 
   return (
     <Row>
@@ -37,8 +30,8 @@ export const Home = (props: IHomeProp) => {
             </h2>
             <div>
               <div>
-                <h1>Потерянное время</h1>
-                <MissedWorkTable dayRegisteredTimes={missedWorkLog}></MissedWorkTable>
+                <h3>Потерянное время</h3>
+                <MissedWorkTable account={account}></MissedWorkTable>
               </div>
             </div>
           </div>

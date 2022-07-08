@@ -2,22 +2,25 @@ package org.manage.service;
 
 import org.manage.config.LocalDateProvider;
 import org.manage.domain.Member;
+import org.manage.domain.Project;
 import org.manage.domain.TimeEntry;
 import org.manage.service.dto.*;
+import org.manage.service.mapper.ProjectMapper;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.ws.rs.NotAuthorizedException;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ReportService {
+
+    public static final Duration WORKDAY_MINUTES_TOTAL = Duration.ofHours(8);
 
     public static final String SUBJECT_DAY_REPORT_TEMPLATE = "Отчёт по проекту %s за %s";
 
@@ -38,6 +41,9 @@ public class ReportService {
 
     @Inject
     public TimeLogService timeLogService;
+
+    @Inject
+    ProjectMapper projectMapper;
 
     public DayReportDTO generateReport(final Long projectId, final LocalDate fromDate, final LocalDate toDate) {
         final ProjectDTO projectDto = projectService.findOne(projectId).orElseThrow();
@@ -109,29 +115,61 @@ public class ReportService {
     /**
      * returns a report of registered time and corresponding projects for period fromDate to toDate for member.
      * Reports for days in which daily goal of 8h was reached are excluded.
-     * @param fromDate - inclusive
-     * @param toDate - exclusive
+     *
+     * @param fromDate  inclusive
+     * @param daysCount count of days in report
      */
     @Transactional
-    public Optional<List<DayRegisteredTimeDTO>> getRegisteredTimeReport(final String login, final LocalDate fromDate, final LocalDate toDate) {
-        Member member = Member.findByLogin(login).orElseThrow();
-        List<TimeEntry> timeEntries = TimeEntry.getAllByDateBetweenAndMember(fromDate, toDate, member);
-
-        List<DayRegisteredTimeDTO> timeReport = new ArrayList<>();
-        for (LocalDate date = LocalDate.from(fromDate);
-             date.isBefore(toDate) || date.equals(toDate);
-             date = date.plusDays(1)){
-            final LocalDate finalDate = LocalDate.from(date);
-            DayRegisteredTimeDTO dayRegisteredTimeDTO = new DayRegisteredTimeDTO();
-            dayRegisteredTimeDTO.date = date;
-            timeEntries.stream().filter(entry -> entry.date.isEqual(finalDate))
-                .forEach(entry -> dayRegisteredTimeDTO.addProjectDuration(projectService.toDTO(entry.project), entry.duration));
-
-            if (dayRegisteredTimeDTO.unregisteredDuration().toMinutes() > 0) {
-                timeReport.add(dayRegisteredTimeDTO);
-            }
-        }
-        return Optional.of(timeReport);
+    public List<DayRegisteredTimeDTO> getRegisteredTimeReport(final String login, final LocalDate fromDate, Integer daysCount) {
+        Member member = Member.findByLogin(login).orElseThrow(() -> new NotAuthorizedException("You are not logged in"));
+        List<TimeEntry> timeEntries = TimeEntry.getAllByDateBetweenAndMember(fromDate, fromDate.plusDays(daysCount), member);
+        return new ReportBuilder(14, fromDate).addTimeEntries(timeEntries).build();
     }
 
+    public class ReportBuilder {
+
+        private final int daysCount;
+        private final LocalDate startDate;
+        private Map<LocalDate, List<TimeEntry>> entries;
+
+        public ReportBuilder(int daysCount, LocalDate startDate) {
+            this.daysCount = daysCount;
+            this.startDate = startDate;
+        }
+
+        ReportBuilder addTimeEntries(List<TimeEntry> entries) {
+            this.entries = entries.stream().collect(Collectors.groupingBy(f -> f.date));
+            return this;
+        }
+
+        public List<DayRegisteredTimeDTO> build() {
+            LocalDate currentDate = startDate;
+            List<DayRegisteredTimeDTO> report = new ArrayList<>(daysCount);
+            for (int i = 0; i < daysCount; i++) {
+                DayRegisteredTimeDTO dayReport = new DayRegisteredTimeDTO();
+                dayReport.date = currentDate;
+                dayReport.unregisteredDuration = WORKDAY_MINUTES_TOTAL.toMinutes();
+                currentDate = currentDate.plusDays(1);
+                report.add(dayReport);
+                if (!entries.containsKey(dayReport.date)) {
+                    continue;
+                }
+                dayReport.totalDuration = entries.get(dayReport.date).stream().collect(Collectors.summarizingLong(this::getMinutes)).getSum();
+                final Map<Project, List<TimeEntry>> entriesByProject = entries.get(dayReport.date).stream().collect(Collectors.groupingBy(f -> f.project));
+                for (var pr : entriesByProject.keySet()) {
+                    ProjectDuration projectDuration = new ProjectDuration();
+                    projectDuration.project = projectMapper.toDto(pr);
+                    projectDuration.duration = entriesByProject.get(pr).stream().collect(Collectors.summarizingLong(this::getMinutes)).getSum();
+                    dayReport.projectDurations.add(projectDuration);
+                    dayReport.unregisteredDuration = dayReport.unregisteredDuration  - projectDuration.duration;
+                }
+            }
+            Collections.reverse(report);
+            return report;
+        }
+
+        private long getMinutes(TimeEntry f) {
+            return f.duration.get(ChronoUnit.SECONDS)/60;
+        }
+    }
 }

@@ -1,83 +1,79 @@
-import React from "react";
-import {Table} from 'reactstrap';
+import React, {useState, useEffect} from "react";
+import {Table, Row} from 'reactstrap';
+import axios from 'axios';
+import { connect } from 'react-redux';
 import {Link} from "react-router-dom";
-import {IRegisteredTime} from "app/shared/model/day-registered-time.model";
+import {IDayRegisteredTime, IProjectDuration, IRegisteredTime} from "app/shared/model/day-registered-time.model";
 import {IProject} from "app/shared/model/project.model";
+import {Home} from "app/modules/home/home";
 
-export class MissedWorkTable extends React.Component<IRegisteredTime> {
-  render() {
-    return (
-      <Table responsive>
-        <tr>
-          <th>Дата</th>
-          <th>Всего за день</th>
-          <th>Потеряно</th>
-          <th>Проект</th>
-          <th>По проекту</th>
-          <th>Найти</th>
-        </tr>
-        {this.formTableBody()}
-      </Table>
-    )
+
+
+function parseDuration(dur: number): string {
+  const minutes = dur % 60;
+  let h = 0;
+  if (dur > minutes) {
+    h = (dur - minutes) / 60;
   }
+  let result = '';
+  if (h > 0) {
+    result = result + h.toString() + "ч";
+  }
+  if (minutes > 0) {
+    result = result + " " + minutes + "м";
+  }
+  if (result.length === 0) {
+    result = "0ч";
+  }
+  return result;
+}
 
-  formTableBody() {
-    const tableBody = [];
-    this.props.dayRegisteredTimes
-      .sort((a, b) => {
-        const aDate = new Date(a.date);
-        const bDate = new Date(b.date);
-        return a.date === b.date ? 0 : aDate.getTime() < bDate.getTime() ? 1 : -1;
-      })
-      .forEach((day) => {
-        const spanLen = day.projectDurations.length;
-        tableBody.push(<tr>
-          <td rowSpan={spanLen + 1}>{day.date}</td>
-          <td rowSpan={spanLen + 1}>{this.parseDuration(day.totalDuration)}</td>
-          <td rowSpan={spanLen + 1}>{this.getMissedTime(day.totalDuration)}</td>
-          {spanLen === 0 && <td>-</td>}
-          {spanLen === 0 && <td>-</td>}
-          {spanLen === 0 && <td>-</td>}
-        </tr>)
-        day.projectDurations.forEach((proj) => {
-          tableBody.push(<tr>
-            <td>{proj?.project?.name}</td>
-            <td>{this.parseDuration(proj.duration)}</td>
-            {this.projectTimeLogLink(proj?.project, day.date)}
-          </tr>)
-        })
+function projectTimeLogLink(projects: Array<IProjectDuration>, date: Date) {
+  return (
+    projects.map((project,i)=>(
+        <Link key={`entity-${i}`} to={"/logwork?project=" + project.project.id + "&date=" + date}>Отметить в {project.project.name}</Link>
+      )))
+}
+
+export const MissedWorkTable = props => {
+
+  const NUMBER_OF_DAYS = 14;
+
+  const {account} = props;
+
+  const [missedWorkLog, setMissedWorkLog] = useState<Array<IDayRegisteredTime>>([]);
+
+
+
+
+  useEffect(() => {
+    if (account && account.login) {
+      const url = "api/reports/registered-time-report/" + account.login + '/' + NUMBER_OF_DAYS;
+      axios.get(url).then(response => {
+        setMissedWorkLog(response.data);
       });
-    return <tbody>{tableBody}</tbody>
-  }
-
-  parseDuration(dur: string) {
-    const minutes = /[0-9]{1,2}M/.exec(dur) || [""];
-    const hours = /[0-9]{1}H/.exec(dur) || [""];
-    const result = hours[0] + " " + minutes[0];
-    if (" " === result)
-      return "-";
-    return result.trim();
-  }
-
-  getMissedTime(dur: string) {
-    const minutes = /([0-9]{1,2})M/.exec(dur) || ["", "0"];
-    const hours = /([0-9]{1})H/.exec(dur) || ["", "0"];
-    const missedHours = 8 - Number(hours[1]);
-    const missedMinutes = (60 - Number(minutes[1])) % 60;
-    let result;
-    if (missedMinutes !== 0) {
-      result = (missedHours - 1) + "H " + missedMinutes + "M";
-    } else {
-      result = missedHours + "H";
     }
-    return result;
-  }
+  }, [account]);
 
-  projectTimeLogLink(project: IProject, date: Date) {
-    return (
-      <td>
-        <Link to={"/logwork?project=" + project.id + "&date=" + date}>link</Link>
-      </td>
-    )
-  }
+  return (<Row>
+    <Table>
+      <tr>
+        <th>Дата</th>
+        <th>Отмечено</th>
+        <th>Осталось</th>
+        <th>Найти</th>
+      </tr>
+      <tbody>
+        {missedWorkLog.map((log,i)=>(
+          <tr key={`entity-${i}`}>
+            <td>{log.date}</td>
+            <td>{parseDuration(log.totalDuration)}</td>
+            <td>{parseDuration(log.unregisteredDuration)}</td>
+            <td>{projectTimeLogLink(log.projectDurations, log.date)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
+  </Row>);
+
 }

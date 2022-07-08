@@ -71,7 +71,6 @@ public class ReportResource {
     public Response registeredTimeReport(@PathParam("user") String login, @PathParam("numberofdays") int nDays) {
         nDays = nDays - 1;
         final LocalDate from = LocalDate.now().minusDays(nDays);
-        final LocalDate to = LocalDate.now();
-        return ResponseUtil.wrapOrNotFound(reportService.getRegisteredTimeReport(login, from, to));
+        return Response.ok(reportService.getRegisteredTimeReport(login, from, nDays)).build();
     }
 }

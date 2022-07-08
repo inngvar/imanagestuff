@@ -64,7 +64,7 @@ public class TimeEntry extends PanacheEntityBase implements Serializable {
     }
 
     public static List<TimeEntry> getAllByDateBetweenAndMember(LocalDate dateFrom, LocalDate dateTo, Member member) {
-        return find("From TimeEntry e WHERE e.member=?1 AND (e.date >= ?2 AND e.date<=?3)", member, dateFrom, dateTo).list();
+        return find("From TimeEntry e WHERE e.member=?1 AND (e.date >= ?2 AND e.date<=?3) ORDER BY e.date DESC", member, dateFrom, dateTo).list();
     }
 
 

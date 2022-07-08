@@ -185,7 +185,7 @@ export const LogWork = (props: ILogWorkProp) => {
       </Col>
     </Row>
   );
-};
+} ;
 
 const mapStateToProps = storeState => ({
   account: storeState.authentication.account,
