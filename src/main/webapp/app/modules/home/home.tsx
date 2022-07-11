@@ -7,17 +7,12 @@ import {Translate} from 'react-jhipster';
 import {connect} from 'react-redux';
 import {Row, Col, Alert} from 'reactstrap';
 
-import {IDayRegisteredTime} from "app/shared/model/day-registered-time.model";
 import {MissedWorkTable} from "app/modules/home/init/missed-work-table";
 
 export type IHomeProp = StateProps;
 
 export const Home = (props: IHomeProp) => {
   const {account} = props;
-
-
-
-
 
   return (
     <Row>

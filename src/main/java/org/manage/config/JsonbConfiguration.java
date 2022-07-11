@@ -16,7 +16,7 @@ public class JsonbConfiguration implements JsonbConfigCustomizer {
     @Override
     public void customize(JsonbConfig config) {
         config
-        .withDateFormat(Constants.DATE_TIME_FORMAT, new Locale("ru-RU"));
+            .withDateFormat(Constants.DATE_TIME_FORMAT, new Locale("ru-RU"));
     }
 
 }
