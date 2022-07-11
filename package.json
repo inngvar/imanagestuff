@@ -37,7 +37,8 @@
     "redux-thunk": "2.3.0",
     "tslib": "1.11.1",
     "uuid": "7.0.3",
-    "iso8601-duration": "^1.2.0"
+    "iso8601-duration": "^1.2.0",
+    "react-moment": "latest"
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.10",

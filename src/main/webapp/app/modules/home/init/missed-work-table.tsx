@@ -1,11 +1,13 @@
 import React, {useState, useEffect} from "react";
 import {Table, Row} from 'reactstrap';
 import axios from 'axios';
+import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import {Link} from "react-router-dom";
 import {IDayRegisteredTime, IProjectDuration, IRegisteredTime} from "app/shared/model/day-registered-time.model";
 import {IProject} from "app/shared/model/project.model";
 import {Home} from "app/modules/home/home";
+import moment from 'moment'
 
 
 
@@ -43,9 +45,6 @@ export const MissedWorkTable = props => {
 
   const [missedWorkLog, setMissedWorkLog] = useState<Array<IDayRegisteredTime>>([]);
 
-
-
-
   useEffect(() => {
     if (account && account.login) {
       const url = "api/reports/registered-time-report/" + account.login + '/' + NUMBER_OF_DAYS;
@@ -58,6 +57,7 @@ export const MissedWorkTable = props => {
   return (<Row>
     <Table>
       <tr>
+        <th>День недели</th>
         <th>Дата</th>
         <th>Отмечено</th>
         <th>Осталось</th>
@@ -66,7 +66,8 @@ export const MissedWorkTable = props => {
       <tbody>
         {missedWorkLog.map((log,i)=>(
           <tr key={`entity-${i}`}>
-            <td>{log.date}</td>
+            <td><Moment format="dddd">{log.date}</Moment></td>
+            <td><Moment format="DD/MM/YYYY">{log.date}</Moment></td>
             <td>{parseDuration(log.totalDuration)}</td>
             <td>{parseDuration(log.unregisteredDuration)}</td>
             <td>{projectTimeLogLink(log.projectDurations, log.date)}</td>

@@ -49,9 +49,11 @@ export const LogWork = (props: ILogWorkProp) => {
       setProjects(response.data);
       const mem = response.data[0].members.find(m => m.login === account.login);
       const dProject = response.data.find(p => p.id === mem.defaultProjectId)
+
+      //console.log('CURRENT_DATE='+selectedDate);
       if (queryParams["project"] && queryParams["date"]) {
         setCurrentProject(response.data.find((p) => p.id === parseInt(queryParams["project"], 10)));
-        setReportDate(new Date(queryParams["date"]).toISOString().substr(0, 10));
+        setReportDate(queryParams["date"]);
       } else {
         setCurrentProject(dProject ? dProject : response.data[0]);
       }

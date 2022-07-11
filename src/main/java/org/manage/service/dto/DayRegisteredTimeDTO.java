@@ -15,8 +15,10 @@ import java.util.Objects;
 @RegisterForReflection
 public class DayRegisteredTimeDTO implements Serializable {
 
-    @JsonbDateFormat(value = Constants.DAY_REPORT_LOCAL_DATE_FORMAT, locale = "ru-RU")
+    @JsonbDateFormat(value = "yyyy-MM-dd")
     public LocalDate date;
+
+    public String dayOfWeek;
 
     public Long totalDuration = 0L;
 

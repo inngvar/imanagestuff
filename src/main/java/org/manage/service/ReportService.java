@@ -148,6 +148,7 @@ public class ReportService {
             for (int i = 0; i < daysCount; i++) {
                 DayRegisteredTimeDTO dayReport = new DayRegisteredTimeDTO();
                 dayReport.date = currentDate;
+                dayReport.dayOfWeek = currentDate.getDayOfWeek().name();
                 dayReport.unregisteredDuration = WORKDAY_MINUTES_TOTAL.toMinutes();
                 currentDate = currentDate.plusDays(1);
                 report.add(dayReport);
