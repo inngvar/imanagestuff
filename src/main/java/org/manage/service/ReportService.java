@@ -11,6 +11,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.NotAuthorizedException;
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -148,8 +149,12 @@ public class ReportService {
             for (int i = 0; i < daysCount; i++) {
                 DayRegisteredTimeDTO dayReport = new DayRegisteredTimeDTO();
                 dayReport.date = currentDate;
-                dayReport.dayOfWeek = currentDate.getDayOfWeek().name();
-                dayReport.unregisteredDuration = WORKDAY_MINUTES_TOTAL.toMinutes();
+                dayReport.holiday = currentDate.getDayOfWeek().equals(DayOfWeek.SATURDAY) || currentDate.getDayOfWeek().equals(DayOfWeek.SUNDAY);
+                if (dayReport.holiday) {
+                    dayReport.unregisteredDuration = 0L;
+                } else {
+                    dayReport.unregisteredDuration = WORKDAY_MINUTES_TOTAL.toMinutes();
+                }
                 currentDate = currentDate.plusDays(1);
                 report.add(dayReport);
                 if (!entries.containsKey(dayReport.date)) {
@@ -162,7 +167,7 @@ public class ReportService {
                     projectDuration.project = projectMapper.toDto(pr);
                     projectDuration.duration = entriesByProject.get(pr).stream().collect(Collectors.summarizingLong(this::getMinutes)).getSum();
                     dayReport.projectDurations.add(projectDuration);
-                    dayReport.unregisteredDuration = dayReport.unregisteredDuration  - projectDuration.duration;
+                    dayReport.unregisteredDuration = dayReport.unregisteredDuration - projectDuration.duration;
                 }
             }
             Collections.reverse(report);
@@ -170,7 +175,7 @@ public class ReportService {
         }
 
         private long getMinutes(TimeEntry f) {
-            return f.duration.get(ChronoUnit.SECONDS)/60;
+            return f.duration.get(ChronoUnit.SECONDS) / 60;
         }
     }
 }

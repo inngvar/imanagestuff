@@ -8,3 +8,11 @@ Main page styles
   background: url('../../../content/images/jhipster_family_member_2.svg') no-repeat center top;
   background-size: contain;
 }
+
+.holiday_true {
+  background: #bbbbbb;
+}
+
+tr.holiday_true:hover{
+  background: #888888 !important;
+}

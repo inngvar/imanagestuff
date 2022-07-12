@@ -1,3 +1,4 @@
+import '../home.scss';
 import React, {useState, useEffect} from "react";
 import {Table, Row} from 'reactstrap';
 import axios from 'axios';
@@ -37,7 +38,7 @@ function projectTimeLogLink(projects: Array<IProjectDuration>, date: Date) {
           в {project.project.name}</Link>
       )))
   } else {
-    return (<Link to={"/logwork?" + "date=" + date}>Отметить в этот день</Link>)
+    return (<Link to={"/logwork?" + "date=" + date}>Отметить</Link>)
   }
 }
 
@@ -60,7 +61,8 @@ export const MissedWorkTable = props => {
   }, [account]);
 
   return (<Row>
-    <Table>
+    <Table bordered hover>
+      <thead>
       <tr>
         <th>День недели</th>
         <th>Дата</th>
@@ -68,10 +70,11 @@ export const MissedWorkTable = props => {
         <th>Осталось</th>
         <th>Найти</th>
       </tr>
+      </thead>
       <tbody>
       {missedWorkLog.map((log, i) => (
-        <tr key={`entity-${i}`}>
-          <td><Moment format="dddd">{log.date}</Moment></td>
+        <tr key={`entity-${i}`}  className={'holiday_'+ log.holiday.toString()}>
+          <td ><Moment format="dddd" locale={account.langKey}>{log.date}</Moment></td>
           <td><Moment format="DD/MM/YYYY">{log.date}</Moment></td>
           <td>{parseDuration(log.totalDuration)}</td>
           <td>{parseDuration(log.unregisteredDuration)}</td>

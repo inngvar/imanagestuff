@@ -18,12 +18,12 @@ public class DayRegisteredTimeDTO implements Serializable {
     @JsonbDateFormat(value = "yyyy-MM-dd")
     public LocalDate date;
 
-    public String dayOfWeek;
-
     public Long totalDuration = 0L;
 
     public final List<ProjectDuration> projectDurations = Lists.newArrayList();
 
     public Long unregisteredDuration = 0L;
+
+    public boolean holiday;
 
 }

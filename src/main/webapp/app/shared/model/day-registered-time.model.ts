@@ -9,6 +9,7 @@ export interface IDayRegisteredTime {
   totalDuration: number;
   projectDurations?: Array<IProjectDuration>;
   unregisteredDuration: number;
+  holiday: boolean;
 }
 
 export interface IProjectDuration {
