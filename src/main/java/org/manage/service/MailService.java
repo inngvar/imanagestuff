@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
  */
 @ApplicationScoped
 public class MailService {
+
     private final Logger log = LoggerFactory.getLogger(MailService.class);
 
     private static final String USER = "user";
@@ -32,48 +33,24 @@ public class MailService {
 
     final JHipsterProperties jHipsterProperties;
 
-//    final MailTemplate activationEmail;
-//
-//    final MailTemplate creationEmail;
-//
-//    final MailTemplate passwordResetEmail;
-//    private final MailTemplate dayReport;
-//    private final MailTemplate timeReport;
-
     @CheckedTemplate(requireTypeSafeExpressions = false)
     static class Templates {
 
-        //@Location("mail/activationEmail")
         public static native MailTemplate.MailTemplateInstance activationEmail();
 
-        ///@Location("mail/creationEmail")
         public static native MailTemplate.MailTemplateInstance  creationEmail();
 
-        //@Location("mail/passwordResetEmail")
         public static native MailTemplate.MailTemplateInstance  passwordResetEmail();
 
-        //@Location("mail/dayReport")
         public static native MailTemplate.MailTemplateInstance  dayReport();
 
-        ///@Location("mail/timeReport")
         public static native MailTemplate.MailTemplateInstance  timeReport();
     }
 
     @Inject
     public MailService(
         JHipsterProperties jHipsterProperties) {
-//        @ResourcePath("mail/activationEmail") MailTemplate activationEmail,
-//        @ResourcePath("mail/creationEmail") MailTemplate creationEmail,
-//        @ResourcePath("mail/passwordResetEmail") MailTemplate passwordResetEmail,
-//        @ResourcePath("mail/dayReport") MailTemplate dayReport,
-//        @ResourcePath("mail/timeReport") MailTemplate timeReport)
-
         this.jHipsterProperties = jHipsterProperties;
-//        this.activationEmail = activationEmail;
-//        this.creationEmail = creationEmail;
-//        this.passwordResetEmail = passwordResetEmail;
-//        this.dayReport = dayReport;
-//        this.timeReport = timeReport;
     }
 
     public CompletionStage<Void> sendEmailFromTemplate(User user, MailTemplate.MailTemplateInstance template, String subject) {
