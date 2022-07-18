@@ -1,11 +1,13 @@
 package org.manage.service;
 
 import org.manage.config.LocalDateProvider;
+import org.manage.domain.DayInfo;
 import org.manage.domain.Member;
 import org.manage.domain.Project;
 import org.manage.domain.TimeEntry;
 import org.manage.service.dto.*;
 import org.manage.service.mapper.ProjectMapper;
+import org.manage.web.rest.CalendarResource;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -149,7 +151,7 @@ public class ReportService {
             for (int i = 0; i < daysCount; i++) {
                 DayRegisteredTimeDTO dayReport = new DayRegisteredTimeDTO();
                 dayReport.date = currentDate;
-                dayReport.holiday = currentDate.getDayOfWeek().equals(DayOfWeek.SATURDAY) || currentDate.getDayOfWeek().equals(DayOfWeek.SUNDAY);
+                dayReport.holiday = isHoliday(currentDate);
                 if (dayReport.holiday) {
                     dayReport.unregisteredDuration = 0L;
                 } else {
@@ -172,6 +174,12 @@ public class ReportService {
             }
             Collections.reverse(report);
             return report;
+        }
+
+        private boolean isHoliday(LocalDate currentDate) {
+            return DayInfo.getByDate(currentDate, CalendarResource.CONSULTANT_SOURCE_TYPE)
+                .map(f -> true)
+                .orElse(currentDate.getDayOfWeek().equals(DayOfWeek.SATURDAY) || currentDate.getDayOfWeek().equals(DayOfWeek.SUNDAY));
         }
 
         private long getMinutes(TimeEntry f) {

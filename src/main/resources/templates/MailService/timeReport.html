@@ -1,0 +1,24 @@
+{@org.manage.service.dto.TimeLogReportDTO report}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Отчёт отметок прибытия/убытия {report.subject}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<p>
+    {report.subject}
+</p>
+
+<p>
+
+{#for memberReport in report.membersReports}
+<h2>{memberReport.member.fio ?: 'Unknown'}</h2>
+<ul>
+    <li>
+        {memberReport.totalHours.roundWithSeconds}
+    </li>
+</ul>
+{/for}
+</body>
+</html>
