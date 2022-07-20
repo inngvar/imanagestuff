@@ -173,6 +173,7 @@ dependencies {
     implementation "io.quarkus:quarkus-smallrye-health"
     implementation "io.quarkus:quarkus-tika"
     implementation "io.quarkus:quarkus-rest-client"
+    implementation("io.quarkus:quarkus-scheduler")
     implementation "org.mapstruct:mapstruct:${mapstruct_version}"
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
 
