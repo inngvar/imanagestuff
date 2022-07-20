@@ -20,6 +20,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.manage.service.HolidayUpdater.CONSULTANT_SOURCE_TYPE;
+
 @ApplicationScoped
 public class ReportService {
 
@@ -177,7 +179,7 @@ public class ReportService {
         }
 
         private boolean isHoliday(LocalDate currentDate) {
-            return DayInfo.getByDate(currentDate, CalendarResource.CONSULTANT_SOURCE_TYPE)
+            return DayInfo.getByDate(currentDate, CONSULTANT_SOURCE_TYPE)
                 .map(f -> true)
                 .orElse(currentDate.getDayOfWeek().equals(DayOfWeek.SATURDAY) || currentDate.getDayOfWeek().equals(DayOfWeek.SUNDAY));
         }
