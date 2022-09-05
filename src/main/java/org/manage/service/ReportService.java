@@ -50,6 +50,7 @@ public class ReportService {
     @Inject
     ProjectMapper projectMapper;
 
+    @Transactional
     public DayReportDTO generateReport(final Long projectId, final LocalDate fromDate, final LocalDate toDate) {
         final ProjectDTO projectDto = projectService.findOne(projectId).orElseThrow();
         final List<MemberReportInfoDTO> membersReports = memberService

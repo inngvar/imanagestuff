@@ -3,6 +3,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import javax.json.bind.annotation.JsonbTransient;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import liquibase.pro.packaged.E;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -41,7 +42,7 @@ public class Project extends PanacheEntityBase implements Serializable {
     @Column(name = "send_reports", length = 4000)
     public String sendReports;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "project_members",
                joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
                inverseJoinColumns = @JoinColumn(name = "members_id", referencedColumnName = "id"))
