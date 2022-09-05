@@ -1,6 +1,5 @@
 package org.manage.service;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.panache.common.Page;
 import io.quarkus.security.identity.SecurityIdentity;
 import org.manage.domain.Member;
@@ -17,10 +16,8 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -45,9 +42,8 @@ public class TimeEntryService {
     @Transactional
     public TimeEntryDTO persistOrUpdate(TimeEntryDTO timeEntryDTO, SecurityIdentity securityIdentity) {
         log.debug("Request to save TimeEntry : {}", timeEntryDTO);
-        if (!memberService.matchesLoggedInMember(timeEntryDTO.memberId, securityIdentity.getPrincipal().getName())) {
-            throw new WebApplicationException(Response.status(403).entity("Specified user doesn't match current user").build());
-        }
+        final Long memberId = timeEntryDTO.memberId;
+        checkRights(securityIdentity, memberId);
         var timeEntry = timeEntryMapper.toEntity(timeEntryDTO);
         timeEntry = TimeEntry.persistOrUpdate(timeEntry);
         return timeEntryMapper.toDto(timeEntry);
@@ -65,9 +61,7 @@ public class TimeEntryService {
         if (entry == null) {
             throw new WebApplicationException(Response.status(400).entity("Time entry with id=" + id + " not found").build());
         }
-        if (!memberService.matchesLoggedInMember(entry.member.id, securityIdentity.getPrincipal().getName())) {
-            throw new WebApplicationException(Response.status(403).entity("Specified user doesn't match current user").build());
-        }
+        checkRights(securityIdentity, entry.member.id);
         entry.delete();
     }
 
@@ -106,7 +100,13 @@ public class TimeEntryService {
     public Paged<TimeEntryDTO> findByParticipatingProjects(String login, Page page) {
         log.debug("Request to find all TimeEntries by member{}", login);
         return new Paged<>(TimeEntry.find("From TimeEntry e WHERE e.project in ?1"
-            ,projectService.findByLogin(login).stream().map(p ->projectMapper.toEntity(p)).collect(Collectors.toList())).page(page))
+            , projectService.findByLogin(login).stream().map(p -> projectMapper.toEntity(p)).collect(Collectors.toList())).page(page))
             .map(timeEntry -> timeEntryMapper.toDto((TimeEntry) timeEntry));
+    }
+
+    private void checkRights(SecurityIdentity securityIdentity, Long memberId) {
+        if (!memberService.matchesLoggedInMember(memberId, securityIdentity.getPrincipal().getName()) && !securityIdentity.getRoles().contains("ROLE_ADMIN")) {
+            throw new WebApplicationException(Response.status(403).entity("Specified user doesn't match current user").build());
+        }
     }
 }
