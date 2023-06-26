@@ -155,6 +155,7 @@ export const LogWork = (props: ILogWorkProp) => {
                               className='form-control logwork'
                               placeholder="Описание"
                               value={entryDescription}
+                              maxlength="256"
                               onChange={event => setEntryDescription(event.target.value)}>
                     </textarea>
                   </FormGroup>
