@@ -28,8 +28,9 @@ export const LogWork = (props: ILogWorkProp) => {
     const [reportDate, setReportDate] = useState(new Date().toISOString().substr(0, 10));
     const [entries, setEntries] = useState(null);
     const [duration, setDuration] = useState(null);
-    const [entryDescription, setEntryDescription] = useState(null);
+    const [entryDescription, setEntryDescription] = useState('');
     const [errorMessage, setErrorMessage] = useState(null);
+    const maxLengthDescription = 256;
     const queryParams = (() => {
       const query = window.location.search.substring(1);
       const vars = query.split('&');
@@ -154,10 +155,11 @@ export const LogWork = (props: ILogWorkProp) => {
                               id="description"
                               className='form-control logwork'
                               placeholder="Описание"
+                              maxLength={maxLengthDescription}
                               value={entryDescription}
-                              maxlength="256"
                               onChange={event => setEntryDescription(event.target.value)}>
                     </textarea>
+                    <p style={{textAlign: "right"}}> {entryDescription.length} / {maxLengthDescription} </p>
                   </FormGroup>
                   <FormGroup className='col-auto'>
                     <Label className="sr-only" for={'logwork'}>Время</Label>
