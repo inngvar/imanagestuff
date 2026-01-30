@@ -17,15 +17,14 @@ plugins {
     id "jacoco"
     id "com.gorylenko.gradle-git-properties"
     id "com.github.node-gradle.node"
-    id "net.ltgt.apt-eclipse"
-    id "net.ltgt.apt-idea"
-    id "net.ltgt.apt"
     id "org.liquibase.gradle"
     id "org.sonarqube"
     //jhipster-needle-gradle-plugins - JHipster will add additional gradle plugins here
 }
 
 node {
+    version = "${node_version}"
+    npmVersion = "${npm_version}"
     download = true
 }
 
@@ -55,15 +54,7 @@ idea {
     }
 }
 
-eclipse {
-    sourceSets {
-        main {
-            java {
-                srcDirs += ["build/generated/sources/annotationProcessor/java/main"]
-            }
-        }
-    }
-}
+
 
 defaultTasks "quarkusDev"
 
@@ -222,6 +213,7 @@ task cleanResources(type: Delete) {
 compileJava {
     options.encoding = 'UTF-8'
     options.compilerArgs << '-parameters'
+    options.annotationProcessorGeneratedSourcesDirectory = file("${build}/generated/sources/annotationProcessor/java/main")
 }
 
 compileTestJava {
