@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col, Label } from 'reactstrap';
-import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
-import { Translate, translate, ICrudGetAction, ICrudGetAllAction, ICrudPutAction } from 'react-jhipster';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IRootState } from 'app/shared/reducers';
-
-import { IMember } from 'app/shared/model/member.model';
-import { getEntities as getMembers } from 'app/entities/member/member.reducer';
-import { IProject } from 'app/shared/model/project.model';
-import { getEntities as getProjects } from 'app/entities/project/project.reducer';
-import { getEntity, updateEntity, createEntity, reset } from './time-entry.reducer';
-import { ITimeEntry } from 'app/shared/model/time-entry.model';
-import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
+import React, {useEffect, useState} from 'react';
+import {connect} from 'react-redux';
+import {Link, RouteComponentProps} from 'react-router-dom';
+import {Button, Col, Label, Row} from 'reactstrap';
+import {AvFeedback, AvField, AvForm, AvGroup, AvInput} from 'availity-reactstrap-validation';
+import {Translate, translate} from 'react-jhipster';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {IRootState} from 'app/shared/reducers';
+import {getEntities as getMembers} from 'app/entities/member/member.reducer';
+import {getEntities as getProjects} from 'app/entities/project/project.reducer';
+import {createEntity, getEntity, reset, updateEntity} from './time-entry.reducer';
+import {
+  convertToIsoDuration,
+  formatDurationForDisplay,
+  isValidDuration,
+  minutesToDuration,
+} from 'app/shared/util/date-utils';
 
 export interface ITimeEntryUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
@@ -22,6 +22,7 @@ export const TimeEntryUpdate = (props: ITimeEntryUpdateProps) => {
   const [memberId, setMemberId] = useState('0');
   const [projectId, setProjectId] = useState('0');
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
+  const [durationError, setDurationError] = useState(null);
 
   const { timeEntryEntity, members, projects, loading, updating } = props;
 
@@ -48,17 +49,46 @@ export const TimeEntryUpdate = (props: ITimeEntryUpdateProps) => {
 
   const saveEntity = (event, errors, values) => {
     if (errors.length === 0) {
-      const entity = {
-        ...timeEntryEntity,
-        ...values,
-      };
+      // Validate and convert duration
+      if (!values.duration || !isValidDuration(values.duration)) {
+        setDurationError(translate('imanagestuffApp.timeEntry.validation.invalidDuration'));
+        return;
+      }
 
-      if (isNew) {
-        props.createEntity(entity);
-      } else {
-        props.updateEntity(entity);
+      try {
+        const isoDuration = convertToIsoDuration(values.duration);
+        const entity = {
+          ...timeEntryEntity,
+          ...values,
+          duration: isoDuration,
+        };
+
+        if (isNew) {
+          props.createEntity(entity);
+        } else {
+          props.updateEntity(entity);
+        }
+      } catch (error) {
+        setDurationError(error.message);
+        return;
       }
     }
+  };
+
+  // Convert duration from ISO 8601 to user-friendly format for display
+  const getInitialDuration = () => {
+    if (!isNew && timeEntryEntity && timeEntryEntity.duration) {
+      // If duration is already a number (minutes), convert to ISO 8601 first
+      if (typeof timeEntryEntity.duration === 'number') {
+        const isoDuration = minutesToDuration(timeEntryEntity.duration);
+        return formatDurationForDisplay(isoDuration);
+      }
+      // If it's already a string in ISO 8601 format
+      if (typeof timeEntryEntity.duration === 'string' && timeEntryEntity.duration.startsWith('PT')) {
+        return formatDurationForDisplay(timeEntryEntity.duration);
+      }
+    }
+    return '';
   };
 
   return (
@@ -75,7 +105,7 @@ export const TimeEntryUpdate = (props: ITimeEntryUpdateProps) => {
           {loading ? (
             <p>Loading...</p>
           ) : (
-            <AvForm model={isNew ? {} : timeEntryEntity} onSubmit={saveEntity}>
+            <AvForm model={isNew ? { duration: '' } : { ...timeEntryEntity, duration: getInitialDuration() }} onSubmit={saveEntity}>
               {!isNew ? (
                 <AvGroup>
                   <Label for="time-entry-id">
@@ -92,10 +122,15 @@ export const TimeEntryUpdate = (props: ITimeEntryUpdateProps) => {
                   id="time-entry-duration"
                   type="text"
                   name="duration"
+                  placeholder="e.g., 2h 30m, 2:30, 90m"
                   validate={{
                     required: { value: true, errorMessage: translate('entity.validation.required') },
                   }}
                 />
+                {durationError && <div className="invalid-feedback d-block">{durationError}</div>}
+                <small className="form-text text-muted">
+                  <Translate contentKey="imanagestuffApp.timeEntry.durationHelp">Use formats like: 2h 30m, 2:30, 90m, or 2h</Translate>
+                </small>
               </AvGroup>
               <AvGroup>
                 <Label id="dateLabel" for="time-entry-date">

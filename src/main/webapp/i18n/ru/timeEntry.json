@@ -17,6 +17,10 @@
         "title": "Time Entry"
       },
       "duration": "Duration",
+      "durationHelp": "Используйте форматы: 2ч 30м, 2:30, 90м, или 2ч",
+      "validation": {
+        "invalidDuration": "Неверный формат продолжительности. Используйте форматы: 2ч 30м, 2:30, 90м, или 2ч"
+      },
       "date": "Date",
       "shortDescription": "Short Description",
       "description": "Description",

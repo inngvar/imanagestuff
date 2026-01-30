@@ -2,7 +2,7 @@ import { Moment } from 'moment';
 
 export interface ITimeEntry {
   id?: number;
-  duration?: number;
+  duration?: string;
   date?: string;
   shortDescription?: string;
   description?: string;
