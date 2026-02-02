@@ -142,6 +142,8 @@ public class UserService {
         if (existingUser.activated) {
             return false;
         }
+        // Also remove the corresponding Member
+        Member.delete("login", existingUser.login);
         User.delete("id", existingUser.id);
         //        this.clearUserCaches(existingUser);
         return true;

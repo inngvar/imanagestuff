@@ -36,10 +36,10 @@ public class TimeLogResourceTest {
     private static final LocalDate DEFAULT_DATE = LocalDate.ofEpochDay(0L);
     private static final LocalDate UPDATED_DATE = LocalDate.now(ZoneId.systemDefault());
 
-    private static final ZonedDateTime DEFAULT_CHECK_IN = ZonedDateTime.ofInstant(Instant.ofEpochSecond(0L).truncatedTo(ChronoUnit.SECONDS), ZoneOffset.UTC);
+    private static final ZonedDateTime DEFAULT_CHECK_IN = ZonedDateTime.ofInstant(Instant.ofEpochSecond(0L).truncatedTo(ChronoUnit.SECONDS), ZoneId.systemDefault());
     private static final ZonedDateTime UPDATED_CHECK_IN = ZonedDateTime.now(ZoneId.systemDefault()).truncatedTo(ChronoUnit.SECONDS);
 
-    private static final ZonedDateTime DEFAULT_CHECK_OUT = ZonedDateTime.ofInstant(Instant.ofEpochSecond(0L).truncatedTo(ChronoUnit.SECONDS), ZoneOffset.UTC);
+    private static final ZonedDateTime DEFAULT_CHECK_OUT = ZonedDateTime.ofInstant(Instant.ofEpochSecond(0L).truncatedTo(ChronoUnit.SECONDS), ZoneId.systemDefault());
     private static final ZonedDateTime UPDATED_CHECK_OUT = ZonedDateTime.now(ZoneId.systemDefault()).truncatedTo(ChronoUnit.SECONDS);
 
 
@@ -89,6 +89,21 @@ public class TimeLogResourceTest {
     @BeforeEach
     public void initTest() {
         timeLogDTO = createEntity();
+        // Create a member for the TimeLog
+        var memberDTO = MemberResourceTest.createEntity();
+        var createdMember = given()
+            .auth()
+            .preemptive()
+            .oauth2(adminToken)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .body(memberDTO)
+            .when()
+            .post("/api/members")
+            .then()
+            .statusCode(CREATED.getStatusCode())
+            .extract().as(MemberResourceTest.ENTITY_TYPE);
+        timeLogDTO.memberId = createdMember.id;
     }
 
     @Test
@@ -441,7 +456,9 @@ public class TimeLogResourceTest {
             .statusCode(OK.getStatusCode())
             .contentType(APPLICATION_JSON)
             .body("id", hasItem(timeLogDTO.id.intValue()))
-            .body("date", hasItem(TestUtil.formatDateTime(DEFAULT_DATE)))            .body("checkIn", hasItem(TestUtil.formatDateTime(DEFAULT_CHECK_IN)))            .body("checkOut", hasItem(TestUtil.formatDateTime(DEFAULT_CHECK_OUT)));
+            .body("date", hasItem(TestUtil.formatLocalDate(DEFAULT_DATE)))
+            .body("checkIn", hasItem(TestUtil.formatZonedDateTime(DEFAULT_CHECK_IN)))
+            .body("checkOut", hasItem(TestUtil.formatZonedDateTime(DEFAULT_CHECK_OUT)));
     }
 
     @Test
@@ -485,10 +502,9 @@ public class TimeLogResourceTest {
             .statusCode(OK.getStatusCode())
             .contentType(APPLICATION_JSON)
             .body("id", is(timeLogDTO.id.intValue()))
-
-                .body("date", is(TestUtil.formatDateTime(DEFAULT_DATE)))
-                .body("checkIn", is(TestUtil.formatDateTime(DEFAULT_CHECK_IN)))
-                .body("checkOut", is(TestUtil.formatDateTime(DEFAULT_CHECK_OUT)));
+            .body("date", is(TestUtil.formatLocalDate(DEFAULT_DATE)))
+            .body("checkIn", is(TestUtil.formatZonedDateTime(DEFAULT_CHECK_IN)))
+            .body("checkOut", is(TestUtil.formatZonedDateTime(DEFAULT_CHECK_OUT)));
     }
 
     @Test
