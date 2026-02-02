@@ -1,6 +1,8 @@
 package org.manage;
 
 import static org.manage.config.Constants.DATE_TIME_FORMAT;
+import static org.manage.config.Constants.LOCAL_DATE_FORMAT;
+import static org.manage.config.Constants.ISO_ZONED_DATE_TIME_FORMAT;
 import static io.restassured.RestAssured.given;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,6 +17,7 @@ import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
@@ -29,8 +32,22 @@ public final class TestUtil {
         .ofPattern(DATE_TIME_FORMAT)
         .withZone(ZoneId.of("UTC"));
 
+    private static DateTimeFormatter LOCAL_DATE_FORMATTER = DateTimeFormatter
+        .ofPattern(LOCAL_DATE_FORMAT);
+
+    private static DateTimeFormatter ISO_ZONED_DATE_TIME_FORMATTER = DateTimeFormatter
+        .ofPattern(ISO_ZONED_DATE_TIME_FORMAT);
+
     public static String formatDateTime(Temporal temporal) {
         return DATE_TIME_FORMATTER.format(temporal);
+    }
+
+    public static String formatLocalDate(LocalDate localDate) {
+        return LOCAL_DATE_FORMATTER.format(localDate);
+    }
+
+    public static String formatZonedDateTime(Temporal temporal) {
+        return ISO_ZONED_DATE_TIME_FORMATTER.format(temporal);
     }
 
 

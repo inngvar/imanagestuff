@@ -137,6 +137,10 @@ checkstyle {
     checkstyleTest.enabled = false
 }
 
+jacoco {
+    toolVersion "${jacoco_version}"
+}
+
 repositories {
     mavenLocal()
     mavenCentral()
