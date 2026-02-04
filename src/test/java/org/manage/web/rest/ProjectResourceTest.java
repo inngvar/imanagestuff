@@ -26,10 +26,10 @@ import java.util.List;
 @QuarkusTest
 public class ProjectResourceTest {
 
-    private static final TypeRef<ProjectDTO> ENTITY_TYPE = new TypeRef<>() {
+    public static final TypeRef<ProjectDTO> ENTITY_TYPE = new TypeRef<>() {
     };
 
-    private static final TypeRef<List<ProjectDTO>> LIST_OF_ENTITY_TYPE = new TypeRef<>() {
+    public static final TypeRef<List<ProjectDTO>> LIST_OF_ENTITY_TYPE = new TypeRef<>() {
     };
 
     private static final String DEFAULT_NAME = "AAAAAAAAAA";

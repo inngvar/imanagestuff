@@ -94,6 +94,37 @@ public class TimeEntryResourceTest {
     @BeforeEach
     public void initTest() {
         timeEntryDTO = createEntity();
+        // Create a member for the TimeEntry
+        var memberDTO = MemberResourceTest.createEntity();
+        var createdMember = given()
+            .auth()
+            .preemptive()
+            .oauth2(adminToken)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .body(memberDTO)
+            .when()
+            .post("/api/members")
+            .then()
+            .statusCode(CREATED.getStatusCode())
+            .extract().as(MemberResourceTest.ENTITY_TYPE);
+        timeEntryDTO.memberId = createdMember.id;
+
+        // Create a project for the TimeEntry
+        var projectDTO = ProjectResourceTest.createEntity();
+        var createdProject = given()
+            .auth()
+            .preemptive()
+            .oauth2(adminToken)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .body(projectDTO)
+            .when()
+            .post("/api/projects")
+            .then()
+            .statusCode(CREATED.getStatusCode())
+            .extract().as(ProjectResourceTest.ENTITY_TYPE);
+        timeEntryDTO.projectId = createdProject.id;
     }
 
     @Test
@@ -495,7 +526,10 @@ public class TimeEntryResourceTest {
             .statusCode(OK.getStatusCode())
             .contentType(APPLICATION_JSON)
             .body("id", hasItem(timeEntryDTO.id.intValue()))
-            .body("duration", hasItem(DEFAULT_DURATION.toString()))            .body("date", hasItem(TestUtil.formatDateTime(DEFAULT_DATE)))            .body("shortDescription", hasItem(DEFAULT_SHORT_DESCRIPTION))            .body("description", hasItem(DEFAULT_DESCRIPTION));
+            .body("duration", hasItem(DEFAULT_DURATION.toString()))
+            .body("date", hasItem(TestUtil.formatLocalDate(DEFAULT_DATE)))
+            .body("shortDescription", hasItem(DEFAULT_SHORT_DESCRIPTION))
+            .body("description", hasItem(DEFAULT_DESCRIPTION));
     }
 
     @Test
@@ -539,11 +573,10 @@ public class TimeEntryResourceTest {
             .statusCode(OK.getStatusCode())
             .contentType(APPLICATION_JSON)
             .body("id", is(timeEntryDTO.id.intValue()))
-            
-                .body("duration", is(DEFAULT_DURATION.toString()))
-                .body("date", is(TestUtil.formatDateTime(DEFAULT_DATE)))
-                .body("shortDescription", is(DEFAULT_SHORT_DESCRIPTION))
-                .body("description", is(DEFAULT_DESCRIPTION));
+            .body("duration", is(DEFAULT_DURATION.toString()))
+            .body("date", is(TestUtil.formatLocalDate(DEFAULT_DATE)))
+            .body("shortDescription", is(DEFAULT_SHORT_DESCRIPTION))
+            .body("description", is(DEFAULT_DESCRIPTION));
     }
 
     @Test
