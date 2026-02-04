@@ -25,10 +25,10 @@ import javax.inject.Inject;
 @QuarkusTest
 public class MemberResourceTest {
 
-    private static final TypeRef<MemberDTO> ENTITY_TYPE = new TypeRef<>() {
+    public static final TypeRef<MemberDTO> ENTITY_TYPE = new TypeRef<>() {
     };
 
-    private static final TypeRef<List<MemberDTO>> LIST_OF_ENTITY_TYPE = new TypeRef<>() {
+    public static final TypeRef<List<MemberDTO>> LIST_OF_ENTITY_TYPE = new TypeRef<>() {
     };
 
     private static final String DEFAULT_LOGIN = "AAAAAAAAAA";
