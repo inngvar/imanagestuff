@@ -190,19 +190,18 @@ export const LogWork = (props: ILogWorkProp) => {
                       onChange={e => setDuration(e.target.value)}
                     />
                   </FormGroup>
-                  {entryDescription.length <= maxLengthDescription && (
-                    <FormGroup className="col-auto">
-                      <Button
-                        className="btn-primary"
-                        onClick={event => {
-                          addNewEntry();
-                          return false;
-                        }}
-                      >
-                        +
-                      </Button>
-                    </FormGroup>
-                  )}
+                  <FormGroup className="col-auto">
+                    <Button
+                      className="btn-primary"
+                      onClick={event => {
+                        addNewEntry();
+                        return false;
+                      }}
+                      disabled={entryDescription.length > maxLengthDescription}
+                    >
+                      +
+                    </Button>
+                  </FormGroup>
                 </Row>
                 <Row>
                   <div>{errorMessage}</div>
