@@ -168,11 +168,10 @@ export const LogWork = (props: ILogWorkProp) => {
                       id="description"
                       className="form-control logwork"
                       placeholder="Описание"
-                      maxLength={maxLengthDescription}
                       value={entryDescription}
                       onChange={event => setEntryDescription(event.target.value)}
                     ></textarea>
-                    <p style={{ textAlign: 'right' }}>
+                    <p style={{ textAlign: 'right', color: entryDescription.length > maxLengthDescription ? 'red' : 'inherit' }}>
                       {' '}
                       {entryDescription.length} / {maxLengthDescription}{' '}
                     </p>
@@ -191,17 +190,19 @@ export const LogWork = (props: ILogWorkProp) => {
                       onChange={e => setDuration(e.target.value)}
                     />
                   </FormGroup>
-                  <FormGroup className="col-auto">
-                    <Button
-                      className="btn-primary"
-                      onClick={event => {
-                        addNewEntry();
-                        return false;
-                      }}
-                    >
-                      +
-                    </Button>
-                  </FormGroup>
+                  {entryDescription.length <= maxLengthDescription && (
+                    <FormGroup className="col-auto">
+                      <Button
+                        className="btn-primary"
+                        onClick={event => {
+                          addNewEntry();
+                          return false;
+                        }}
+                      >
+                        +
+                      </Button>
+                    </FormGroup>
+                  )}
                 </Row>
                 <Row>
                   <div>{errorMessage}</div>
