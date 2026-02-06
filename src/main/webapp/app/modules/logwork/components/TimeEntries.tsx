@@ -2,10 +2,13 @@ import React from 'react';
 import {useSelector} from 'react-redux';
 import {TimeEntryToDuration} from 'app/entities/time-entry/time-to-total.tsx';
 import {Table} from 'reactstrap';
-import PropTypes from 'prop-types';
 import {TimeEntry} from './TimeEntry';
+import {ITimeEntry} from "app/shared/model/time-entry.model";
 
-export const TimeEntries = props => {
+export const TimeEntries = (props: {
+  entries: ITimeEntry[];
+  onUpdate: () => void;
+}) => {
   const account = useSelector(state => state['authentication'].account);
   return (
     <Table className="table-striped table-hover table-sm" responsive>
@@ -27,8 +30,13 @@ export const TimeEntries = props => {
       <tbody>
       {props.entries ? (
         props.entries.map((entry, i) => (
-          <TimeEntry entry={entry} key={i} date={entry.date} showButtons={account.login === entry.memberLogin}
-                     onUpdate={props.onUpdate}/>
+          <TimeEntry
+            entry={entry}
+            key={i}
+            date={entry.date}
+            showButtons={account.login === entry.memberLogin}
+            onUpdate={props.onUpdate}
+          />
         ))
       ) : (
         <p>No Tasks</p>
@@ -43,9 +51,4 @@ export const TimeEntries = props => {
       </tfoot>
     </Table>
   );
-};
-
-TimeEntries.propTypes = {
-  entries: PropTypes.array,
-  onUpdate: PropTypes.func
 };
