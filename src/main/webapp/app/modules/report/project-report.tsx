@@ -9,13 +9,18 @@ export const ProjectReport = props => {
 
   const [projectStats, setProjectStats] = useState(null);
   const [currentMember, setCurrentMember] = useState(null);
+
+  function updateProjectStats() {
+    axios.get("api/reports/project/" + props.project.id + '?dateFrom=' + props.dateFrom + '&dateTo=' + props.dateTo).then(response => {
+      setProjectStats(response.data);
+    });
+  }
+
   useEffect(() => {
     if (!props.project) {
       return;
     }
-    axios.get("api/reports/project/" + props.project.id + '?dateFrom=' + props.dateFrom + '&dateTo=' + props.dateTo).then(response => {
-      setProjectStats(response.data);
-    });
+    updateProjectStats();
   }, [props.project, props.dateFrom, props.dateTo]);
 
   useEffect(() => {
@@ -24,11 +29,13 @@ export const ProjectReport = props => {
     });
   }, [])
 
+
+
   function sendReport() {
-    axios.post('api/reports/day-report/' + props.project.id + '?dateFrom=' + props.dateFrom + '&dateTo=' + props.dateTo).then(response =>{
-      if(response.status === 202){
+    axios.post('api/reports/day-report/' + props.project.id + '?dateFrom=' + props.dateFrom + '&dateTo=' + props.dateTo).then(response => {
+      if (response.status === 202) {
         alert("Отчет отправлен")
-      } else{
+      } else {
         alert("Ошибка отправления")
       }
     });
@@ -59,11 +66,11 @@ export const ProjectReport = props => {
               .map((memberStats, i) => (
                 <Row key={i}>
                   <h3>{memberStats.member.fio}</h3>
-                  <TimeEntries entries={memberStats.entries}/>
+                  <TimeEntries entries={memberStats.entries} onUpdate={updateProjectStats}/>
                 </Row>
               )))
-              :
-              (<p>noData</p>)
+            :
+            (<p>noData</p>)
         }
         <Row>
           <Button onClick={() => sendReport()}>Отправить отчёт</Button>

@@ -1,13 +1,13 @@
 import axios from 'axios';
 import '../home/home.scss';
 import './logwork.scss';
-import React, { useState, useEffect } from 'react';
-import { durationToHours, formatDuration, convertToIsoDuration, isValidDuration } from 'app/shared/util/date-utils';
-import { Translate, translate } from 'react-jhipster';
-import { connect } from 'react-redux';
-import { MemberList, ProjectList, TimeEntries } from 'app/modules/logwork/logwork-components';
-import { Button, Row, Col, Form, FormGroup, Label, Input } from 'reactstrap';
-import { cleanEntity } from 'app/shared/util/entity-utils';
+import React, {useEffect, useState} from 'react';
+import {convertToIsoDuration, isValidDuration} from 'app/shared/util/date-utils';
+import {Translate, translate} from 'react-jhipster';
+import {connect} from 'react-redux';
+import {MemberList, ProjectList, TimeEntries} from 'app/modules/logwork/logwork-components';
+import {Button, Col, Form, FormGroup, Input, Label, Row} from 'reactstrap';
+import {cleanEntity} from 'app/shared/util/entity-utils';
 
 export type ILogWorkProp = StateProps;
 
@@ -211,7 +211,7 @@ export const LogWork = (props: ILogWorkProp) => {
           </Col>
         )}
         <Row>
-          <TimeEntries entries={entries} />
+          <TimeEntries entries={entries} onUpdate={updateEntries} />
         </Row>
       </Col>
     </Row>
