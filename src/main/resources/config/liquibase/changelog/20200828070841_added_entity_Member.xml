@@ -57,5 +57,15 @@
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>
+    
+    <changeSet id="20200828070841-1-data-project_members" author="jhipster" context="faker">
+        <loadData
+                  file="config/liquibase/fake-data/project_members.csv"
+                  separator=";"
+                  tableName="project_members">
+            <column name="project_id" type="numeric"/>
+            <column name="members_id" type="numeric"/>
+        </loadData>
+    </changeSet>
 
 </databaseChangeLog>
