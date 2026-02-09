@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { InputGroup, InputGroupAddon, Button, Input, Label } from 'reactstrap';
+import { InputGroup, InputGroupAddon, Button, Input, Label, FormGroup } from 'reactstrap';
 
 export const ProjectList = props => {
   const [defaultProject, setDefaultProjects] = useState(null);
@@ -17,7 +17,7 @@ export const ProjectList = props => {
   });
 
   return (
-    <div className="col-md-6">
+    <FormGroup>
       <Label for="project">Проект</Label>
       <InputGroup>
         {props?.showButton ? (
@@ -43,7 +43,7 @@ export const ProjectList = props => {
           )}
         </Input>
       </InputGroup>
-    </div>
+    </FormGroup>
   );
 };
 

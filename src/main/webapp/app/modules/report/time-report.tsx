@@ -1,21 +1,13 @@
-import React, {useState, useEffect} from 'react';
-import {connect} from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import axios from 'axios';
-import {
-  Row,
-  Col,
-  Form,
-  FormGroup,
-  Label,
-  Button,
-  Table
-} from 'reactstrap';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { Row, Col, Form, FormGroup, Label, Button, Table } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LogTimeReportModal } from '../logtime/logtime-modal';
-import {toast} from 'react-toastify';
+import { toast } from 'react-toastify';
+import './report.scss';
 
 export const TimeReport = props => {
-
   const [dateFrom, setDateFrom] = useState(new Date().toISOString().substr(0, 10));
   const [dateTo, setDateTo] = useState(new Date().toISOString().substr(0, 10));
   const [reportData, setReportData] = useState(null);
@@ -25,7 +17,7 @@ export const TimeReport = props => {
     axios.get(`api/reports/time-logs/?dateFrom=${dateFrom}&dateTo=${dateTo}`).then(response => {
       setReportData(response.data);
     });
-  }
+  };
 
   useEffect(() => {
     getReportData();
@@ -44,80 +36,90 @@ export const TimeReport = props => {
 
     values.addresses.split(',').forEach(addr => {
       url += `&to=${addr.trim()}`;
-    })
+    });
 
-    axios.post(url, null, {headers: {['Content-Type']: 'application/json'}}).then(response => {
-
-      toast.success(`Отчет успешно отправлен!`, {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-      });
-
-      setIsShowModal(false);
-
-    }).catch(err => {
-      toast.error(`Ошибка при отправке отчета: ${err.message}`, {
-          position: "top-center",
+    axios
+      .post(url, null, { headers: { ['Content-Type']: 'application/json' } })
+      .then(response => {
+        toast.success(`Отчет успешно отправлен!`, {
+          position: 'top-center',
+          autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: false,
-        }
-      );
-    });
-  }
+          draggable: true,
+          progress: undefined,
+        });
+
+        setIsShowModal(false);
+      })
+      .catch(err => {
+        toast.error(`Ошибка при отправке отчета: ${err.message}`, {
+          position: 'top-center',
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+        });
+      });
+  };
 
   const toggle = () => {
-    setIsShowModal(!isShowModal)
-  }
+    setIsShowModal(!isShowModal);
+  };
 
   return (
     <div>
       <Col md="12">
-        <Form>
-          <Row class="form-row">
-
-          </Row>
-          <FormGroup>
+        <Form className="report-form">
+          <Row class="form-row"></Row>
+          <FormGroup className="date-inputs">
             <Label>Дата:&nbsp;</Label>
-            <input type="date" name="dateFrom" class-name="form-control" defaultValue={dateFrom} value={dateFrom}
-                   onChange={event => setDateFrom(event.target.value)}/>
+            <input
+              type="date"
+              name="dateFrom"
+              className="form-control"
+              defaultValue={dateFrom}
+              value={dateFrom}
+              onChange={event => setDateFrom(event.target.value)}
+            />
             <Label>по&nbsp;</Label>
-            <input type="date" name="dateTo" class-name="form-control" defaultValue={dateTo} value={dateTo}
-                   onChange={event => setDateTo(event.target.value)}/>
+            <input
+              type="date"
+              name="dateTo"
+              className="form-control"
+              defaultValue={dateTo}
+              value={dateTo}
+              onChange={event => setDateTo(event.target.value)}
+            />
           </FormGroup>
         </Form>
         <Row>
           <Col md="12">
-
             <Row>
               <Table className="table-striped table-hover table-sm">
                 <thead className="thead-dark">
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Участник</th>
-                  <th scope="col">Время, ч</th>
-                  <th scope="col">Дней с отметками</th>
-                </tr>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Участник</th>
+                    <th scope="col">Время, ч</th>
+                    <th scope="col">Дней с отметками</th>
+                  </tr>
                 </thead>
                 <tbody>
-                {
-                  reportData?.membersReports ? (reportData.membersReports.map((membersReport, i) => (
-                    <tr key={i}>
-                      <td>{i + 1}</td>
-                      <td>{membersReport.member.fio}</td>
-                      <td>{membersReport.totalHours}</td>
-                      <td>{membersReport.entries.length}</td>
-                    </tr>
-                  ))) : <div></div>
-                }
+                  {reportData?.membersReports ? (
+                    reportData.membersReports.map((membersReport, i) => (
+                      <tr key={i}>
+                        <td>{i + 1}</td>
+                        <td>{membersReport.member.fio}</td>
+                        <td>{membersReport.totalHours}</td>
+                        <td>{membersReport.entries.length}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <div></div>
+                  )}
                 </tbody>
-                <tr>
-                </tr>
+                <tr></tr>
               </Table>
             </Row>
             <Row>
@@ -128,14 +130,10 @@ export const TimeReport = props => {
           </Col>
         </Row>
       </Col>
-      <LogTimeReportModal
-        toggle={toggle}
-        isShow={isShowModal}
-        onSend={sendReport}
-      />
+      <LogTimeReportModal toggle={toggle} isShow={isShowModal} onSend={sendReport} />
     </div>
-  )
-}
+  );
+};
 
 const mapStateToProps = storeState => ({
   account: storeState.authentication.account,
