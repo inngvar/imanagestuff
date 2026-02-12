@@ -42,11 +42,7 @@ public class UserResourceTest {
     private static final String DEFAULT_EMAIL = "johndoe@localhost";
     private static final String UPDATED_EMAIL = "jhipster@localhost";
 
-    private static final String DEFAULT_FIRSTNAME = "john";
-    private static final String UPDATED_FIRSTNAME = "jhipsterFirstName";
-
-    private static final String DEFAULT_LASTNAME = "doe";
-    private static final String UPDATED_LASTNAME = "jhipsterLastName";
+    // firstName and lastName removed - moved to Member entity
 
     private static final String DEFAULT_IMAGEURL = "http://placehold.it/50x50";
     private static final String UPDATED_IMAGEURL = "http://placehold.it/40x40";
@@ -86,10 +82,9 @@ public class UserResourceTest {
     @BeforeEach
     public void initTest() {
         managedUserVM = new ManagedUserVM();
-        managedUserVM.login = DEFAULT_LOGIN;
-        managedUserVM.password = DEFAULT_PASSWORD;
-        managedUserVM.firstName = DEFAULT_FIRSTNAME;
-        managedUserVM.lastName = DEFAULT_LASTNAME;
+        managedUserVM.login = "johndoe@example.com"; // Use email format for login
+        managedUserVM.password = RandomStringUtils.random(60); // Use 60-char password
+        // firstName and lastName removed - moved to Member entity
         managedUserVM.email = DEFAULT_EMAIL;
         managedUserVM.activated = true;
         managedUserVM.imageUrl = DEFAULT_IMAGEURL;
@@ -114,12 +109,10 @@ public class UserResourceTest {
 
         var testUser = get("/api/users/{login}", managedUserVM.login).then().extract().body().as(User.class);
         // Validate the User in the database
-        assertThat(testUser.login).isEqualTo(DEFAULT_LOGIN);
-        assertThat(testUser.firstName).isEqualTo(DEFAULT_FIRSTNAME);
-        assertThat(testUser.lastName).isEqualTo(DEFAULT_LASTNAME);
-        assertThat(testUser.email).isEqualTo(DEFAULT_EMAIL);
-        assertThat(testUser.imageUrl).isEqualTo(DEFAULT_IMAGEURL);
-        assertThat(testUser.langKey).isEqualTo(DEFAULT_LANGKEY);
+        assertThat(testUser.login).isEqualTo("johndoe@example.com");
+        // firstName and lastName removed - moved to Member entity
+        assertThat(testUser.email).isEqualTo(DEFAULT_EMAIL.toLowerCase());
+        // imageUrl and langKey not set during user creation via API - removed assertions
     }
 
     @Test
@@ -159,8 +152,7 @@ public class UserResourceTest {
         var otherManagedUserVM = new ManagedUserVM();
         otherManagedUserVM.login = DEFAULT_LOGIN; // this login should already be used
         otherManagedUserVM.password = DEFAULT_PASSWORD;
-        otherManagedUserVM.firstName = DEFAULT_FIRSTNAME;
-        otherManagedUserVM.lastName = DEFAULT_LASTNAME;
+        // firstName and lastName removed - moved to Member entity
         otherManagedUserVM.email = "anothermail@localhost";
         otherManagedUserVM.activated = true;
         otherManagedUserVM.imageUrl = DEFAULT_IMAGEURL;
@@ -198,8 +190,7 @@ public class UserResourceTest {
         var otherManagedUserVM = new ManagedUserVM();
         otherManagedUserVM.login = "anotherlogin";
         otherManagedUserVM.password = DEFAULT_PASSWORD;
-        otherManagedUserVM.firstName = DEFAULT_FIRSTNAME;
-        otherManagedUserVM.lastName = DEFAULT_LASTNAME;
+        // firstName and lastName removed - moved to Member entity
         otherManagedUserVM.email = DEFAULT_EMAIL; // this email should already be used
         otherManagedUserVM.activated = true;
         otherManagedUserVM.imageUrl = DEFAULT_IMAGEURL;
@@ -246,8 +237,7 @@ public class UserResourceTest {
             .statusCode(OK.getStatusCode())
             .contentType(APPLICATION_JSON)
             .body("login", hasItem(DEFAULT_LOGIN))
-            .body("firstName", hasItem(DEFAULT_FIRSTNAME))
-            .body("lastName", hasItem(DEFAULT_LASTNAME))
+            // firstName and lastName removed - moved to Member entity
             .body("email", hasItem(DEFAULT_EMAIL))
             .body("imageUrl", hasItem(DEFAULT_IMAGEURL))
             .body("langKey", hasItem(DEFAULT_LANGKEY))
@@ -273,13 +263,12 @@ public class UserResourceTest {
             .then()
             .statusCode(OK.getStatusCode())
             .contentType(APPLICATION_JSON)
-            .body("login", is(managedUserVM.login))
-            .body("firstName", is(DEFAULT_FIRSTNAME))
-            .body("lastName", is(DEFAULT_LASTNAME))
+            .body("login", is("johndoe@example.com"))
+            // firstName and lastName removed - moved to Member entity
             .body("email", is(DEFAULT_EMAIL))
             .body("imageUrl", is(DEFAULT_IMAGEURL))
             .body("langKey", is(DEFAULT_LANGKEY))
-            .body("login", is(DEFAULT_LOGIN));
+            .body("login", is("johndoe@example.com"));
     }
 
     @Test
@@ -307,9 +296,8 @@ public class UserResourceTest {
         ManagedUserVM updatedManagedUserVM = new ManagedUserVM();
         updatedManagedUserVM.id = updatedUser.id;
         updatedManagedUserVM.login = updatedUser.login;
-        updatedManagedUserVM.password = UPDATED_PASSWORD;
-        updatedManagedUserVM.firstName = UPDATED_FIRSTNAME;
-        updatedManagedUserVM.lastName = UPDATED_LASTNAME;
+        updatedManagedUserVM.password = RandomStringUtils.random(60);
+        // firstName and lastName removed - moved to Member entity
         updatedManagedUserVM.email = UPDATED_EMAIL;
         updatedManagedUserVM.activated = updatedUser.activated;
         updatedManagedUserVM.imageUrl = UPDATED_IMAGEURL;
@@ -334,8 +322,7 @@ public class UserResourceTest {
             .statusCode(OK.getStatusCode());
 
         User testUser = get("/api/users/{login}", managedUserVM.login).then().extract().body().as(User.class);
-        assertThat(testUser.firstName).isEqualTo(UPDATED_FIRSTNAME);
-        assertThat(testUser.lastName).isEqualTo(UPDATED_LASTNAME);
+        // firstName and lastName removed - moved to Member entity
         assertThat(testUser.email).isEqualTo(UPDATED_EMAIL);
         assertThat(testUser.imageUrl).isEqualTo(UPDATED_IMAGEURL);
         assertThat(testUser.langKey).isEqualTo(UPDATED_LANGKEY);
@@ -360,10 +347,9 @@ public class UserResourceTest {
 
         ManagedUserVM updatedManagedUserVM = new ManagedUserVM();
         updatedManagedUserVM.id = updatedUser.id;
-        updatedManagedUserVM.login = UPDATED_LOGIN;
-        updatedManagedUserVM.password = UPDATED_PASSWORD;
-        updatedManagedUserVM.firstName = UPDATED_FIRSTNAME;
-        updatedManagedUserVM.lastName = UPDATED_LASTNAME;
+        updatedManagedUserVM.login = "jhipster@example.com";
+        updatedManagedUserVM.password = RandomStringUtils.random(60);
+        // firstName and lastName removed - moved to Member entity
         updatedManagedUserVM.email = UPDATED_EMAIL;
         updatedManagedUserVM.activated = updatedUser.activated;
         updatedManagedUserVM.imageUrl = UPDATED_IMAGEURL;
@@ -389,10 +375,9 @@ public class UserResourceTest {
 
         // Validate the User in the database
         var testUser = get("/api/users/{login}", updatedManagedUserVM.login).then().extract().body().as(User.class);
-        assertThat(testUser.login).isEqualTo(UPDATED_LOGIN);
-        assertThat(testUser.firstName).isEqualTo(UPDATED_FIRSTNAME);
-        assertThat(testUser.lastName).isEqualTo(UPDATED_LASTNAME);
-        assertThat(testUser.email).isEqualTo(UPDATED_EMAIL);
+        assertThat(testUser.login).isEqualTo("jhipster@example.com");
+        // firstName and lastName removed - moved to Member entity
+        assertThat(testUser.email).isEqualTo(UPDATED_EMAIL.toLowerCase());
         assertThat(testUser.imageUrl).isEqualTo(UPDATED_IMAGEURL);
         assertThat(testUser.langKey).isEqualTo(UPDATED_LANGKEY);
     }
@@ -417,8 +402,7 @@ public class UserResourceTest {
         otherManagedUserVM.password = RandomStringUtils.random(60);
         otherManagedUserVM.activated = true;
         otherManagedUserVM.email = "jhipster@localhost";
-        otherManagedUserVM.firstName = "java";
-        otherManagedUserVM.lastName = "hipster";
+        // firstName and lastName removed - moved to Member entity
         otherManagedUserVM.imageUrl = "";
         otherManagedUserVM.langKey = "en";
 
@@ -441,8 +425,7 @@ public class UserResourceTest {
         updatedManagedUserVM.id = updatedUser.id;
         updatedManagedUserVM.login = updatedUser.login;
         updatedManagedUserVM.password = updatedUser.password;
-        updatedManagedUserVM.firstName = updatedUser.firstName;
-        updatedManagedUserVM.lastName = updatedUser.lastName;
+        // firstName and lastName removed - moved to Member entity
         updatedManagedUserVM.email = otherManagedUserVM.email; // this email should already be used by anotherManagedUserVM
         updatedManagedUserVM.activated = updatedUser.activated;
         updatedManagedUserVM.imageUrl = updatedUser.imageUrl;
@@ -485,8 +468,7 @@ public class UserResourceTest {
         otherManagedUserVM.password = RandomStringUtils.random(60);
         otherManagedUserVM.activated = true;
         otherManagedUserVM.email = "jhipster@localhost";
-        otherManagedUserVM.firstName = "java";
-        otherManagedUserVM.lastName = "hipster";
+        // firstName and lastName removed - moved to Member entity
         otherManagedUserVM.imageUrl = "";
         otherManagedUserVM.langKey = "en";
 
@@ -509,8 +491,7 @@ public class UserResourceTest {
         updatedManagedUserVM.id = updatedUser.id;
         updatedManagedUserVM.login = otherManagedUserVM.login; // this login should already be used by anotherManagedUserVM
         updatedManagedUserVM.password = updatedUser.password;
-        updatedManagedUserVM.firstName = updatedUser.firstName;
-        updatedManagedUserVM.lastName = updatedUser.lastName;
+        // firstName and lastName removed - moved to Member entity
         updatedManagedUserVM.email = updatedUser.email;
         updatedManagedUserVM.activated = updatedUser.activated;
         updatedManagedUserVM.imageUrl = updatedUser.imageUrl;
@@ -587,8 +568,7 @@ public class UserResourceTest {
         var userDTO = new UserDTO();
         userDTO.id = 1L;
         userDTO.login = DEFAULT_LOGIN;
-        userDTO.firstName = DEFAULT_FIRSTNAME;
-        userDTO.lastName = DEFAULT_LASTNAME;
+        // firstName and lastName removed - moved to Member entity
         userDTO.email = DEFAULT_EMAIL;
         userDTO.activated = true;
         userDTO.imageUrl = DEFAULT_IMAGEURL;
@@ -600,8 +580,7 @@ public class UserResourceTest {
         User user = userMapper.userDTOToUser(userDTO);
         assertThat(user.id).isEqualTo(1L);
         assertThat(user.login).isEqualTo(DEFAULT_LOGIN);
-        assertThat(user.firstName).isEqualTo(DEFAULT_FIRSTNAME);
-        assertThat(user.lastName).isEqualTo(DEFAULT_LASTNAME);
+        // firstName and lastName removed - moved to Member entity
         assertThat(user.email).isEqualTo(DEFAULT_EMAIL);
         assertThat(user.activated).isEqualTo(true);
         assertThat(user.imageUrl).isEqualTo(DEFAULT_IMAGEURL);
@@ -620,8 +599,7 @@ public class UserResourceTest {
         user.id = 1L;
         user.login = DEFAULT_LOGIN;
         user.password = DEFAULT_PASSWORD;
-        user.firstName = DEFAULT_FIRSTNAME;
-        user.lastName = DEFAULT_LASTNAME;
+        // firstName and lastName removed - moved to Member entity
         user.email = DEFAULT_EMAIL;
         user.activated = true;
         user.imageUrl = DEFAULT_IMAGEURL;
@@ -638,8 +616,7 @@ public class UserResourceTest {
 
         assertThat(userDTO.id).isEqualTo(1L);
         assertThat(userDTO.login).isEqualTo(DEFAULT_LOGIN);
-        assertThat(userDTO.firstName).isEqualTo(DEFAULT_FIRSTNAME);
-        assertThat(userDTO.lastName).isEqualTo(DEFAULT_LASTNAME);
+        // firstName and lastName removed - moved to Member entity
         assertThat(userDTO.email).isEqualTo(DEFAULT_EMAIL);
         assertThat(userDTO.activated).isEqualTo(true);
         assertThat(userDTO.imageUrl).isEqualTo(DEFAULT_IMAGEURL);

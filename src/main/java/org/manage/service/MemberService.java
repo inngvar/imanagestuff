@@ -4,6 +4,7 @@ import io.quarkus.panache.common.Page;
 import io.quarkus.security.identity.SecurityIdentity;
 import org.manage.domain.Member;
 import org.manage.domain.Project;
+import org.manage.service.dto.AccountDTO;
 import org.manage.service.dto.MemberDTO;
 import org.manage.service.dto.ProjectDTO;
 import org.manage.service.mapper.MemberMapper;
@@ -98,5 +99,27 @@ public class MemberService {
     public boolean matchesLoggedInMember(Long id, String currentUserLogin) {
         MemberDTO currentMember = findByLogin(currentUserLogin).orElse(null);
         return currentMember != null && currentMember.id.equals(id);
+    }
+
+    public void updateMember(String login, String firstName, String middleName, String lastName) {
+        Member.findByLogin(login).ifPresent(member -> {
+            member.firstName = firstName;
+            member.middleName = middleName;
+            member.lastName = lastName;
+            member.update();
+            log.debug("Changed Information for Member: {}", member);
+        });
+    }
+
+    public void fillAccountDTO(AccountDTO accountDTO, String login) {
+        Member.findByLogin(login).ifPresent(member -> {
+            accountDTO.firstName = member.firstName;
+            accountDTO.middleName = member.middleName;
+            accountDTO.lastName = member.lastName;
+            if (member.defaultProject != null) {
+                accountDTO.defaultProjectId = member.defaultProject.id;
+                accountDTO.defaultProjectName = member.defaultProject.name;
+            }
+        });
     }
 }

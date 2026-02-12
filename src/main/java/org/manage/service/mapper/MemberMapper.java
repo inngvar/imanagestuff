@@ -32,5 +32,8 @@ public interface MemberMapper extends EntityMapper<MemberDTO, Member> {
         return member;
     }
 
+    @Mapping(target = "defaultProject", ignore = true)
+    @Mapping(target = "timeLogs", ignore = true)
+    @Mapping(target = "projects", ignore = true)
     Member toEntity(MemberCreateVM memberCreateVM);
 }

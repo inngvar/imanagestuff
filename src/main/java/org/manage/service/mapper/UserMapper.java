@@ -45,8 +45,6 @@ public class UserMapper {
             User user = new User();
             user.id = userDTO.id;
             user.login = userDTO.login;
-            user.firstName = userDTO.firstName;
-            user.lastName = userDTO.lastName;
             user.email = userDTO.email;
             user.imageUrl = userDTO.imageUrl;
             user.activated = userDTO.activated;

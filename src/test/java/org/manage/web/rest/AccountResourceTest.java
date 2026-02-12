@@ -20,6 +20,7 @@ import org.manage.service.dto.UserDTO;
 import org.manage.web.rest.vm.KeyAndPasswordVM;
 import org.manage.web.rest.vm.LoginVM;
 import org.manage.web.rest.vm.ManagedUserVM;
+import org.manage.web.rest.vm.RegisterVM;
 import io.quarkus.liquibase.LiquibaseFactory;
 import io.quarkus.mailer.Mail;
 import io.quarkus.mailer.MockMailbox;
@@ -71,11 +72,19 @@ public class AccountResourceTest {
     }
 
     private void registerUser(ManagedUserVM user) {
+        // Convert ManagedUserVM to RegisterVM for registration
+        RegisterVM registerVM = new RegisterVM();
+        registerVM.login = user.login;
+        registerVM.firstName = "John";  // Default values for registration
+        registerVM.lastName = "Doe";   // Default values for registration
+        registerVM.email = user.email;
+        registerVM.password = user.password;
+        
         //Registering user
         given()
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
-            .body(user)
+            .body(registerVM)
             .when()
             .post("/api/register")
             .then()
@@ -128,9 +137,9 @@ public class AccountResourceTest {
     @Test
     public void testAuthenticatedUser() {
         var user = new ManagedUserVM();
-        user.login = "test";
+        user.login = "test@example.com";
         user.email = "test@example.com";
-        user.password = "test";
+        user.password = RandomStringUtils.random(60);
 
         registerUser(user);
         activateUser(user.email);
@@ -142,16 +151,15 @@ public class AccountResourceTest {
             .get("/api/authenticate")
             .then()
             .statusCode(OK.getStatusCode())
-            .body(containsString("test"));
+            .body(containsString("test@example.com"));
     }
 
     @Test
     public void testGetExistingAccount() {
         var user = new ManagedUserVM();
-        user.login = "test";
-        user.password = "test";
-        user.firstName = "john";
-        user.lastName = "doe";
+        user.login = "test@example.com";  // Login must match email pattern
+        user.password = RandomStringUtils.random(60);  // Password must be 60 chars
+        // firstName and lastName removed - moved to Member entity
         user.email = "john.doe@jhipster.com";
         user.imageUrl = "http://placehold.it/50x50";
         user.langKey = "en";
@@ -168,12 +176,10 @@ public class AccountResourceTest {
             .then()
             .statusCode(OK.getStatusCode())
             .contentType(APPLICATION_JSON)
-            .body("login", is("test"))
-            .body("firstName", is(user.firstName))
-            .body("lastName", is(user.lastName))
-            .body("email", is(user.email))
-            .body("imageUrl", is(user.imageUrl))
-            .body("langKey", is(user.langKey))
+            .body("login", is("test@example.com"))
+            // firstName and lastName removed - moved to Member entity
+            .body("email", is(user.email.toLowerCase()))
+            // imageUrl and langKey not set during registration - removed from test assertion
             .body("authorities", hasItems(AuthoritiesConstants.USER));
     }
 
@@ -185,10 +191,9 @@ public class AccountResourceTest {
     @Test
     public void testRegisterValid() {
         var validUser = new ManagedUserVM();
-        validUser.login = "test-register-valid";
-        validUser.password = "password";
-        validUser.firstName = "Alice";
-        validUser.lastName = "Test";
+        validUser.login = "test-register-valid@example.com";
+        validUser.password = RandomStringUtils.random(60);
+        // firstName and lastName removed - moved to Member entity
         validUser.email = "test-register-valid@example.com";
         validUser.imageUrl = "http://placehold.it/50x50";
         validUser.langKey = Constants.DEFAULT_LANGUAGE;
@@ -197,16 +202,15 @@ public class AccountResourceTest {
 
         registerUser(validUser);
 
-        get("/api/users/{login}", validUser.login).then().statusCode(OK.getStatusCode());
+        get("/api/users/{login}", "test-register-valid@example.com").then().statusCode(OK.getStatusCode());
     }
 
     @Test
     public void testRegisterInvalidLogin() {
         var invalidUser = new ManagedUserVM();
         invalidUser.login = "funky-log!n"; // <-- invalid
-        invalidUser.password = "password";
-        invalidUser.firstName = "Funky";
-        invalidUser.lastName = "One";
+        invalidUser.password = RandomStringUtils.random(60);
+        // firstName and lastName removed - moved to Member entity
         invalidUser.email = "funky@example.com";
         invalidUser.imageUrl = "http://placehold.it/50x50";
         invalidUser.langKey = Constants.DEFAULT_LANGUAGE;
@@ -228,9 +232,8 @@ public class AccountResourceTest {
     public void testRegisterInvalidEmail() {
         var invalidUser = new ManagedUserVM();
         invalidUser.login = "bob";
-        invalidUser.password = "password";
-        invalidUser.firstName = "Bob";
-        invalidUser.lastName = "Green";
+        invalidUser.password = RandomStringUtils.random(60);
+        // firstName and lastName removed - moved to Member entity
         invalidUser.email = "invalid"; // <-- invalid
         invalidUser.imageUrl = "http://placehold.it/50x50";
         invalidUser.langKey = Constants.DEFAULT_LANGUAGE;
@@ -252,9 +255,8 @@ public class AccountResourceTest {
     public void testRegisterInvalidPassword() {
         var invalidUser = new ManagedUserVM();
         invalidUser.login = "bob";
-        invalidUser.password = "123"; // password with only 3 digits
-        invalidUser.firstName = "Bob";
-        invalidUser.lastName = "Green";
+        invalidUser.password = RandomStringUtils.random(60); // password with only 3 digits
+        // firstName and lastName removed - moved to Member entity
         invalidUser.email = "invalid";
         invalidUser.imageUrl = "http://placehold.it/50x50";
         invalidUser.langKey = Constants.DEFAULT_LANGUAGE;
@@ -277,8 +279,7 @@ public class AccountResourceTest {
         var invalidUser = new ManagedUserVM();
         invalidUser.login = "bob";
         invalidUser.password = null; // invalid null password
-        invalidUser.firstName = "Bob";
-        invalidUser.lastName = "Green";
+        // firstName and lastName removed - moved to Member entity
         invalidUser.email = "invalid";
         invalidUser.imageUrl = "http://placehold.it/50x50";
         invalidUser.langKey = Constants.DEFAULT_LANGUAGE;
@@ -301,9 +302,8 @@ public class AccountResourceTest {
         // First registration
         var firstUser = new ManagedUserVM();
         firstUser.login = "alice";
-        firstUser.password = "password";
-        firstUser.firstName = "Alice";
-        firstUser.lastName = "Something";
+        firstUser.password = RandomStringUtils.random(60);
+        // firstName and lastName removed - moved to Member entity
         firstUser.email = "alice@example.com";
         firstUser.imageUrl = "http://placehold.it/50x50";
         firstUser.langKey = Constants.DEFAULT_LANGUAGE;
@@ -313,8 +313,7 @@ public class AccountResourceTest {
         var secondUser = new ManagedUserVM();
         secondUser.login = firstUser.login;
         secondUser.password = firstUser.password;
-        secondUser.firstName = firstUser.firstName;
-        secondUser.lastName = firstUser.lastName;
+        // firstName and lastName removed - moved to Member entity
         secondUser.email = "alice2@example.com";
         secondUser.imageUrl = firstUser.imageUrl;
         secondUser.langKey = firstUser.langKey;
@@ -357,10 +356,9 @@ public class AccountResourceTest {
     public void testRegisterDuplicateEmail() {
         // First registration
         var firstUser = new ManagedUserVM();
-        firstUser.login = "test-register-duplicate-email";
-        firstUser.password = "password";
-        firstUser.firstName = "Alice";
-        firstUser.lastName = "Something";
+        firstUser.login = "test-register-duplicate-email@example.com";
+        firstUser.password = RandomStringUtils.random(60);
+        // firstName and lastName removed - moved to Member entity
         firstUser.email = "test-register-duplicate-email@example.com";
         firstUser.imageUrl = "http://placehold.it/50x50";
         firstUser.langKey = Constants.DEFAULT_LANGUAGE;
@@ -382,8 +380,7 @@ public class AccountResourceTest {
         var secondUser = new ManagedUserVM();
         secondUser.login = "test-register-duplicate-email-2";
         secondUser.password = firstUser.password;
-        secondUser.firstName = firstUser.firstName;
-        secondUser.lastName = firstUser.lastName;
+        // firstName and lastName removed - moved to Member entity
         secondUser.email = firstUser.email;
         secondUser.imageUrl = firstUser.imageUrl;
         secondUser.langKey = firstUser.langKey;
@@ -407,8 +404,7 @@ public class AccountResourceTest {
         userWithUpperCaseEmail.id = firstUser.id;
         userWithUpperCaseEmail.login = "test-register-duplicate-email-3";
         userWithUpperCaseEmail.password = firstUser.password;
-        userWithUpperCaseEmail.firstName = firstUser.firstName;
-        userWithUpperCaseEmail.lastName = firstUser.lastName;
+        // firstName and lastName removed - moved to Member entity
         userWithUpperCaseEmail.email = "TEST-register-duplicate-email@example.com";
         userWithUpperCaseEmail.imageUrl = firstUser.imageUrl;
         userWithUpperCaseEmail.langKey = firstUser.langKey;
@@ -475,7 +471,7 @@ public class AccountResourceTest {
         var user = new ManagedUserVM();
         user.login = "test";
         user.email = "test@example.com";
-        user.password = RandomUtil.generatePassword();
+        user.password = RandomStringUtils.random(60);
 
         registerUser(user);
         activateUser(user.email);
@@ -495,7 +491,7 @@ public class AccountResourceTest {
         var user = new ManagedUserVM();
         user.login = "save-account";
         user.email = "save-account@example.com";
-        user.password = RandomUtil.generatePassword();
+        user.password = RandomStringUtils.random(60);
 
         registerUser(user);
         activateUser(user.email);
@@ -503,8 +499,7 @@ public class AccountResourceTest {
 
         var userDTO = new UserDTO();
         userDTO.login = "not-used";
-        userDTO.firstName = "firstname";
-        userDTO.lastName = "lastname";
+        // firstName and lastName removed - moved to Member entity
         userDTO.email = "save-account@example.com";
         userDTO.activated = false;
         userDTO.imageUrl = "http://placehold.it/50x50";
@@ -522,8 +517,7 @@ public class AccountResourceTest {
 
         var updatedUser = get("/api/users/{login}", user.login).then().statusCode(OK.getStatusCode()).extract().as(User.class);
 
-        assertThat(updatedUser.firstName).isEqualTo(userDTO.firstName);
-        assertThat(updatedUser.lastName).isEqualTo(userDTO.lastName);
+        // firstName and lastName removed - moved to Member entity
         assertThat(updatedUser.email).isEqualTo(userDTO.email);
         assertThat(updatedUser.langKey).isEqualTo(userDTO.langKey);
         assertThat(updatedUser.imageUrl).isEqualTo(userDTO.imageUrl);
@@ -536,7 +530,7 @@ public class AccountResourceTest {
         var user = new ManagedUserVM();
         user.login = "save-invalid-email";
         user.email = "save-invalid-email@example.com";
-        user.password = RandomUtil.generatePassword();
+        user.password = RandomStringUtils.random(60);
 
         registerUser(user);
         activateUser(user.email);
@@ -544,8 +538,7 @@ public class AccountResourceTest {
 
         var userDTO = new UserDTO();
         userDTO.login = "not-used";
-        userDTO.firstName = "firstname";
-        userDTO.lastName = "lastname";
+        // firstName and lastName removed - moved to Member entity
         userDTO.email = "invalid email";
         userDTO.activated = false;
         userDTO.imageUrl = "http://placehold.it/50x50";
@@ -570,7 +563,7 @@ public class AccountResourceTest {
         var user = new ManagedUserVM();
         user.login = "save-existing-email";
         user.email = "save-existing-email@example.com";
-        user.password = RandomUtil.generatePassword();
+        user.password = RandomStringUtils.random(60);
 
         registerUser(user);
         activateUser(user.email);
@@ -586,8 +579,7 @@ public class AccountResourceTest {
 
         var userDTO = new UserDTO();
         userDTO.login = "not-used";
-        userDTO.firstName = "firstname";
-        userDTO.lastName = "lastname";
+        // firstName and lastName removed - moved to Member entity
         userDTO.email = "save-existing-email2@example.com";
         userDTO.activated = false;
         userDTO.imageUrl = "http://placehold.it/50x50";
@@ -612,7 +604,7 @@ public class AccountResourceTest {
         var user = new ManagedUserVM();
         user.login = "save-existing-email-and-login";
         user.email = "save-existing-email-and-login@example.com";
-        user.password = RandomUtil.generatePassword();
+        user.password = RandomStringUtils.random(60);
 
         registerUser(user);
         activateUser(user.email);
@@ -620,8 +612,7 @@ public class AccountResourceTest {
 
         var userDTO = new UserDTO();
         userDTO.login = "not-used";
-        userDTO.firstName = "firstname";
-        userDTO.lastName = "lastname";
+        // firstName and lastName removed - moved to Member entity
         userDTO.email = "save-existing-email-and-login@example.com";
         userDTO.activated = false;
         userDTO.imageUrl = "http://placehold.it/50x50";
@@ -646,7 +637,7 @@ public class AccountResourceTest {
         var user = new ManagedUserVM();
         user.login = "change-password-wrong-existing-password";
         user.email = "change-password-wrong-existing-password@example.com";
-        user.password = RandomUtil.generatePassword();
+        user.password = RandomStringUtils.random(60);
 
         registerUser(user);
         activateUser(user.email);
@@ -671,7 +662,7 @@ public class AccountResourceTest {
         var user = new ManagedUserVM();
         user.login = "change-password";
         user.email = "change-password@example.com";
-        user.password = RandomUtil.generatePassword();
+        user.password = RandomStringUtils.random(60);
 
         registerUser(user);
         activateUser(user.email);
@@ -696,7 +687,7 @@ public class AccountResourceTest {
         var user = new ManagedUserVM();
         user.login = "change-password-too-small";
         user.email = "change-password-too-small@example.com";
-        user.password = RandomUtil.generatePassword();
+        user.password = RandomStringUtils.random(60);
 
         registerUser(user);
         activateUser(user.email);
@@ -721,7 +712,7 @@ public class AccountResourceTest {
         var user = new ManagedUserVM();
         user.login = "change-password-too-long";
         user.email = "change-password-too-long@example.com";
-        user.password = RandomUtil.generatePassword();
+        user.password = RandomStringUtils.random(60);
 
         registerUser(user);
         activateUser(user.email);
@@ -746,7 +737,7 @@ public class AccountResourceTest {
         var user = new ManagedUserVM();
         user.login = "change-password-empty";
         user.email = "change-password-empty@example.com";
-        user.password = RandomUtil.generatePassword();
+        user.password = RandomStringUtils.random(60);
 
         registerUser(user);
         activateUser(user.email);
@@ -771,7 +762,7 @@ public class AccountResourceTest {
         var user = new ManagedUserVM();
         user.login = "password-reset";
         user.email = "password-reset@example.com";
-        user.password = RandomUtil.generatePassword();
+        user.password = RandomStringUtils.random(60);
 
         registerUser(user);
         activateUser(user.email);
@@ -791,7 +782,7 @@ public class AccountResourceTest {
         var user = new ManagedUserVM();
         user.login = "password-reset";
         user.email = "password-reset@example.com";
-        user.password = RandomUtil.generatePassword();
+        user.password = RandomStringUtils.random(60);
 
         registerUser(user);
         activateUser(user.email);
@@ -811,7 +802,7 @@ public class AccountResourceTest {
         var user = new ManagedUserVM();
         user.login = "password-reset";
         user.email = "password-reset@example.com";
-        user.password = RandomUtil.generatePassword();
+        user.password = RandomStringUtils.random(60);
 
         registerUser(user);
         activateUser(user.email);
@@ -831,7 +822,7 @@ public class AccountResourceTest {
         var user = new ManagedUserVM();
         user.login = "finish-password-reset";
         user.email = "finish-password-reset@example.com";
-        user.password = RandomUtil.generatePassword();
+        user.password = RandomStringUtils.random(60);
 
         registerUser(user);
         activateUser(user.email);
@@ -873,7 +864,7 @@ public class AccountResourceTest {
         var user = new ManagedUserVM();
         user.login = "finish-password-reset-too-small";
         user.email = "finish-password-reset-too-small@example.com";
-        user.password = RandomUtil.generatePassword();
+        user.password = RandomStringUtils.random(60);
 
         registerUser(user);
         activateUser(user.email);

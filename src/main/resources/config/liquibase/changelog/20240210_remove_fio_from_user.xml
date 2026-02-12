@@ -1,0 +1,54 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    
+    <!-- Migrate first_name and last_name from jhi_user to member table -->
+    <changeSet id="20240210-migrate-fio-from-user-to-member" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="jhi_user" columnName="first_name"/>
+            </not>
+        </preConditions>
+        
+        <sql>
+            -- Migrate first_name from jhi_user to member (only if member first_name is empty)
+            UPDATE member m
+            SET first_name = (
+                SELECT u.first_name
+                FROM jhi_user u
+                WHERE u.login = m.login
+                AND (m.first_name IS NULL OR m.first_name = '')
+            )
+            WHERE EXISTS (
+                SELECT 1 FROM jhi_user u
+                WHERE u.login = m.login
+                AND (m.first_name IS NULL OR m.first_name = '')
+            );
+
+            -- Migrate last_name from jhi_user to member (only if member last_name is empty)
+            UPDATE member m
+            SET last_name = (
+                SELECT u.last_name
+                FROM jhi_user u
+                WHERE u.login = m.login
+                AND (m.last_name IS NULL OR m.last_name = '')
+            )
+            WHERE EXISTS (
+                SELECT 1 FROM jhi_user u
+                WHERE u.login = m.login
+                AND (m.last_name IS NULL OR m.last_name = '')
+            );
+        </sql>
+    </changeSet>
+
+    <!-- Remove first_name and last_name columns from jhi_user table -->
+    <changeSet id="20240210-remove-fio-columns-from-user" author="system">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="jhi_user" columnName="first_name"/>
+            <columnExists tableName="jhi_user" columnName="last_name"/>
+        </preConditions>
+        
+        <dropColumn tableName="jhi_user" columnName="first_name"/>
+        <dropColumn tableName="jhi_user" columnName="last_name"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -96,41 +96,6 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                 />
               </AvGroup>
               <AvGroup>
-                <Label for="firstName">
-                  <Translate contentKey="userManagement.firstName">First Name</Translate>
-                </Label>
-                <AvField
-                  type="text"
-                  className="form-control"
-                  name="firstName"
-                  validate={{
-                    maxLength: {
-                      value: 50,
-                      errorMessage: translate('entity.validation.maxlength', { max: 50 }),
-                    },
-                  }}
-                  value={user.firstName}
-                />
-              </AvGroup>
-              <AvGroup>
-                <Label for="lastName">
-                  <Translate contentKey="userManagement.lastName">Last Name</Translate>
-                </Label>
-                <AvField
-                  type="text"
-                  className="form-control"
-                  name="lastName"
-                  validate={{
-                    maxLength: {
-                      value: 50,
-                      errorMessage: translate('entity.validation.maxlength', { max: 50 }),
-                    },
-                  }}
-                  value={user.lastName}
-                />
-                <AvFeedback>This field cannot be longer than 50 characters.</AvFeedback>
-              </AvGroup>
-              <AvGroup>
                 <AvField
                   name="email"
                   label={translate('global.form.email.label')}

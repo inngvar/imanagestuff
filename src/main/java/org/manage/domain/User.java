@@ -45,13 +45,7 @@ public class User extends PanacheEntityBase implements Serializable {
     @Column(name = "password_hash", length = 60, nullable = false)
     public String password;
 
-    @Size(max = 50)
-    @Column(name = "first_name", length = 50)
-    public String firstName;
 
-    @Size(max = 50)
-    @Column(name = "last_name", length = 50)
-    public String lastName;
 
     @Email
     @Size(min = 5, max = 254)
@@ -137,12 +131,6 @@ public class User extends PanacheEntityBase implements Serializable {
             "User{" +
             "login='" +
             login +
-            '\'' +
-            ", firstName='" +
-            firstName +
-            '\'' +
-            ", lastName='" +
-            lastName +
             '\'' +
             ", email='" +
             email +

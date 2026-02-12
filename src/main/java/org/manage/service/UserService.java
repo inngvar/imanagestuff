@@ -8,7 +8,9 @@ import org.manage.security.AuthoritiesConstants;
 import org.manage.security.BCryptPasswordHasher;
 import org.manage.security.RandomUtil;
 import org.manage.service.dto.UserDTO;
+import org.manage.web.rest.vm.RegisterVM;
 import io.quarkus.panache.common.Page;
+
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,9 +82,9 @@ public class UserService {
             );
     }
 
-    public User registerUser(UserDTO userDTO, String password) {
+    public User registerUser(RegisterVM registerVM) {
         User
-            .findOneByLogin(userDTO.login.toLowerCase())
+            .findOneByLogin(registerVM.login.toLowerCase())
             .ifPresent(
                 existingUser -> {
                     var removed = removeNonActivatedUser(existingUser);
@@ -91,7 +94,7 @@ public class UserService {
                 }
             );
         User
-            .findOneByEmailIgnoreCase(userDTO.email)
+            .findOneByEmailIgnoreCase(registerVM.email)
             .ifPresent(
                 existingUser -> {
                     var removed = removeNonActivatedUser(existingUser);
@@ -100,18 +103,12 @@ public class UserService {
                     }
                 }
             );
-        var encryptedPassword = passwordHasher.hash(password);
+        var encryptedPassword = passwordHasher.hash(registerVM.password);
         var newUser = new User();
-        newUser.login = userDTO.login.toLowerCase();
+        newUser.login = registerVM.login.toLowerCase();
         // new user gets initially a generated password
         newUser.password = encryptedPassword;
-        newUser.firstName = userDTO.firstName;
-        newUser.lastName = userDTO.lastName;
-        if (userDTO.email != null) {
-            newUser.email = userDTO.email.toLowerCase();
-        }
-        newUser.imageUrl = userDTO.imageUrl;
-        newUser.langKey = userDTO.langKey;
+        newUser.email = registerVM.email.toLowerCase();
         // new user is not active
         newUser.activated = false;
         // new user gets registration key
@@ -123,16 +120,17 @@ public class UserService {
         //        this.clearUserCaches(newUser);
         log.debug("Created Information for User: {}", newUser);
 
-        Member.persist(userDtoToMember(userDTO));
+        Member.persist(registerVMToMember(registerVM));
         return newUser;
     }
 
-    private Member userDtoToMember(UserDTO userDTO) {
+
+    private Member registerVMToMember(RegisterVM registerVM) {
         Member newMember = new Member();
-        newMember.login = userDTO.login.toLowerCase();
-        newMember.firstName = userDTO.firstName == null ? "" : userDTO.firstName;
-        newMember.middleName = null;
-        newMember.lastName = userDTO.lastName == null ? "" : userDTO.lastName;
+        newMember.login = registerVM.login.toLowerCase();
+        newMember.firstName = registerVM.firstName == null ? "" : registerVM.firstName;
+        newMember.middleName = registerVM.middleName;
+        newMember.lastName = registerVM.lastName == null ? "" : registerVM.lastName;
         newMember.defaultProject = null;
         log.debug("Created Information for Member: {}", newMember);
         return newMember;
@@ -152,8 +150,6 @@ public class UserService {
     public User createUser(UserDTO userDTO) {
         User user = new User();
         user.login = userDTO.login.toLowerCase();
-        user.firstName = userDTO.firstName;
-        user.lastName = userDTO.lastName;
         if (userDTO.email != null) {
             user.email = userDTO.email.toLowerCase();
         }
@@ -184,22 +180,18 @@ public class UserService {
     }
 
     /**
-     * Update basic information (first name, last name, email, language) for the current user.
+     * Update basic information (email, language) for the current user.
      *
-     * @param login     the login to find the user to update.
-     * @param firstName first name of user.
-     * @param lastName  last name of user.
-     * @param email     email id of user.
-     * @param langKey   language key.
-     * @param imageUrl  image URL of user.
+     * @param login    the login to find the user to update.
+     * @param email    email id of user.
+     * @param langKey  language key.
+     * @param imageUrl image URL of user.
      */
-    public void updateUser(String login, String firstName, String lastName, String email, String langKey, String imageUrl) {
+    public void updateUser(String login, String email, String langKey, String imageUrl) {
         User
             .findOneByLogin(login)
             .ifPresent(
                 user -> {
-                    user.firstName = firstName;
-                    user.lastName = lastName;
                     if (email != null) {
                         user.email = email.toLowerCase();
                     }
@@ -211,20 +203,12 @@ public class UserService {
             );
     }
 
-    /**
-     * Update all information for a specific user, and return the modified user.
-     *
-     * @param userDTO user to update.
-     * @return updated user.
-     */
     public Optional<UserDTO> updateUser(UserDTO userDTO) {
         return User
             .<User>findByIdOptional(userDTO.id)
             .map(
                 user -> {
                     user.login = userDTO.login.toLowerCase();
-                    user.firstName = userDTO.firstName;
-                    user.lastName = userDTO.lastName;
                     if (userDTO.email != null) {
                         user.email = userDTO.email.toLowerCase();
                     }

@@ -1,15 +1,16 @@
-import React, { useEffect } from 'react';
-import { Button, Col, Alert, Row } from 'reactstrap';
-import { connect } from 'react-redux';
-import { Translate, translate } from 'react-jhipster';
-import { AvForm, AvField } from 'availity-reactstrap-validation';
+import React, {useEffect} from 'react';
+import {Button, Col, Alert, Row} from 'reactstrap';
+import {connect} from 'react-redux';
+import {Translate, translate} from 'react-jhipster';
+import {AvForm, AvField} from 'availity-reactstrap-validation';
 
-import { locales, languages } from 'app/config/translation';
-import { IRootState } from 'app/shared/reducers';
-import { getSession } from 'app/shared/reducers/authentication';
-import { saveAccountSettings, reset } from './settings.reducer';
+import {locales, languages} from 'app/config/translation';
+import {IRootState} from 'app/shared/reducers';
+import {getSession} from 'app/shared/reducers/authentication';
+import {saveAccountSettings, reset} from './settings.reducer';
 
-export interface IUserSettingsProps extends StateProps, DispatchProps {}
+export interface IUserSettingsProps extends StateProps, DispatchProps {
+}
 
 export const SettingsPage = (props: IUserSettingsProps) => {
   useEffect(() => {
@@ -23,6 +24,7 @@ export const SettingsPage = (props: IUserSettingsProps) => {
     const account = {
       ...props.account,
       ...values,
+      langKey: values.langKey || props.account.langKey,
     };
 
     props.saveAccountSettings(account);
@@ -34,7 +36,7 @@ export const SettingsPage = (props: IUserSettingsProps) => {
       <Row className="justify-content-center">
         <Col md="8">
           <h2 id="settings-title">
-            <Translate contentKey="settings.title" interpolate={{ username: props.account.login }}>
+            <Translate contentKey="settings.title" interpolate={{username: props.account.login}}>
               User settings for {props.account.login}
             </Translate>
           </h2>
@@ -47,9 +49,9 @@ export const SettingsPage = (props: IUserSettingsProps) => {
               id="firstName"
               placeholder={translate('settings.form.firstname.placeholder')}
               validate={{
-                required: { value: true, errorMessage: translate('settings.messages.validate.firstname.required') },
-                minLength: { value: 1, errorMessage: translate('settings.messages.validate.firstname.minlength') },
-                maxLength: { value: 50, errorMessage: translate('settings.messages.validate.firstname.maxlength') },
+                required: {value: true, errorMessage: translate('settings.messages.validate.firstname.required')},
+                minLength: {value: 1, errorMessage: translate('settings.messages.validate.firstname.minlength')},
+                maxLength: {value: 50, errorMessage: translate('settings.messages.validate.firstname.maxlength')},
               }}
               value={props.account.firstName}
             />
@@ -61,9 +63,9 @@ export const SettingsPage = (props: IUserSettingsProps) => {
               id="lastName"
               placeholder={translate('settings.form.lastname.placeholder')}
               validate={{
-                required: { value: true, errorMessage: translate('settings.messages.validate.lastname.required') },
-                minLength: { value: 1, errorMessage: translate('settings.messages.validate.lastname.minlength') },
-                maxLength: { value: 50, errorMessage: translate('settings.messages.validate.lastname.maxlength') },
+                required: {value: true, errorMessage: translate('settings.messages.validate.lastname.required')},
+                minLength: {value: 1, errorMessage: translate('settings.messages.validate.lastname.minlength')},
+                maxLength: {value: 50, errorMessage: translate('settings.messages.validate.lastname.maxlength')},
               }}
               value={props.account.lastName}
             />
@@ -74,9 +76,9 @@ export const SettingsPage = (props: IUserSettingsProps) => {
               placeholder={translate('global.form.email.placeholder')}
               type="email"
               validate={{
-                required: { value: true, errorMessage: translate('global.messages.validate.email.required') },
-                minLength: { value: 5, errorMessage: translate('global.messages.validate.email.minlength') },
-                maxLength: { value: 254, errorMessage: translate('global.messages.validate.email.maxlength') },
+                required: {value: true, errorMessage: translate('global.messages.validate.email.required')},
+                minLength: {value: 5, errorMessage: translate('global.messages.validate.email.minlength')},
+                maxLength: {value: 254, errorMessage: translate('global.messages.validate.email.maxlength')},
               }}
               value={props.account.email}
             />
@@ -105,12 +107,12 @@ export const SettingsPage = (props: IUserSettingsProps) => {
   );
 };
 
-const mapStateToProps = ({ authentication }: IRootState) => ({
+const mapStateToProps = ({authentication}: IRootState) => ({
   account: authentication.account,
   isAuthenticated: authentication.isAuthenticated,
 });
 
-const mapDispatchToProps = { getSession, saveAccountSettings, reset };
+const mapDispatchToProps = {getSession, saveAccountSettings, reset};
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

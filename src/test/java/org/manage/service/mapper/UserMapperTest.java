@@ -33,8 +33,7 @@ public class UserMapperTest {
         user.password = RandomStringUtils.random(60);
         user.activated = true;
         user.email = "johndoe@localhost";
-        user.firstName = "john";
-        user.lastName = "doe";
+        // firstName and lastName removed - moved to Member entity
         user.imageUrl = "image_url";
         user.langKey = "en";
 

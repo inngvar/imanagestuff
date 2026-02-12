@@ -52,7 +52,13 @@
       "confirmpassword.label": "Подтверждение нового пароля",
       "confirmpassword.placeholder": "Подтвердите новый пароль",
       "email.label": "Email",
-      "email.placeholder": "Ваш email"
+      "email.placeholder": "Ваш email",
+      "firstname.label": "Имя",
+      "firstname.placeholder": "Ваше имя",
+      "middlename.label": "Отчество",
+      "middlename.placeholder": "Ваше отчество",
+      "lastname.label": "Фамилия",
+      "lastname.placeholder": "Ваша фамилия"
     },
     "messages": {
       "info": {

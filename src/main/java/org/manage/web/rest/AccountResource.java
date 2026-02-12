@@ -3,8 +3,10 @@ package org.manage.web.rest;
 import org.manage.domain.User;
 import org.manage.service.InvalidPasswordException;
 import org.manage.service.MailService;
+import org.manage.service.MemberService;
 import org.manage.service.UserService;
 import org.manage.service.UsernameAlreadyUsedException;
+import org.manage.service.dto.AccountDTO;
 import org.manage.service.dto.PasswordChangeDTO;
 import org.manage.service.dto.UserDTO;
 import org.manage.web.rest.errors.EmailAlreadyUsedException;
@@ -12,6 +14,7 @@ import org.manage.web.rest.errors.EmailNotFoundException;
 import org.manage.web.rest.errors.LoginAlreadyUsedException;
 import org.manage.web.rest.vm.KeyAndPasswordVM;
 import org.manage.web.rest.vm.ManagedUserVM;
+import org.manage.web.rest.vm.RegisterVM;
 import io.quarkus.security.Authenticated;
 import java.security.Principal;
 import java.util.Optional;
@@ -49,16 +52,19 @@ public class AccountResource {
 
     final UserService userService;
 
+    final MemberService memberService;
+
     @Inject
-    public AccountResource(MailService mailService, UserService userService) {
+    public AccountResource(MailService mailService, UserService userService, MemberService memberService) {
         this.mailService = mailService;
         this.userService = userService;
+        this.memberService = memberService;
     }
 
     /**
      * {@code POST /register} : register the user.
      *
-     * @param managedUserVM the managed user View Model.
+     * @param registerVM the register View Model.
      * @throws InvalidPasswordException  {@code 400 (Bad Request)} if the password is incorrect.
      * @throws EmailAlreadyUsedException {@code 400 (Bad Request)} if the email is already used.
      * @throws LoginAlreadyUsedException {@code 400 (Bad Request)} if the login is already used.
@@ -66,12 +72,12 @@ public class AccountResource {
     @POST
     @Path("/register")
     @PermitAll
-    public CompletionStage<Response> registerAccount(@Valid ManagedUserVM managedUserVM) {
-        if (!checkPasswordLength(managedUserVM.password)) {
+    public CompletionStage<Response> registerAccount(@Valid RegisterVM registerVM) {
+        if (!checkPasswordLength(registerVM.password)) {
             throw new InvalidPasswordException();
         }
         try {
-            var user = userService.registerUser(managedUserVM, managedUserVM.password);
+            var user = userService.registerUser(registerVM);
             return mailService.sendActivationEmail(user).thenApply(it -> Response.created(null).build());
         } catch (UsernameAlreadyUsedException e) {
             throw new LoginAlreadyUsedException();
@@ -120,10 +126,14 @@ public class AccountResource {
     @GET
     @Path("/account")
     @Authenticated
-    public UserDTO getAccount(@Context SecurityContext ctx) {
+    public AccountDTO getAccount(@Context SecurityContext ctx) {
         return userService
             .getUserWithAuthoritiesByLogin(ctx.getUserPrincipal().getName())
-            .map(UserDTO::new)
+            .map(user -> {
+                var accountDTO = new AccountDTO(user);
+                memberService.fillAccountDTO(accountDTO, user.login);
+                return accountDTO;
+            })
             .orElseThrow(() -> new AccountResourceException("User could not be found"));
     }
 
@@ -136,11 +146,11 @@ public class AccountResource {
      */
     @POST
     @Path("/account")
-    public Response saveAccount(@Valid UserDTO userDTO, @Context SecurityContext ctx) {
+    public Response saveAccount(@Valid AccountDTO accountDTO, @Context SecurityContext ctx) {
         var userLogin = Optional
             .ofNullable(ctx.getUserPrincipal().getName())
             .orElseThrow(() -> new AccountResourceException("Current user login not found"));
-        var existingUser = User.findOneByEmailIgnoreCase(userDTO.email);
+        var existingUser = User.findOneByEmailIgnoreCase(accountDTO.email);
         if (existingUser.isPresent() && (!existingUser.get().login.equalsIgnoreCase(userLogin))) {
             throw new EmailAlreadyUsedException();
         }
@@ -148,7 +158,8 @@ public class AccountResource {
         if (!user.isPresent()) {
             throw new AccountResourceException("User could not be found");
         }
-        userService.updateUser(userLogin, userDTO.firstName, userDTO.lastName, userDTO.email, userDTO.langKey, userDTO.imageUrl);
+        userService.updateUser(userLogin, accountDTO.email, accountDTO.langKey, accountDTO.imageUrl);
+        memberService.updateMember(userLogin, accountDTO.firstName, accountDTO.middleName, accountDTO.lastName);
         return Response.ok().build();
     }
 
@@ -209,8 +220,8 @@ public class AccountResource {
     private static boolean checkPasswordLength(String password) {
         return (
             !password.isEmpty() &&
-            password.length() >= ManagedUserVM.PASSWORD_MIN_LENGTH &&
-            password.length() <= ManagedUserVM.PASSWORD_MAX_LENGTH
+            password.length() >= 4 &&
+            password.length() <= 100
         );
     }
 }

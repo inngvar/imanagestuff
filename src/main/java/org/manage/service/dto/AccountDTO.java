@@ -13,19 +13,14 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-/**
- * A DTO representing a user, with his authorities.
- */
 @RegisterForReflection
-public class UserDTO {
+public class AccountDTO {
     public Long id;
 
     @NotBlank
     @Pattern(regexp = Constants.LOGIN_REGEX)
     @Size(min = 1, max = 50)
     public String login;
-
-
 
     @Email
     @Size(min = 5, max = 254)
@@ -39,6 +34,12 @@ public class UserDTO {
     @Size(min = 2, max = 10)
     public String langKey;
 
+    public String firstName;
+
+    public String middleName;
+
+    public String lastName;
+
     public String createdBy;
 
     public Instant createdDate;
@@ -49,11 +50,14 @@ public class UserDTO {
 
     public Set<String> authorities;
 
-    public UserDTO() {
-        // Empty constructor needed for Jackson.
+    public Long defaultProjectId;
+
+    public String defaultProjectName;
+
+    public AccountDTO() {
     }
 
-    public UserDTO(User user) {
+    public AccountDTO(User user) {
         this.id = user.id;
         this.login = user.login;
         this.email = user.email;
@@ -70,7 +74,7 @@ public class UserDTO {
     @Override
     public String toString() {
         return (
-            "UserDTO{" +
+            "AccountDTO{" +
             "login='" +
             login +
             '\'' +
@@ -84,6 +88,12 @@ public class UserDTO {
             activated +
             ", langKey='" +
             langKey +
+            '\'' +
+            ", firstName='" +
+            firstName +
+            '\'' +
+            ", lastName='" +
+            lastName +
             '\'' +
             ", createdBy=" +
             createdBy +

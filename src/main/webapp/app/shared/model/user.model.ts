@@ -1,8 +1,6 @@
 export interface IUser {
   id?: any;
   login?: string;
-  firstName?: string;
-  lastName?: string;
   email?: string;
   activated?: boolean;
   langKey?: string;
@@ -17,8 +15,6 @@ export interface IUser {
 export const defaultValue: Readonly<IUser> = {
   id: '',
   login: '',
-  firstName: '',
-  lastName: '',
   email: '',
   activated: true,
   langKey: '',
