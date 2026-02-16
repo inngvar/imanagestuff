@@ -17,10 +17,10 @@
 
 ## Группа 2: Сущности и модели (После 1.1)
 
-- [ ] **2.1 Сущности Panache**
-  - [ ] Обновить `Member.java`
-  - [ ] Создать `PendingLink.java`
-  - [ ] Создать `PollingState.java`
+- [x] **2.1 Сущности Panache**
+  - [x] Обновить `Member.java`
+  - [x] Создать `PendingLink.java`
+  - [x] Создать `PollingState.java`
 
 ## Группа 3: Бизнес-логика (После 1.2, 1.3, 2.1)
 
