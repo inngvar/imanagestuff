@@ -7,9 +7,9 @@
   - [ ] Добавить `telegram_id` в `member`
   - [ ] Создать таблицу `pending_link`
   - [ ] Создать таблицу `polling_state`
-- [ ] **1.2 Telegram REST Client & DTOs**
-  - [ ] Создать DTO (Update, Message, User, Chat, SendMessageRequest)
-  - [ ] Создать интерфейс `TelegramBotClient`
+- [x] **1.2 Telegram REST Client & DTOs**
+  - [x] Создать DTO (Update, Message, User, Chat, SendMessageRequest)
+  - [x] Создать интерфейс `TelegramBotClient`
 - [ ] **1.3 Компонент парсинга сообщений**
   - [ ] Реализовать `TelegramMessageParser`
   - [ ] Написать Unit-тесты для парсера
