@@ -11,7 +11,8 @@
   - [x] Создать DTO (Update, Message, User, Chat, SendMessageRequest)
   - [x] Создать интерфейс `TelegramBotClient`
 - [ ] **1.3 Компонент парсинга сообщений**
-  - [ ] Реализовать `TelegramMessageParser`
+  - [ ] Реализовать `TelegramMessageParser` (поддержка `Ч:ММ`, `Xч Yм`, `Xh Ym`)
+  - [ ] Реализовать логику нормализации (маппинг `ч`/`м` -> `H`/`M`)
   - [ ] Написать Unit-тесты для парсера
 
 ## Группа 2: Сущности и модели (После 1.1)
