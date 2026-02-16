@@ -50,6 +50,9 @@ public class Member extends PanacheEntityBase implements Serializable {
     @JoinColumn
     public Project defaultProject;
 
+    @Column(name = "telegram_id", unique = true)
+    public Long telegramId;
+
     @OneToMany(mappedBy = "member")
     public Set<TimeLog> timeLogs = new HashSet<>();
 
@@ -109,6 +112,7 @@ public class Member extends PanacheEntityBase implements Serializable {
             entity.middleName = member.middleName;
             entity.lastName = member.lastName;
             entity.defaultProject = member.defaultProject;
+            entity.telegramId = member.telegramId;
             entity.timeLogs = member.timeLogs;
             entity.projects = member.projects;
         }
