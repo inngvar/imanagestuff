@@ -2,11 +2,11 @@
 
 ## Группа 1: Инфраструктура и логика парсинга (Параллельно)
 
-- [ ] **1.1 Миграции базы данных (Liquibase)**
-  - [ ] Создать changelog `add_telegram_tables.xml`
-  - [ ] Добавить `telegram_id` в `member`
-  - [ ] Создать таблицу `pending_link`
-  - [ ] Создать таблицу `polling_state`
+- [x] **1.1 Миграции базы данных (Liquibase)**
+  - [x] Создать changelog `add_telegram_tables.xml`
+  - [x] Добавить `telegram_id` в `member`
+  - [x] Создать таблицу `pending_link`
+  - [x] Создать таблицу `polling_state`
 - [ ] **1.2 Telegram REST Client & DTOs**
   - [ ] Создать DTO (Update, Message, User, Chat, SendMessageRequest)
   - [ ] Создать интерфейс `TelegramBotClient`
