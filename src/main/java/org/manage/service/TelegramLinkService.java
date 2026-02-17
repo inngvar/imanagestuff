@@ -4,12 +4,14 @@ import org.manage.domain.Member;
 import org.manage.domain.PendingLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.manage.security.RandomUtil;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -44,11 +46,29 @@ public class TelegramLinkService {
     }
 
     @Transactional
+    public boolean linkMember(Long telegramId, String code) {
+        Optional<PendingLink> pendingLinkOpt = PendingLink.find("code = ?1 and used = false", code).firstResultOptional();
+        if (pendingLinkOpt.isPresent()) {
+            PendingLink pendingLink = pendingLinkOpt.get();
+            if (pendingLink.expiresAt.isAfter(Instant.now())) {
+                Member member = pendingLink.member;
+                member.telegramId = telegramId;
+                member.persist();
+
+                pendingLink.used = true;
+                pendingLink.persist();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Transactional
     public Optional<Member> confirmLink(String code, Long telegramId) {
         log.debug("Confirming link for code: {} and telegramId: {}", code, telegramId);
 
         Optional<PendingLink> pendingLinkOpt = PendingLink.find("code = ?1 and used = false and expiresAt > ?2",
-                code, Instant.now()).firstResultOptional();
+            code, Instant.now()).firstResultOptional();
 
         if (pendingLinkOpt.isPresent()) {
             PendingLink pendingLink = pendingLinkOpt.get();

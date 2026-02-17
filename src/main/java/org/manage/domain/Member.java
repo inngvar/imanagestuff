@@ -64,6 +64,10 @@ public class Member extends PanacheEntityBase implements Serializable {
         return find("login=?1", login).firstResultOptional();
     }
 
+    public static Optional<Member> findByTelegramId(Long telegramId) {
+        return find("telegramId=?1", telegramId).firstResultOptional();
+    }
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
     @Override
