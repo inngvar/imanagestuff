@@ -5,6 +5,7 @@ import org.manage.domain.PendingLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.manage.security.RandomUtil;
+import io.quarkus.scheduler.Scheduled;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
@@ -85,6 +86,16 @@ public class TelegramLinkService {
 
         log.warn("Invalid or expired link code: {}", code);
         return Optional.empty();
+    }
+
+    @Transactional
+    @Scheduled(every = "{telegram.link.cleanup.interval}")
+    public void cleanup() {
+        log.debug("Cleaning up expired or used pending links");
+        long deletedCount = PendingLink.delete("used = true or expiresAt < ?1", Instant.now());
+        if (deletedCount > 0) {
+            log.info("Deleted {} expired or used pending links", deletedCount);
+        }
     }
 
     private String generateRandomCode() {
