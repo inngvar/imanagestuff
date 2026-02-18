@@ -34,9 +34,9 @@
 
 ## Группа 4: Интеграция и интерфейс (После 3.1, 3.2)
 
-- [ ] **4.1 Сервис опроса (TelegramPollingService)**
-  - [ ] Реализовать Polling через `@Scheduled`
-  - [ ] Управление `last_update_id`
+- [x] **4.1 Сервис опроса (TelegramPollingService)**
+  - [x] Реализовать Polling через `@Scheduled`
+  - [x] Управление `last_update_id`
 - [ ] **4.2 Сервис напоминаний (ReminderService)**
   - [ ] Настроить cron-задачу
   - [ ] Логика проверки заполнения времени и рассылки
