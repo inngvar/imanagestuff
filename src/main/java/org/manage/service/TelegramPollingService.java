@@ -35,7 +35,7 @@ public class TelegramPollingService {
     @Scheduled(every = "{telegram.polling.interval}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
     public void poll() {
         log.trace("Polling telegram updates");
-        
+
         Long offset = getOffset();
 
         try {
@@ -54,10 +54,9 @@ public class TelegramPollingService {
         if (state == null) {
             state = new PollingState();
             state.id = 1L;
-            state.lastUpdateId = 0L;
             state.persist();
         }
-        return state.lastUpdateId == 0L ? null : state.lastUpdateId + 1;
+        return state.lastUpdateId == null ? null : state.lastUpdateId + 1;
     }
 
     @Transactional
@@ -68,7 +67,7 @@ public class TelegramPollingService {
                 try {
                     telegramMessageHandler.handleMessage(update.message);
                 } catch (Exception e) {
-                    log.error("Error handling message update_id=" + update.update_id, e);
+                    log.error("Error handling message update_id={}", update.update_id, e);
                 }
             }
             state.lastUpdateId = update.update_id;
