@@ -11,7 +11,9 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -66,6 +68,10 @@ public class Member extends PanacheEntityBase implements Serializable {
 
     public static Optional<Member> findByTelegramId(Long telegramId) {
         return find("telegramId=?1", telegramId).firstResultOptional();
+    }
+
+    public static List<Member> findAllWhoNeedReminder(LocalDate date) {
+        return find("telegramId IS NOT NULL AND NOT EXISTS (FROM TimeEntry te WHERE te.member.id = id AND te.date = ?1)", date).list();
     }
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

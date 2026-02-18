@@ -32,26 +32,25 @@ public class ReminderService {
     String reminderMessage;
 
     @Scheduled(cron = "{reminder.cron}")
-    @Transactional
     public void sendReminders() {
         log.info("Running daily reminders task");
         LocalDate today = LocalDate.now();
 
-        List<Member> membersWithTelegram = Member.find("telegramId IS NOT NULL").list();
-        log.info("Found {} members with Telegram linked", membersWithTelegram.size());
+        List<Member> membersToRemind = getMembersToRemind(today);
+        log.info("Found {} members to remind", membersToRemind.size());
 
-        for (Member member : membersWithTelegram) {
-            long count = TimeEntry.count("member = ?1 and date = ?2", member, today);
-            if (count == 0) {
-                log.info("Sending reminder to member {} (telegramId: {})", member.login, member.telegramId);
-                try {
-                    telegramBotClient.sendMessage(token, new SendMessageRequest(member.telegramId, reminderMessage));
-                } catch (Exception e) {
-                    log.error("Failed to send reminder to telegramId {}: {}", member.telegramId, e.getMessage());
-                }
-            } else {
-                log.debug("Member {} already has {} time entries for today", member.login, count);
+        for (Member member : membersToRemind) {
+            log.info("Sending reminder to member {} (telegramId: {})", member.login, member.telegramId);
+            try {
+                telegramBotClient.sendMessage(token, new SendMessageRequest(member.telegramId, reminderMessage));
+            } catch (Exception e) {
+                log.error("Failed to send reminder to telegramId {}: {}", member.telegramId, e.getMessage());
             }
         }
+    }
+
+    @Transactional
+    public List<Member> getMembersToRemind(LocalDate date) {
+        return Member.findAllWhoNeedReminder(date);
     }
 }
