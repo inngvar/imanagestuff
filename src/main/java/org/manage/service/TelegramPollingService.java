@@ -54,10 +54,10 @@ public class TelegramPollingService {
         if (state == null) {
             state = new PollingState();
             state.id = 1L;
-            state.lastUpdateId = 0;
+            state.lastUpdateId = 0L;
             state.persist();
         }
-        return state.lastUpdateId == 0 ? null : (long) state.lastUpdateId + 1;
+        return state.lastUpdateId == 0L ? null : state.lastUpdateId + 1;
     }
 
     @Transactional
@@ -71,7 +71,7 @@ public class TelegramPollingService {
                     log.error("Error handling message update_id=" + update.update_id, e);
                 }
             }
-            state.lastUpdateId = update.update_id.intValue();
+            state.lastUpdateId = update.update_id;
         }
     }
 }
