@@ -29,10 +29,27 @@ public class TelegramPollingService {
     @ConfigProperty(name = "telegram.bot.token")
     String token;
 
-    @Scheduled(every = "{telegram.polling.interval}")
-    @Transactional
+    @ConfigProperty(name = "telegram.polling.timeout", defaultValue = "30")
+    Integer timeout;
+
+    @Scheduled(every = "{telegram.polling.interval}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
     public void poll() {
         log.trace("Polling telegram updates");
+        
+        Long offset = getOffset();
+
+        try {
+            List<Update> updates = telegramBotClient.getUpdates(token, offset, timeout);
+            if (!updates.isEmpty()) {
+                processUpdates(updates);
+            }
+        } catch (Exception e) {
+            log.error("Failed to fetch updates from Telegram", e);
+        }
+    }
+
+    @Transactional
+    public Long getOffset() {
         PollingState state = PollingState.findById(1L);
         if (state == null) {
             state = new PollingState();
@@ -40,19 +57,21 @@ public class TelegramPollingService {
             state.lastUpdateId = 0;
             state.persist();
         }
+        return state.lastUpdateId == 0 ? null : (long) state.lastUpdateId + 1;
+    }
 
-        Long offset = state.lastUpdateId == 0 ? null : (long) state.lastUpdateId + 1;
-
-        try {
-            List<Update> updates = telegramBotClient.getUpdates(token, offset, 0);
-            for (Update update : updates) {
-                if (update.message != null) {
+    @Transactional
+    public void processUpdates(List<Update> updates) {
+        PollingState state = PollingState.findById(1L);
+        for (Update update : updates) {
+            if (update.message != null) {
+                try {
                     telegramMessageHandler.handleMessage(update.message);
+                } catch (Exception e) {
+                    log.error("Error handling message update_id=" + update.update_id, e);
                 }
-                state.lastUpdateId = update.update_id.intValue();
             }
-        } catch (Exception e) {
-            log.error("Failed to fetch updates from Telegram", e);
+            state.lastUpdateId = update.update_id.intValue();
         }
     }
 }
