@@ -13,6 +13,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class TelegramPollingService {
@@ -36,10 +37,8 @@ public class TelegramPollingService {
     public void poll() {
         log.trace("Polling telegram updates");
 
-        Long offset = getOffset();
-
         try {
-            List<Update> updates = telegramBotClient.getUpdates(token, offset, timeout);
+            List<Update> updates = telegramBotClient.getUpdates(token, getOffset().orElse(null), timeout);
             if (!updates.isEmpty()) {
                 processUpdates(updates);
             }
@@ -49,14 +48,15 @@ public class TelegramPollingService {
     }
 
     @Transactional
-    public Long getOffset() {
+    public Optional<Long> getOffset() {
         PollingState state = PollingState.findById(1L);
         if (state == null) {
             state = new PollingState();
             state.id = 1L;
             state.persist();
         }
-        return state.lastUpdateId == null ? null : state.lastUpdateId + 1;
+        return Optional.ofNullable(state.lastUpdateId)
+            .map(id -> id + 1);
     }
 
     @Transactional
