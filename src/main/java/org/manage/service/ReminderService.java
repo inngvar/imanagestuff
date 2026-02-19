@@ -2,9 +2,6 @@ package org.manage.service;
 
 import io.quarkus.scheduler.Scheduled;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-import org.manage.client.TelegramBotClient;
-import org.manage.client.dto.SendMessageRequest;
 import org.manage.domain.Member;
 import org.manage.domain.TimeEntry;
 import org.slf4j.Logger;
@@ -22,11 +19,7 @@ public class ReminderService {
     private static final Logger log = LoggerFactory.getLogger(ReminderService.class);
 
     @Inject
-    @RestClient
-    TelegramBotClient telegramBotClient;
-
-    @ConfigProperty(name = "telegram.bot.token")
-    String token;
+    TelegramBotService telegramBotService;
 
     @ConfigProperty(name = "reminder.message")
     String reminderMessage;
@@ -41,11 +34,7 @@ public class ReminderService {
 
         for (Member member : membersToRemind) {
             log.info("Sending reminder to member {} (telegramId: {})", member.login, member.telegramId);
-            try {
-                telegramBotClient.sendMessage(token, new SendMessageRequest(member.telegramId, reminderMessage));
-            } catch (Exception e) {
-                log.error("Failed to send reminder to telegramId {}: {}", member.telegramId, e.getMessage());
-            }
+            telegramBotService.sendMsg(member.telegramId, reminderMessage);
         }
     }
 
