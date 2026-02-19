@@ -58,7 +58,7 @@ public class TelegramPollingServiceTest {
         telegramPollingService.poll();
 
         verify(telegramMessageHandler).handleMessage(any());
-        
+
         PollingState state = PollingState.findById(1L);
         assertThat(state).isNotNull();
         assertThat(state.lastUpdateId).isEqualTo(100);
@@ -69,7 +69,7 @@ public class TelegramPollingServiceTest {
     public void testPollWithOffset() {
         PollingState state = new PollingState();
         state.id = 1L;
-        state.lastUpdateId = 100;
+        state.lastUpdateId = 100L;
         state.persist();
         PollingState.flush();
 
@@ -88,7 +88,7 @@ public class TelegramPollingServiceTest {
         telegramPollingService.poll();
 
         verify(telegramMessageHandler).handleMessage(any());
-        
+
         PollingState updatedState = PollingState.findById(1L);
         assertThat(updatedState.lastUpdateId).isEqualTo(101);
     }
