@@ -20,7 +20,7 @@ public class PollingState extends PanacheEntityBase implements Serializable {
     public Long id; // Always 1
 
     @Column(name = "last_update_id")
-    public Integer lastUpdateId;
+    public Long lastUpdateId;
 
     @Override
     public boolean equals(Object o) {
