@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.manage.client.dto.*;
 import org.manage.domain.Member;
+import org.manage.domain.PendingLink;
 import org.manage.domain.Project;
 import org.manage.domain.TimeEntry;
 import org.manage.service.dto.TimeEntryDTO;
@@ -32,6 +33,7 @@ public class TelegramMessageHandlerTest {
     @Transactional
     public void setup() {
         TimeEntry.deleteAll();
+        PendingLink.deleteAll();
         Member.deleteAll();
         Project.deleteAll();
         TelegramBotClientMock.sentMessages.clear();
