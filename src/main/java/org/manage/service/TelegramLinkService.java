@@ -33,7 +33,7 @@ public class TelegramLinkService {
         // Invalidate previous unused codes for this member
         PendingLink.find("from PendingLink pl where pl.member = ?1 and pl.used = false", member)
             .stream().forEach(pl -> {
-                ((PendingLink)pl).used = true;
+                ((PendingLink) pl).used = true;
             });
 
         String code = generateRandomCode();
@@ -89,7 +89,7 @@ public class TelegramLinkService {
     }
 
     @Transactional
-    @Scheduled(every = "{telegram.link.cleanup.interval}")
+    @Scheduled(every = "{telegram.link.cleanup.interval}", delay = 2)
     public void cleanup() {
         log.debug("Cleaning up expired or used pending links");
         long deletedCount = PendingLink.delete("used = true or expiresAt < ?1", Instant.now());

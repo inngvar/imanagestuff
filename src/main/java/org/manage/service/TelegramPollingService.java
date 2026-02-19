@@ -1,5 +1,6 @@
 package org.manage.service;
 
+import com.rometools.utils.Strings;
 import io.quarkus.scheduler.Scheduled;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -9,9 +10,11 @@ import org.manage.domain.PollingState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,8 +36,21 @@ public class TelegramPollingService {
     @ConfigProperty(name = "telegram.polling.timeout", defaultValue = "30")
     Integer timeout;
 
-    @Scheduled(every = "{telegram.polling.interval}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
+    @PostConstruct
+    void init() {
+        if ("MISSING_TOKEN".equals(token)) {
+            log.warn("Telegram bot token is not set. Polling will be skipped.");
+        }
+    }
+
+    @Scheduled(every = "{telegram.polling.interval}", delay = 2,
+        concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
     public void poll() {
+        // Если токен отсутствует – ничего не делаем
+        if ("MISSING_TOKEN".equals(token)) {
+            return;
+        }
+
         log.trace("Polling telegram updates");
 
         try {
@@ -73,4 +89,6 @@ public class TelegramPollingService {
             state.lastUpdateId = update.update_id;
         }
     }
+
+
 }
