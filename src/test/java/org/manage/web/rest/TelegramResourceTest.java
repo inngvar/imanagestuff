@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.manage.TestUtil;
+import org.manage.domain.Member;
 import org.manage.domain.User;
 import org.manage.web.rest.vm.ManagedUserVM;
 
@@ -77,6 +78,44 @@ public class TelegramResourceTest {
             .body("link", containsString("imanagestuff_bot"))
             .body("link", containsString("start="))
             .body("expiresAt", notNullValue());
+    }
+
+    @Test
+    public void testGenerateLinkUserWithoutMember() {
+        var userVM = new ManagedUserVM();
+        userVM.login = "nomember";
+        userVM.email = "nomember@example.com";
+        userVM.password = "password";
+        userVM.firstName = "No";
+        userVM.lastName = "Member";
+
+        // Register
+        given()
+            .contentType(ContentType.JSON)
+            .accept(ContentType.JSON)
+            .body(userVM)
+            .post("/api/register")
+            .then()
+            .statusCode(Response.Status.CREATED.getStatusCode());
+
+        // Note: registerUser in UserService creates a Member, so we need to delete it to test 404
+        deleteMember(userVM.login);
+        activateUser(userVM.login);
+
+        String token = TestUtil.getToken(userVM.login, userVM.password);
+
+        given()
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+            .contentType(ContentType.JSON)
+            .accept(ContentType.JSON)
+            .post("/api/telegram/generate-link")
+            .then()
+            .statusCode(Response.Status.NOT_FOUND.getStatusCode());
+    }
+
+    @Transactional
+    public void deleteMember(String login) {
+        Member.delete("login", login);
     }
 
     @Transactional

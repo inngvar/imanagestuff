@@ -47,6 +47,6 @@ public class TelegramResource {
                 String link = String.format("https://t.me/%s?start=%s", botUsername, pendingLink.code);
                 return Response.ok(new TelegramLinkDTO(link, pendingLink.expiresAt)).build();
             })
-            .orElseGet(() -> Response.status(Response.Status.BAD_REQUEST).build());
+            .orElseGet(() -> Response.status(Response.Status.NOT_FOUND).build());
     }
 }
