@@ -21,6 +21,12 @@ export const SettingsPage = (props: IUserSettingsProps) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (props.telegramLink) {
+      window.open(props.telegramLink, '_blank');
+    }
+  }, [props.telegramLink]);
+
   const handleValidSubmit = (event, values) => {
     const account = {
       ...props.account,
@@ -111,8 +117,20 @@ export const SettingsPage = (props: IUserSettingsProps) => {
                 Connect Telegram bot to receive reminders about unfilled time and quick work recording.
               </Translate>
             </p>
-            {props.telegramLink ? (
-              <div>
+            {props.account.telegramId ? (
+              <Alert color="success">
+                <Translate contentKey="settings.telegram.status.linked" interpolate={{ telegramId: props.account.telegramId }}>
+                  Your account is linked to Telegram (ID: {props.account.telegramId}).
+                </Translate>
+              </Alert>
+            ) : (
+              <Alert color="warning">
+                <Translate contentKey="settings.telegram.status.notLinked">Your account is not linked to Telegram.</Translate>
+              </Alert>
+            )}
+
+            {props.telegramLink && (
+              <div className="mb-3">
                 <a href={props.telegramLink} target="_blank" rel="noopener noreferrer" className="btn btn-info">
                   <Translate contentKey="settings.telegram.link">Go to Telegram</Translate>
                 </a>
@@ -122,11 +140,13 @@ export const SettingsPage = (props: IUserSettingsProps) => {
                   </Translate>
                 </p>
               </div>
-            ) : (
-              <Button color="info" onClick={props.generateTelegramLink} disabled={props.loading}>
-                <Translate contentKey="settings.telegram.generate">Link Account</Translate>
-              </Button>
             )}
+
+            <Button color="info" onClick={props.generateTelegramLink} disabled={props.loading}>
+              <Translate contentKey={props.account.telegramId ? 'settings.telegram.relink' : 'settings.telegram.generate'}>
+                {props.account.telegramId ? 'Re-link Account' : 'Link Account'}
+              </Translate>
+            </Button>
           </div>
         </Col>
       </Row>

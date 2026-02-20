@@ -12,8 +12,13 @@
     "telegram": {
       "title": "Telegram Bot",
       "explanation": "Подключите Telegram бота для получения напоминаний о незаполненном времени и быстрой записи работ.",
+      "status": {
+        "linked": "Ваш аккаунт привязан к Telegram (ID: {{telegramId}}).",
+        "notLinked": "Ваш аккаунт не привязан к Telegram."
+      },
       "link": "Перейти в Telegram",
       "generate": "Привязать аккаунт",
+      "relink": "Перепривязать аккаунт",
       "expiresAt": "Ссылка действительна до {{expiresAt}}"
     },
     "messages": {
