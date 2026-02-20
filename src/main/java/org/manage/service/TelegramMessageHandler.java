@@ -80,7 +80,7 @@ public class TelegramMessageHandler {
         } else {
             StringBuilder sb = new StringBuilder("Записи за сегодня:\n");
             for (TimeEntryDTO entry : entries) {
-                sb.append("- ").append(formatDuration(entry.duration)).append(": ").append(entry.description).append("\n");
+                sb.append("- ").append(formatDuration(entry.duration)).append(": ").append(entry.shortDescription).append("\n");
             }
             telegramBotService.sendMsg(chatId, sb.toString());
         }
@@ -117,7 +117,10 @@ public class TelegramMessageHandler {
 
         TimeEntryDTO timeEntryDTO = new TimeEntryDTO();
         timeEntryDTO.duration = result.getDuration();
-        timeEntryDTO.description = result.getDescription();
+        String description = result.getDescription();
+        timeEntryDTO.shortDescription = description.length() > 256
+            ? description.substring(0, 253) + "..."
+            : description;
         timeEntryDTO.date = LocalDate.now();
         timeEntryDTO.memberId = member.id;
         timeEntryDTO.projectId = member.defaultProject.id;

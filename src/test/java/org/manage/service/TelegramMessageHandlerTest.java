@@ -102,7 +102,37 @@ public class TelegramMessageHandlerTest {
         List<TimeEntryDTO> entries = timeEntryService.findAll(io.quarkus.panache.common.Page.of(0, 10)).content;
         assertThat(entries).hasSize(1);
         assertThat(entries.get(0).duration).isEqualTo(Duration.ofHours(2).plusMinutes(30));
-        assertThat(entries.get(0).description).isEqualTo("coding");
+        assertThat(entries.get(0).description).isNull();
+        assertThat(entries.get(0).shortDescription).isEqualTo("coding");
+    }
+
+    @Test
+    @Transactional
+    public void testHandleToday() {
+        Project project = new Project();
+        project.name = "Test Project";
+        project.persist();
+
+        Member member = new Member();
+        member.login = "testuser";
+        member.firstName = "Test";
+        member.lastName = "User";
+        member.defaultProject = project;
+        member.telegramId = 123L;
+        member.persist();
+
+        // Add a time entry manually
+        Message message = createMessage("1:00 meeting", 123L);
+        telegramMessageHandler.handleMessage(message);
+        TelegramBotServiceMock.sentMessages.clear();
+
+        // Ask for today's entries
+        Message todayMessage = createMessage("/today", 123L);
+        telegramMessageHandler.handleMessage(todayMessage);
+
+        assertThat(TelegramBotServiceMock.sentMessages).hasSize(1);
+        assertThat(TelegramBotServiceMock.sentMessages.get(0).text).contains("meeting");
+        assertThat(TelegramBotServiceMock.sentMessages.get(0).text).contains("1:00");
     }
 
     private Message createMessage(String text, Long telegramId) {
