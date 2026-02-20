@@ -129,19 +129,6 @@ export const SettingsPage = (props: IUserSettingsProps) => {
               </Alert>
             )}
 
-            {props.telegramLink && (
-              <div className="mb-3">
-                <a href={props.telegramLink} target="_blank" rel="noopener noreferrer" className="btn btn-info">
-                  <Translate contentKey="settings.telegram.link">Go to Telegram</Translate>
-                </a>
-                <p className="mt-2">
-                  <Translate contentKey="settings.telegram.expiresAt" interpolate={{ expiresAt: props.expiresAt }}>
-                    Link is valid until {props.expiresAt}
-                  </Translate>
-                </p>
-              </div>
-            )}
-
             <Button color="info" onClick={props.generateTelegramLink} disabled={props.loading}>
               <Translate contentKey={props.account.telegramId ? 'settings.telegram.relink' : 'settings.telegram.generate'}>
                 {props.account.telegramId ? 'Re-link Account' : 'Link Account'}
