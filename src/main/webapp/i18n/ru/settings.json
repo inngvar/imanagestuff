@@ -9,6 +9,13 @@
       "language": "Язык",
       "button": "Сохранить"
     },
+    "telegram": {
+      "title": "Telegram Bot",
+      "explanation": "Подключите Telegram бота для получения напоминаний о незаполненном времени и быстрой записи работ.",
+      "link": "Перейти в Telegram",
+      "generate": "Привязать аккаунт",
+      "expiresAt": "Ссылка действительна до {{expiresAt}}"
+    },
     "messages": {
       "error": {
         "fail": "<strong>Произошла ошибка!</strong> Настройки не могут быть сохранены.",

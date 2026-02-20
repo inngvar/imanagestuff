@@ -8,6 +8,7 @@ import { locales, languages } from 'app/config/translation';
 import { IRootState } from 'app/shared/reducers';
 import { getSession } from 'app/shared/reducers/authentication';
 import { saveAccountSettings, reset } from './settings.reducer';
+import { generateTelegramLink, reset as resetTelegram } from './telegram.reducer';
 
 export interface IUserSettingsProps extends StateProps, DispatchProps {}
 
@@ -16,6 +17,7 @@ export const SettingsPage = (props: IUserSettingsProps) => {
     props.getSession();
     return () => {
       props.reset();
+      props.resetTelegram();
     };
   }, []);
 
@@ -99,18 +101,48 @@ export const SettingsPage = (props: IUserSettingsProps) => {
               <Translate contentKey="settings.form.button">Save</Translate>
             </Button>
           </AvForm>
+          <hr />
+          <div id="telegram-settings">
+            <h3>
+              <Translate contentKey="settings.telegram.title">Telegram Bot</Translate>
+            </h3>
+            <p>
+              <Translate contentKey="settings.telegram.explanation">
+                Connect Telegram bot to receive reminders about unfilled time and quick work recording.
+              </Translate>
+            </p>
+            {props.telegramLink ? (
+              <div>
+                <a href={props.telegramLink} target="_blank" rel="noopener noreferrer" className="btn btn-info">
+                  <Translate contentKey="settings.telegram.link">Go to Telegram</Translate>
+                </a>
+                <p className="mt-2">
+                  <Translate contentKey="settings.telegram.expiresAt" interpolate={{ expiresAt: props.expiresAt }}>
+                    Link is valid until {props.expiresAt}
+                  </Translate>
+                </p>
+              </div>
+            ) : (
+              <Button color="info" onClick={props.generateTelegramLink} disabled={props.loading}>
+                <Translate contentKey="settings.telegram.generate">Link Account</Translate>
+              </Button>
+            )}
+          </div>
         </Col>
       </Row>
     </div>
   );
 };
 
-const mapStateToProps = ({ authentication }: IRootState) => ({
+const mapStateToProps = ({ authentication, telegram }: IRootState) => ({
   account: authentication.account,
   isAuthenticated: authentication.isAuthenticated,
+  telegramLink: telegram.telegramLink,
+  expiresAt: telegram.expiresAt,
+  loading: telegram.loading,
 });
 
-const mapDispatchToProps = { getSession, saveAccountSettings, reset };
+const mapDispatchToProps = { getSession, saveAccountSettings, reset, generateTelegramLink, resetTelegram };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
