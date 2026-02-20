@@ -11,7 +11,9 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -50,6 +52,9 @@ public class Member extends PanacheEntityBase implements Serializable {
     @JoinColumn
     public Project defaultProject;
 
+    @Column(name = "telegram_id", unique = true)
+    public Long telegramId;
+
     @OneToMany(mappedBy = "member")
     public Set<TimeLog> timeLogs = new HashSet<>();
 
@@ -59,6 +64,14 @@ public class Member extends PanacheEntityBase implements Serializable {
 
     public static Optional<Member> findByLogin(String login) {
         return find("login=?1", login).firstResultOptional();
+    }
+
+    public static Optional<Member> findByTelegramId(Long telegramId) {
+        return find("telegramId=?1", telegramId).firstResultOptional();
+    }
+
+    public static List<Member> findAllWhoNeedReminder(LocalDate date) {
+        return find("telegramId IS NOT NULL AND NOT EXISTS (FROM TimeEntry te WHERE te.member.id = id AND te.date = ?1)", date).list();
     }
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -109,6 +122,7 @@ public class Member extends PanacheEntityBase implements Serializable {
             entity.middleName = member.middleName;
             entity.lastName = member.lastName;
             entity.defaultProject = member.defaultProject;
+            entity.telegramId = member.telegramId;
             entity.timeLogs = member.timeLogs;
             entity.projects = member.projects;
         }

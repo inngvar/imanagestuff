@@ -31,6 +31,8 @@ public class MemberDTO implements Serializable {
 
     public String defaultProjectName;
 
+    public Long telegramId;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -58,6 +60,7 @@ public class MemberDTO implements Serializable {
             ", lastName='" + lastName + "'" +
             ", defaultProjectId=" + defaultProjectId +
             ", defaultProjectName='" + defaultProjectName + "'" +
+            ", telegramId=" + telegramId +
             "}";
     }
 }

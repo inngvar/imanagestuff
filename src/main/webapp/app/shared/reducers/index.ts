@@ -11,6 +11,7 @@ import register, { RegisterState } from 'app/modules/account/register/register.r
 import activate, { ActivateState } from 'app/modules/account/activate/activate.reducer';
 import password, { PasswordState } from 'app/modules/account/password/password.reducer';
 import settings, { SettingsState } from 'app/modules/account/settings/settings.reducer';
+import telegram, { TelegramState } from 'app/modules/account/settings/telegram.reducer';
 import passwordReset, { PasswordResetState } from 'app/modules/account/password-reset/password-reset.reducer';
 // prettier-ignore
 import project, {
@@ -41,6 +42,7 @@ export interface IRootState {
   readonly passwordReset: PasswordResetState;
   readonly password: PasswordState;
   readonly settings: SettingsState;
+  readonly telegram: TelegramState;
   readonly project: ProjectState;
   readonly member: MemberState;
   readonly timeEntry: TimeEntryState;
@@ -60,6 +62,7 @@ const rootReducer = combineReducers<IRootState>({
   passwordReset,
   password,
   settings,
+  telegram,
   project,
   member,
   timeEntry,

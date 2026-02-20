@@ -44,6 +44,12 @@ public class TimeEntryService {
         log.debug("Request to save TimeEntry : {}", timeEntryDTO);
         final Long memberId = timeEntryDTO.memberId;
         checkRights(securityIdentity, memberId);
+        return persist(timeEntryDTO);
+    }
+
+    @Transactional
+    public TimeEntryDTO persist(TimeEntryDTO timeEntryDTO) {
+        log.debug("Request to save TimeEntry : {}", timeEntryDTO);
         var timeEntry = timeEntryMapper.toEntity(timeEntryDTO);
         timeEntry = TimeEntry.persistOrUpdate(timeEntry);
         return timeEntryMapper.toDto(timeEntry);

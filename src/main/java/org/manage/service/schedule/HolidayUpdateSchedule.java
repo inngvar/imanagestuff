@@ -1,5 +1,6 @@
 package org.manage.service.schedule;
 
+import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.StartupEvent;
 import io.quarkus.scheduler.Scheduled;
 import org.jboss.logging.Logger;
@@ -21,6 +22,9 @@ public class HolidayUpdateSchedule {
 
     @Scheduled(cron = "{consultant.holiday.cron}")
     void increment() {
+        if (LaunchMode.current() == LaunchMode.TEST) {
+            return;
+        }
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         for (int i = 2014; i <= currentYear; i++) {
             holidayUpdater.updateForYear(i);
@@ -29,6 +33,9 @@ public class HolidayUpdateSchedule {
     }
 
     void onStart(@Observes StartupEvent ev) {
+        if (LaunchMode.current() == LaunchMode.TEST) {
+            return;
+        }
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         holidayUpdater.updateForYear(currentYear);
     }

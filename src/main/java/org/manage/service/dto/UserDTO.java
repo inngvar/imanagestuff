@@ -2,6 +2,7 @@ package org.manage.service.dto;
 
 import org.manage.config.Constants;
 import org.manage.domain.User;
+import org.manage.domain.Member;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
@@ -52,6 +53,7 @@ public class UserDTO {
     public Instant lastModifiedDate;
 
     public Set<String> authorities;
+    public Long telegramId;
 
     public UserDTO() {
         // Empty constructor needed for Jackson.
@@ -71,6 +73,7 @@ public class UserDTO {
         this.lastModifiedBy = user.lastModifiedBy;
         this.lastModifiedDate = user.lastModifiedDate;
         this.authorities = user.authorities.stream().map(authority -> authority.name).collect(Collectors.toSet());
+        this.telegramId = Member.findByLogin(user.login).map(member -> member.telegramId).orElse(null);
     }
 
     @Override

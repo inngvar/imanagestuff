@@ -12,6 +12,7 @@ export interface IUser {
   lastModifiedBy?: string;
   lastModifiedDate?: Date | null;
   password?: string;
+  telegramId?: number;
 }
 
 export const defaultValue: Readonly<IUser> = {
@@ -28,4 +29,5 @@ export const defaultValue: Readonly<IUser> = {
   lastModifiedBy: '',
   lastModifiedDate: null,
   password: '',
+  telegramId: null,
 };
