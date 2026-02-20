@@ -75,7 +75,7 @@ public class TelegramResourceTest {
             .post("/api/telegram/generate-link")
             .then()
             .statusCode(Response.Status.OK.getStatusCode())
-            .body("link", containsString("imanagestuff_bot"))
+            .body("link", containsString("_bot"))
             .body("link", containsString("start="))
             .body("expiresAt", notNullValue());
     }

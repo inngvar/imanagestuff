@@ -1,11 +1,13 @@
 package org.manage.service.mapper;
 
+import io.quarkus.test.junit.QuarkusTest;
 import org.manage.domain.User;
 import org.manage.service.dto.UserDTO;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -16,18 +18,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Unit tests for {@link UserMapper}.
  */
+@QuarkusTest
 public class UserMapperTest {
 
     private static final String DEFAULT_LOGIN = "johndoe";
     private static final Long DEFAULT_ID = 1L;
 
-    private UserMapper userMapper;
+    @Inject
+    UserMapper userMapper;
     private User user;
     private UserDTO userDto;
 
     @BeforeEach
     public void init() {
-        userMapper = new UserMapper();
         user = new User();
         user.login = DEFAULT_LOGIN;
         user.password = RandomStringUtils.random(60);
