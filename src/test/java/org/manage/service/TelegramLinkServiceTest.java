@@ -29,7 +29,7 @@ class TelegramLinkServiceTest {
         member.persist();
 
         // Generate code
-        String code = telegramLinkService.generateLinkCode(member);
+        String code = telegramLinkService.generateLinkCode(member).code;
         assertThat(code).isNotNull().hasSize(8);
 
         // Check PendingLink created
@@ -88,11 +88,11 @@ class TelegramLinkServiceTest {
         member.lastName = "User";
         member.persist();
 
-        String code1 = telegramLinkService.generateLinkCode(member);
+        String code1 = telegramLinkService.generateLinkCode(member).code;
         PendingLink pl1 = PendingLink.find("code", code1).firstResult();
         assertThat(pl1.used).isFalse();
 
-        String code2 = telegramLinkService.generateLinkCode(member);
+        String code2 = telegramLinkService.generateLinkCode(member).code;
         pl1 = PendingLink.findById(pl1.id);
         assertThat(pl1.used).isTrue();
 

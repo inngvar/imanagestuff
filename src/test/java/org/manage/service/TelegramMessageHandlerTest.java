@@ -66,7 +66,7 @@ public class TelegramMessageHandlerTest {
         member.defaultProject = project;
         member.persist();
 
-        String code = telegramLinkService.generateLinkCode(member);
+        String code = telegramLinkService.generateLinkCode(member).code;
 
         Message message = createMessage("/start " + code, 123L);
         telegramMessageHandler.handleMessage(message);

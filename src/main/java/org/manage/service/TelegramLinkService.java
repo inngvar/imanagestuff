@@ -27,7 +27,7 @@ public class TelegramLinkService {
     private final SecureRandom random = new SecureRandom();
 
     @Transactional
-    public String generateLinkCode(Member member) {
+    public PendingLink generateLinkCode(Member member) {
         log.debug("Generating link code for member: {}", member.login);
 
         // Invalidate previous unused codes for this member
@@ -43,7 +43,7 @@ public class TelegramLinkService {
         pendingLink.expiresAt = Instant.now().plus(CODE_EXPIRATION);
         pendingLink.persist();
 
-        return code;
+        return pendingLink;
     }
 
     @Transactional
