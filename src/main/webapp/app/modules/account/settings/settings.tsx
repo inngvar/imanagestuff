@@ -15,11 +15,18 @@ export interface IUserSettingsProps extends StateProps, DispatchProps {}
 export const SettingsPage = (props: IUserSettingsProps) => {
   useEffect(() => {
     props.getSession();
+    const interval = setInterval(() => {
+      if (!props.account.telegramId) {
+        props.getSession();
+      }
+    }, 5000); // Poll every 5 seconds if not linked
+
     return () => {
       props.reset();
       props.resetTelegram();
+      clearInterval(interval);
     };
-  }, []);
+  }, [props.account.telegramId]);
 
   useEffect(() => {
     if (props.telegramLink) {
