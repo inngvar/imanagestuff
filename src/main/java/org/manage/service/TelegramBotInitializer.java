@@ -2,10 +2,12 @@ package org.manage.service;
 
 import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.StartupEvent;
+import io.quarkus.runtime.ShutdownEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.BotSession;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -19,6 +21,8 @@ public class TelegramBotInitializer {
 
     @Inject
     TelegramBotService telegramBotService;
+
+    private BotSession botSession;
 
     void onStart(@Observes StartupEvent ev) {
         if (LaunchMode.current() == LaunchMode.TEST) {
@@ -34,10 +38,18 @@ public class TelegramBotInitializer {
 
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-            botsApi.registerBot(telegramBotService);
+            botSession = botsApi.registerBot(telegramBotService);
             log.info("Telegram Bot registered successfully.");
         } catch (TelegramApiException e) {
             log.error("Failed to register Telegram Bot", e);
+        }
+    }
+
+    void onStop(@Observes ShutdownEvent ev) {
+        if (botSession != null && botSession.isRunning()) {
+            log.info("Stopping Telegram Bot...");
+            botSession.stop();
+            log.info("Telegram Bot stopped.");
         }
     }
 }
