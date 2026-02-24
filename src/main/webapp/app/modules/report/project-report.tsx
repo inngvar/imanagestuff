@@ -66,7 +66,7 @@ export const ProjectReport = props => {
               .map((memberStats, i) => (
                 <Row key={i}>
                   <h3>{memberStats.member.fio}</h3>
-                  <TimeEntries entries={memberStats.entries} onUpdate={updateProjectStats}/>
+                  <TimeEntries entries={memberStats.entries} onUpdate={updateProjectStats} useModalEdit={true}/>
                 </Row>
               )))
             :
