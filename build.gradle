@@ -170,6 +170,7 @@ dependencies {
     implementation "io.quarkus:quarkus-rest-client"
     implementation("io.quarkus:quarkus-scheduler")
     implementation "org.mapstruct:mapstruct:${mapstruct_version}"
+    implementation "org.telegram:telegrambots:6.1.0"
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
 
     liquibaseRuntime sourceSets.main.compileClasspath

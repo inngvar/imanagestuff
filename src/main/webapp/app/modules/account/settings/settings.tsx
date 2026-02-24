@@ -8,16 +8,31 @@ import { locales, languages } from 'app/config/translation';
 import { IRootState } from 'app/shared/reducers';
 import { getSession } from 'app/shared/reducers/authentication';
 import { saveAccountSettings, reset } from './settings.reducer';
+import { generateTelegramLink, reset as resetTelegram } from './telegram.reducer';
 
 export interface IUserSettingsProps extends StateProps, DispatchProps {}
 
 export const SettingsPage = (props: IUserSettingsProps) => {
   useEffect(() => {
     props.getSession();
+    const interval = setInterval(() => {
+      if (!props.account.telegramId) {
+        props.getSession();
+      }
+    }, 5000); // Poll every 5 seconds if not linked
+
     return () => {
       props.reset();
+      props.resetTelegram();
+      clearInterval(interval);
     };
-  }, []);
+  }, [props.account.telegramId]);
+
+  useEffect(() => {
+    if (props.telegramLink) {
+      window.open(props.telegramLink, '_blank');
+    }
+  }, [props.telegramLink]);
 
   const handleValidSubmit = (event, values) => {
     const account = {
@@ -99,18 +114,49 @@ export const SettingsPage = (props: IUserSettingsProps) => {
               <Translate contentKey="settings.form.button">Save</Translate>
             </Button>
           </AvForm>
+          <hr />
+          <div id="telegram-settings">
+            <h3>
+              <Translate contentKey="settings.telegram.title">Telegram Bot</Translate>
+            </h3>
+            <p>
+              <Translate contentKey="settings.telegram.explanation">
+                Connect Telegram bot to receive reminders about unfilled time and quick work recording.
+              </Translate>
+            </p>
+            {props.account.telegramId ? (
+              <Alert color="success">
+                <Translate contentKey="settings.telegram.status.linked" interpolate={{ telegramId: props.account.telegramId }}>
+                  Your account is linked to Telegram (ID: {props.account.telegramId}).
+                </Translate>
+              </Alert>
+            ) : (
+              <Alert color="warning">
+                <Translate contentKey="settings.telegram.status.notLinked">Your account is not linked to Telegram.</Translate>
+              </Alert>
+            )}
+
+            <Button color="info" onClick={props.generateTelegramLink} disabled={props.loading}>
+              <Translate contentKey={props.account.telegramId ? 'settings.telegram.relink' : 'settings.telegram.generate'}>
+                {props.account.telegramId ? 'Re-link Account' : 'Link Account'}
+              </Translate>
+            </Button>
+          </div>
         </Col>
       </Row>
     </div>
   );
 };
 
-const mapStateToProps = ({ authentication }: IRootState) => ({
+const mapStateToProps = ({ authentication, telegram }: IRootState) => ({
   account: authentication.account,
   isAuthenticated: authentication.isAuthenticated,
+  telegramLink: telegram.telegramLink,
+  expiresAt: telegram.expiresAt,
+  loading: telegram.loading,
 });
 
-const mapDispatchToProps = { getSession, saveAccountSettings, reset };
+const mapDispatchToProps = { getSession, saveAccountSettings, reset, generateTelegramLink, resetTelegram };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

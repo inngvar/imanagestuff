@@ -22,6 +22,8 @@ public class MemberCreateVM {
 
     public String fio;
 
+    public Long telegramId;
+
     @Override
     public String toString() {
         return "MemberCreateVM{" +
@@ -31,6 +33,7 @@ public class MemberCreateVM {
             ", middleName='" + middleName + '\'' +
             ", lastName='" + lastName + '\'' +
             ", fio='" + fio + '\'' +
+            ", telegramId=" + telegramId +
             '}';
     }
 }
