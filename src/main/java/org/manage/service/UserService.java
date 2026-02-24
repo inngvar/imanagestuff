@@ -80,8 +80,10 @@ public class UserService {
     }
 
     public User registerUser(UserDTO userDTO, String password) {
+        final String normalizedLogin = userDTO.login.toLowerCase();
+
         User
-            .findOneByLogin(userDTO.login.toLowerCase())
+            .findOneByLogin(normalizedLogin)
             .ifPresent(
                 existingUser -> {
                     var removed = removeNonActivatedUser(existingUser);
@@ -90,6 +92,11 @@ public class UserService {
                     }
                 }
             );
+        Member
+            .findByLogin(normalizedLogin)
+            .ifPresent(existingMember -> {
+                throw new UsernameAlreadyUsedException();
+            });
         User
             .findOneByEmailIgnoreCase(userDTO.email)
             .ifPresent(
@@ -102,7 +109,7 @@ public class UserService {
             );
         var encryptedPassword = passwordHasher.hash(password);
         var newUser = new User();
-        newUser.login = userDTO.login.toLowerCase();
+        newUser.login = normalizedLogin;
         // new user gets initially a generated password
         newUser.password = encryptedPassword;
         newUser.firstName = userDTO.firstName;
@@ -123,13 +130,13 @@ public class UserService {
         //        this.clearUserCaches(newUser);
         log.debug("Created Information for User: {}", newUser);
 
-        Member.persist(userDtoToMember(userDTO));
+        Member.persist(userDtoToMember(userDTO, normalizedLogin));
         return newUser;
     }
 
-    private Member userDtoToMember(UserDTO userDTO) {
+    private Member userDtoToMember(UserDTO userDTO, String normalizedLogin) {
         Member newMember = new Member();
-        newMember.login = userDTO.login.toLowerCase();
+        newMember.login = normalizedLogin;
         newMember.firstName = userDTO.firstName == null ? "" : userDTO.firstName;
         newMember.middleName = null;
         newMember.lastName = userDTO.lastName == null ? "" : userDTO.lastName;
