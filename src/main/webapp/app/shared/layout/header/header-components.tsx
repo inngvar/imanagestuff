@@ -11,7 +11,7 @@ import MenuItem from "app/shared/layout/menus/menu-item";
 
 export const BrandIcon = props => (
   <div {...props} className="brand-icon">
-    <img src="content/images/logo-jhipster.png" alt="Logo"/>
+    <img src="content/images/logo-imanagestuff.svg" alt="IManageStuff logo"/>
   </div>
 );
 
