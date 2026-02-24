@@ -2,7 +2,7 @@ import axios from 'axios';
 import '../home/home.scss';
 import './logwork.scss';
 import React, {useEffect, useState} from 'react';
-import {convertToIsoDuration, isValidDuration} from 'app/shared/util/date-utils';
+import {convertToIsoDuration, formatDurationForDisplay, isValidDuration, minutesToDuration} from 'app/shared/util/date-utils';
 import {Translate, translate} from 'react-jhipster';
 import {connect} from 'react-redux';
 import {MemberList, ProjectList, TimeEntries} from 'app/modules/logwork/logwork-components';
@@ -21,6 +21,7 @@ export const LogWork = (props: ILogWorkProp) => {
   const [entries, setEntries] = useState(null);
   const [duration, setDuration] = useState(null);
   const [entryDescription, setEntryDescription] = useState('');
+  const [editingEntryId, setEditingEntryId] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const maxLengthDescription = 256;
   const queryParams = (() => {
@@ -79,7 +80,7 @@ export const LogWork = (props: ILogWorkProp) => {
     setCurrentMember(member);
   };
 
-  const addNewEntry = () => {
+  const saveEntry = () => {
     // Validate duration input
     if (!duration || !isValidDuration(duration)) {
       setErrorMessage(translate('imanagestuffApp.timeEntry.validation.invalidDuration'));
@@ -88,19 +89,26 @@ export const LogWork = (props: ILogWorkProp) => {
 
     try {
       const isoDuration = convertToIsoDuration(duration);
+      const isEditMode = !!editingEntryId;
       const entity = {
+        ...(isEditMode ? { id: editingEntryId } : {}),
         duration: isoDuration,
         shortDescription: entryDescription,
         projectId: currentProject.id,
         memberId: currentMember.id,
         date: reportDate,
       };
-      axios
-        .post('api/time-entries/', cleanEntity(entity))
+
+      const request = isEditMode
+        ? axios.put('api/time-entries/', cleanEntity(entity))
+        : axios.post('api/time-entries/', cleanEntity(entity));
+
+      request
         .then(result => {
           updateEntries();
           setEntryDescription('');
           setDuration('');
+          setEditingEntryId(null);
           setErrorMessage(null);
         })
         .catch(error => {
@@ -111,6 +119,23 @@ export const LogWork = (props: ILogWorkProp) => {
     } catch (error) {
       setErrorMessage(error.message);
     }
+  };
+
+  const startEditingEntry = entry => {
+    let editableDuration = '';
+    if (typeof entry?.duration === 'number') {
+      editableDuration = formatDurationForDisplay(minutesToDuration(entry.duration));
+    } else if (typeof entry?.duration === 'string' && entry.duration.startsWith('PT')) {
+      editableDuration = formatDurationForDisplay(entry.duration);
+    } else {
+      editableDuration = entry?.duration || '';
+    }
+
+    setEntryDescription(entry?.shortDescription || '');
+    setDuration(editableDuration);
+    setReportDate(entry?.date || reportDate);
+    setEditingEntryId(entry?.id);
+    setErrorMessage(null);
   };
 
   const updateDefaultProjectForMembers = () => {
@@ -157,7 +182,7 @@ export const LogWork = (props: ILogWorkProp) => {
           <Col>
             <Row>
               <Form className="jumbotron">
-                <h3>Добавить задачу</h3>
+                <h3>{editingEntryId ? 'Редактировать задачу' : 'Добавить задачу'}</h3>
                 <Row className="align-items-center">
                   <FormGroup className="col-auto">
                     <Label className="sr-only" for="description">
@@ -194,14 +219,29 @@ export const LogWork = (props: ILogWorkProp) => {
                     <Button
                       className="btn-primary"
                       onClick={event => {
-                        addNewEntry();
+                        saveEntry();
                         return false;
                       }}
                       disabled={entryDescription.length > maxLengthDescription}
                     >
-                      +
+                      {editingEntryId ? 'Обновить' : '+'}
                     </Button>
                   </FormGroup>
+                  {editingEntryId && (
+                    <FormGroup className="col-auto">
+                      <Button
+                        color="secondary"
+                        onClick={() => {
+                          setEditingEntryId(null);
+                          setEntryDescription('');
+                          setDuration('');
+                          setErrorMessage(null);
+                        }}
+                      >
+                        Отмена
+                      </Button>
+                    </FormGroup>
+                  )}
                 </Row>
                 <Row>
                   <div>{errorMessage}</div>
@@ -211,7 +251,7 @@ export const LogWork = (props: ILogWorkProp) => {
           </Col>
         )}
         <Row>
-          <TimeEntries entries={entries} onUpdate={updateEntries} />
+          <TimeEntries entries={entries} onUpdate={updateEntries} onEdit={startEditingEntry} useModalEdit={false} />
         </Row>
       </Col>
     </Row>

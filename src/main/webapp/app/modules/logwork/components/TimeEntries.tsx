@@ -8,6 +8,8 @@ import {ITimeEntry} from "app/shared/model/time-entry.model";
 export const TimeEntries = (props: {
   entries: ITimeEntry[];
   onUpdate: () => void;
+  onEdit?: (entry: ITimeEntry) => void;
+  useModalEdit?: boolean;
 }) => {
   const account = useSelector(state => state['authentication'].account);
   return (
@@ -36,6 +38,8 @@ export const TimeEntries = (props: {
             date={entry.date}
             showButtons={account.login === entry.memberLogin}
             onUpdate={props.onUpdate}
+            onEdit={props.onEdit}
+            useModalEdit={props.useModalEdit}
           />
         ))
       ) : (

@@ -1,6 +1,5 @@
 import React from 'react';
 import axios from 'axios';
-import {parseTime} from 'app/shared/util/date-utils';
 import {TimeEntryToDuration} from 'app/entities/time-entry/time-to-total.tsx';
 import {Button} from 'reactstrap';
 import TimeEntryUpdateModal from 'app/entities/time-entry/time-entry-modal';
@@ -11,15 +10,20 @@ export const TimeEntry = (props: {
   key: number,
   showButtons: boolean,
   date: string,
-  onUpdate: () => void
+  onUpdate: () => void,
+  onEdit?: (entry: ITimeEntry) => void,
+  useModalEdit?: boolean
 }) => {
-
-
-  function saveEntry(event, errors, values, num) {
-    props.entry.duration = parseTime(values.duration);
-    props.entry.shortDescription = values.shortDescription;
-    props.entry.date = values.date;
-    axios.put('api/time-entries/', props.entry).then(props.onUpdate);
+  function saveEntry(event, errors, values) {
+    if (errors?.length) {
+      return;
+    }
+    axios
+      .put('api/time-entries/', {
+        ...props.entry,
+        ...values,
+      })
+      .then(props.onUpdate);
   }
 
   function deleteEntry() {
@@ -36,7 +40,14 @@ export const TimeEntry = (props: {
       <td>{props.entry.shortDescription}</td>
       <td style={{textAlign: 'center'}}>{props.entry.date}</td>
       <td style={{textAlign: 'center'}}>
-        {props.showButtons && (
+        {props.showButtons && !props.useModalEdit && props.onEdit && (
+          <div>
+            <Button color="primary" onClick={() => props.onEdit(props.entry)}>
+              Изменить
+            </Button>
+          </div>
+        )}
+        {props.showButtons && props.useModalEdit && (
           <div>
             <TimeEntryUpdateModal entity={props.entry} saveEntity={saveEntry} num={props.key}/>
           </div>
@@ -54,5 +65,3 @@ export const TimeEntry = (props: {
     </tr>
   );
 };
-
-
