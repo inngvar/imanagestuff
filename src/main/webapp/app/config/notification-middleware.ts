@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 
 const addErrorAlert = (message, key?, data?) => {
   key = key ? key : message;
-  if(key !== '') {
+  if (key !== '') {
     toast.error(translate(key, data));
   }
 };
@@ -61,7 +61,11 @@ export default () => next => action => {
               headers.forEach(([k, v]: [string, string]) => {
                 if (k.toLowerCase().endsWith('app-error')) {
                   errorHeader = v;
+                } else if (k.toLowerCase() === 'message') {
+                  errorHeader = v;
                 } else if (k.toLowerCase().endsWith('app-params')) {
+                  entityKey = v;
+                } else if (k.toLowerCase() === 'params') {
                   entityKey = v;
                 }
               });
