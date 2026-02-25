@@ -1,18 +1,17 @@
-package org.manage.service;
+package org.manage.service.project;
 
 import io.quarkus.panache.common.Page;
 import org.manage.domain.Member;
 import org.manage.domain.Project;
 import org.manage.service.dto.ProjectDTO;
 import org.manage.service.mapper.ProjectMapper;
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import org.manage.service.util.Paged;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

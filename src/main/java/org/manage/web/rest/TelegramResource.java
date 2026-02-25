@@ -4,7 +4,7 @@ import io.quarkus.security.Authenticated;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.manage.domain.Member;
 import org.manage.domain.PendingLink;
-import org.manage.service.TelegramLinkService;
+import org.manage.service.telegram.TelegramLinkService;
 import org.manage.service.dto.TelegramLinkDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

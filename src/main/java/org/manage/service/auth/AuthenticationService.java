@@ -1,4 +1,4 @@
-package org.manage.service;
+package org.manage.service.auth;
 
 import org.manage.domain.User;
 import org.manage.security.BCryptPasswordHasher;

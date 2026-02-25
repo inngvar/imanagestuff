@@ -1,4 +1,4 @@
-package org.manage.service;
+package org.manage.service.exception;
 
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 

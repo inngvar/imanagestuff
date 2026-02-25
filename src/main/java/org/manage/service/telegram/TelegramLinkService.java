@@ -1,4 +1,4 @@
-package org.manage.service;
+package org.manage.service.telegram;
 
 import org.manage.domain.Member;
 import org.manage.domain.PendingLink;

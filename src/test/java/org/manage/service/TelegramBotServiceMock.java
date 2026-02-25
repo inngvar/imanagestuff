@@ -1,6 +1,7 @@
 package org.manage.service;
 
 import io.quarkus.test.Mock;
+import org.manage.service.telegram.TelegramBotService;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;

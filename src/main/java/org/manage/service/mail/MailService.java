@@ -1,4 +1,4 @@
-package org.manage.service;
+package org.manage.service.mail;
 
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.Location;

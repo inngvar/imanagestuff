@@ -5,7 +5,7 @@ import static javax.ws.rs.core.UriBuilder.fromPath;
 import io.quarkus.security.identity.SecurityIdentity;
 import org.manage.domain.Member;
 import org.manage.security.AuthoritiesConstants;
-import org.manage.service.MemberService;
+import org.manage.service.member.MemberService;
 import org.manage.web.rest.errors.BadRequestAlertException;
 import org.manage.web.rest.vm.MemberCreateVM;
 import org.manage.web.util.HeaderUtil;
@@ -15,7 +15,7 @@ import org.manage.service.dto.MemberDTO;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.manage.service.Paged;
+import org.manage.service.util.Paged;
 import org.manage.web.rest.vm.PageRequestVM;
 import org.manage.web.util.PaginationUtil;
 

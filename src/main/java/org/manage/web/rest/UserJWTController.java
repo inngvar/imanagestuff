@@ -1,7 +1,7 @@
 package org.manage.web.rest;
 
 import org.manage.security.jwt.TokenProvider;
-import org.manage.service.AuthenticationService;
+import org.manage.service.auth.AuthenticationService;
 import org.manage.web.rest.vm.LoginVM;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import io.quarkus.security.runtime.QuarkusSecurityIdentity;

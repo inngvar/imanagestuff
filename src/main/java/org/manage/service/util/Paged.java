@@ -1,4 +1,4 @@
-package org.manage.service;
+package org.manage.service.util;
 
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 

@@ -1,6 +1,6 @@
 package org.manage.web.rest;
 
-import org.manage.service.ManagementInfoService;
+import org.manage.service.common.ManagementInfoService;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;

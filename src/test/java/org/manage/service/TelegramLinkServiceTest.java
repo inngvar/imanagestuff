@@ -4,6 +4,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import org.manage.domain.Member;
 import org.manage.domain.PendingLink;
+import org.manage.service.telegram.TelegramLinkService;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;

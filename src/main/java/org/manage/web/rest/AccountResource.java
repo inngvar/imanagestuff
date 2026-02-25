@@ -1,10 +1,10 @@
 package org.manage.web.rest;
 
 import org.manage.domain.User;
-import org.manage.service.InvalidPasswordException;
-import org.manage.service.MailService;
-import org.manage.service.UserService;
-import org.manage.service.UsernameAlreadyUsedException;
+import org.manage.service.exception.InvalidPasswordException;
+import org.manage.service.mail.MailService;
+import org.manage.service.auth.UserService;
+import org.manage.service.exception.UsernameAlreadyUsedException;
 import org.manage.service.dto.PasswordChangeDTO;
 import org.manage.service.dto.UserDTO;
 import org.manage.web.rest.errors.EmailAlreadyUsedException;
@@ -75,7 +75,7 @@ public class AccountResource {
             return mailService.sendActivationEmail(user).thenApply(it -> Response.created(null).build());
         } catch (UsernameAlreadyUsedException e) {
             throw new LoginAlreadyUsedException();
-        } catch (org.manage.service.EmailAlreadyUsedException e) {
+        } catch (EmailAlreadyUsedException e) {
             throw new EmailAlreadyUsedException();
         }
     }

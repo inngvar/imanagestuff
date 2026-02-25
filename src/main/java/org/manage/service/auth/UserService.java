@@ -1,4 +1,4 @@
-package org.manage.service;
+package org.manage.service.auth;
 
 import org.manage.config.Constants;
 import org.manage.domain.Authority;
@@ -8,6 +8,9 @@ import org.manage.security.AuthoritiesConstants;
 import org.manage.security.BCryptPasswordHasher;
 import org.manage.security.RandomUtil;
 import org.manage.service.dto.UserDTO;
+import org.manage.service.exception.EmailAlreadyUsedException;
+import org.manage.service.exception.InvalidPasswordException;
+import org.manage.service.exception.UsernameAlreadyUsedException;
 import io.quarkus.panache.common.Page;
 import java.time.Instant;
 import java.util.HashSet;
