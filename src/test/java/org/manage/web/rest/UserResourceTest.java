@@ -535,6 +535,186 @@ public class UserResourceTest {
     }
 
     @Test
+    public void testCreateUserDuplicateEmailReturns400WithHeaders() throws Exception {
+        var firstUser = new ManagedUserVM();
+        firstUser.login = "create-user-dup-email";
+        firstUser.password = DEFAULT_PASSWORD;
+        firstUser.firstName = DEFAULT_FIRSTNAME;
+        firstUser.lastName = DEFAULT_LASTNAME;
+        firstUser.email = "create-user-dup-email@example.com";
+        firstUser.activated = true;
+        firstUser.imageUrl = DEFAULT_IMAGEURL;
+        firstUser.langKey = DEFAULT_LANGKEY;
+        firstUser.authorities = Set.of(AuthoritiesConstants.USER);
+
+        given()
+            .auth()
+            .preemptive()
+            .oauth2(adminToken)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .body(firstUser)
+            .when()
+            .post("/api/users")
+            .then()
+            .statusCode(CREATED.getStatusCode());
+
+        var secondUser = new ManagedUserVM();
+        secondUser.login = "create-user-dup-email-2";
+        secondUser.password = DEFAULT_PASSWORD;
+        secondUser.firstName = DEFAULT_FIRSTNAME;
+        secondUser.lastName = DEFAULT_LASTNAME;
+        secondUser.email = firstUser.email;
+        secondUser.activated = true;
+        secondUser.imageUrl = DEFAULT_IMAGEURL;
+        secondUser.langKey = DEFAULT_LANGKEY;
+        secondUser.authorities = Set.of(AuthoritiesConstants.USER);
+
+        given()
+            .auth()
+            .preemptive()
+            .oauth2(adminToken)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .body(secondUser)
+            .when()
+            .post("/api/users")
+            .then()
+            .statusCode(BAD_REQUEST.getStatusCode())
+            .header("message", "error.emailexists");
+    }
+
+    @Test
+    public void testCreateUserDuplicateLoginReturns400WithHeaders() throws Exception {
+        var firstUser = new ManagedUserVM();
+        firstUser.login = "create-user-dup-login";
+        firstUser.password = DEFAULT_PASSWORD;
+        firstUser.firstName = DEFAULT_FIRSTNAME;
+        firstUser.lastName = DEFAULT_LASTNAME;
+        firstUser.email = "create-user-dup-login@example.com";
+        firstUser.activated = true;
+        firstUser.imageUrl = DEFAULT_IMAGEURL;
+        firstUser.langKey = DEFAULT_LANGKEY;
+        firstUser.authorities = Set.of(AuthoritiesConstants.USER);
+
+        given()
+            .auth()
+            .preemptive()
+            .oauth2(adminToken)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .body(firstUser)
+            .when()
+            .post("/api/users")
+            .then()
+            .statusCode(CREATED.getStatusCode());
+
+        var secondUser = new ManagedUserVM();
+        secondUser.login = firstUser.login;
+        secondUser.password = DEFAULT_PASSWORD;
+        secondUser.firstName = DEFAULT_FIRSTNAME;
+        secondUser.lastName = DEFAULT_LASTNAME;
+        secondUser.email = "another-email@example.com";
+        secondUser.activated = true;
+        secondUser.imageUrl = DEFAULT_IMAGEURL;
+        secondUser.langKey = DEFAULT_LANGKEY;
+        secondUser.authorities = Set.of(AuthoritiesConstants.USER);
+
+        given()
+            .auth()
+            .preemptive()
+            .oauth2(adminToken)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .body(secondUser)
+            .when()
+            .post("/api/users")
+            .then()
+            .statusCode(BAD_REQUEST.getStatusCode())
+            .header("message", "error.userexists");
+    }
+
+    @Test
+    public void testUpdateUserDuplicateEmailReturns400WithHeaders() throws Exception {
+        var firstUser = new ManagedUserVM();
+        firstUser.login = "update-user-dup-email";
+        firstUser.password = DEFAULT_PASSWORD;
+        firstUser.firstName = DEFAULT_FIRSTNAME;
+        firstUser.lastName = DEFAULT_LASTNAME;
+        firstUser.email = "update-user-dup-email@example.com";
+        firstUser.activated = true;
+        firstUser.imageUrl = DEFAULT_IMAGEURL;
+        firstUser.langKey = DEFAULT_LANGKEY;
+        firstUser.authorities = Set.of(AuthoritiesConstants.USER);
+
+        given()
+            .auth()
+            .preemptive()
+            .oauth2(adminToken)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .body(firstUser)
+            .when()
+            .post("/api/users")
+            .then()
+            .statusCode(CREATED.getStatusCode());
+
+        var secondUser = new ManagedUserVM();
+        secondUser.login = "update-user-dup-email-2";
+        secondUser.password = DEFAULT_PASSWORD;
+        secondUser.firstName = DEFAULT_FIRSTNAME;
+        secondUser.lastName = DEFAULT_LASTNAME;
+        secondUser.email = "update-user-dup-email-2@example.com";
+        secondUser.activated = true;
+        secondUser.imageUrl = DEFAULT_IMAGEURL;
+        secondUser.langKey = DEFAULT_LANGKEY;
+        secondUser.authorities = Set.of(AuthoritiesConstants.USER);
+
+        given()
+            .auth()
+            .preemptive()
+            .oauth2(adminToken)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .body(secondUser)
+            .when()
+            .post("/api/users")
+            .then()
+            .statusCode(CREATED.getStatusCode());
+
+        var updatedFirstUser = get("/api/users/{login}", firstUser.login).then().extract().body().as(User.class);
+
+        var updatedManagedUserVM = new ManagedUserVM();
+        updatedManagedUserVM.id = updatedFirstUser.id;
+        updatedManagedUserVM.login = updatedFirstUser.login;
+        updatedManagedUserVM.password = updatedFirstUser.password;
+        updatedManagedUserVM.firstName = updatedFirstUser.firstName;
+        updatedManagedUserVM.lastName = updatedFirstUser.lastName;
+        updatedManagedUserVM.email = secondUser.email;
+        updatedManagedUserVM.activated = updatedFirstUser.activated;
+        updatedManagedUserVM.imageUrl = updatedFirstUser.imageUrl;
+        updatedManagedUserVM.langKey = updatedFirstUser.langKey;
+        updatedManagedUserVM.createdBy = updatedFirstUser.createdBy;
+        updatedManagedUserVM.createdDate = updatedFirstUser.createdDate;
+        updatedManagedUserVM.lastModifiedBy = updatedFirstUser.lastModifiedBy;
+        updatedManagedUserVM.lastModifiedDate = updatedFirstUser.lastModifiedDate;
+        updatedManagedUserVM.authorities = Set.of(AuthoritiesConstants.USER);
+
+        given()
+            .auth()
+            .preemptive()
+            .oauth2(adminToken)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .body(updatedManagedUserVM)
+            .when()
+            .put("/api/users")
+            .then()
+            .statusCode(BAD_REQUEST.getStatusCode())
+            .header("message", "error.emailexists");
+    }
+
+    @Test
     public void deleteUser() throws Exception {
         given()
             .auth()

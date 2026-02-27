@@ -1,19 +1,18 @@
 package org.manage.web.rest;
 
-import static javax.ws.rs.core.UriBuilder.fromPath;
-
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.manage.domain.User;
 import org.manage.security.AuthoritiesConstants;
-import org.manage.service.mail.MailService;
 import org.manage.service.auth.UserService;
 import org.manage.service.dto.UserDTO;
+import org.manage.service.exception.EmailAlreadyUsedException;
+import org.manage.service.mail.MailService;
 import org.manage.web.rest.errors.BadRequestAlertException;
-import org.manage.web.rest.errors.EmailAlreadyUsedException;
-import org.manage.web.rest.errors.LoginAlreadyUsedException;
 import org.manage.web.util.HeaderUtil;
 import org.manage.web.util.ResponseUtil;
-import java.util.List;
-import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -21,9 +20,10 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
+import java.util.Optional;
+
+import static javax.ws.rs.core.UriBuilder.fromPath;
 
 /**
  * REST controller for managing users.
@@ -93,18 +93,20 @@ public class UserResource {
 
         if (userDTO.id != null) {
             throw new BadRequestAlertException("A new user cannot already have an ID", "userManagement", "idexists");
-            // Lowercase the user login before comparing with database
-        } else if (User.findOneByLogin(userDTO.login.toLowerCase()).isPresent()) {
-            throw new LoginAlreadyUsedException();
-        } else if (User.findOneByEmailIgnoreCase(userDTO.email).isPresent()) {
-            throw new EmailAlreadyUsedException();
-        } else {
-            var newUser = userService.createUser(userDTO);
-            mailService.sendCreationEmail(newUser);
-            Response.ResponseBuilder response = Response.created(fromPath("/api/users").path(newUser.login).build()).entity(newUser);
-            HeaderUtil.createAlert(applicationName, "userManagement.created", newUser.login).forEach(response::header);
-            return response.build();
         }
+        var existingUser = User.findOneByLogin(userDTO.login.toLowerCase());
+        if (existingUser.isPresent()) {
+            throw new BadRequestAlertException("Login name already used!", "userManagement", "userexists");
+        }
+        existingUser = User.findOneByEmailIgnoreCase(userDTO.email);
+        if (existingUser.isPresent()) {
+            throw new BadRequestAlertException("Email is already in use!", "userManagement", "emailexists");
+        }
+        var newUser = userService.createUser(userDTO);
+        mailService.sendCreationEmail(newUser);
+        Response.ResponseBuilder response = Response.created(fromPath("/api/users").path(newUser.login).build()).entity(newUser);
+        HeaderUtil.createAlert(applicationName, "userManagement.created", newUser.login).forEach(response::header);
+        return response.build();
     }
 
     /**
@@ -112,8 +114,6 @@ public class UserResource {
      *
      * @param userDTO the user to update.
      * @return the {@link Response} with status {@code 200 (OK)} and with body the updated user.
-     * @throws EmailAlreadyUsedException {@code 400 (Bad Request)} if the email is already in use.
-     * @throws LoginAlreadyUsedException {@code 400 (Bad Request)} if the login is already in use.
      */
     @PUT
     @RolesAllowed(AuthoritiesConstants.ADMIN)
@@ -121,11 +121,11 @@ public class UserResource {
         log.debug("REST request to update User : {}", userDTO);
         Optional<User> existingUser = User.findOneByEmailIgnoreCase(userDTO.email);
         if (existingUser.isPresent() && (!existingUser.get().id.equals(userDTO.id))) {
-            throw new EmailAlreadyUsedException();
+            throw new BadRequestAlertException("Email is already in use!", "userManagement", "emailexists");
         }
         existingUser = User.findOneByLogin(userDTO.login.toLowerCase());
         if (existingUser.isPresent() && (!existingUser.get().id.equals(userDTO.id))) {
-            throw new LoginAlreadyUsedException();
+            throw new BadRequestAlertException("Login name already used!", "userManagement", "userexists");
         }
         Optional<UserDTO> updatedUser = userService.updateUser(userDTO);
         return ResponseUtil.wrapOrNotFound(updatedUser, HeaderUtil.createAlert(applicationName, "userManagement.updated", userDTO.login));
