@@ -5,7 +5,6 @@ import org.manage.domain.User;
 import org.manage.security.AuthoritiesConstants;
 import org.manage.service.auth.UserService;
 import org.manage.service.dto.UserDTO;
-import org.manage.service.exception.EmailAlreadyUsedException;
 import org.manage.service.mail.MailService;
 import org.manage.web.rest.errors.BadRequestAlertException;
 import org.manage.web.util.HeaderUtil;

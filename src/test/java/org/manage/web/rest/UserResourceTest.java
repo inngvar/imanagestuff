@@ -143,7 +143,7 @@ public class UserResourceTest {
 
     @Test
     @Transactional
-    public void createUserWithExistingLogin() throws Exception {
+    public void createUserWithExistingLogin() {
         given()
             .auth()
             .preemptive()
@@ -182,7 +182,7 @@ public class UserResourceTest {
     }
 
     @Test
-    public void createUserWithExistingEmail() throws Exception {
+    public void createUserWithExistingEmail() {
         given()
             .auth()
             .preemptive()
@@ -221,7 +221,7 @@ public class UserResourceTest {
     }
 
     @Test
-    public void getAllUsers() throws Exception {
+    public void getAllUsers() {
         given()
             .auth()
             .preemptive()
@@ -255,7 +255,7 @@ public class UserResourceTest {
     }
 
     @Test
-    public void getUser() throws Exception {
+    public void getUser() {
         given()
             .auth()
             .preemptive()
@@ -288,7 +288,7 @@ public class UserResourceTest {
     }
 
     @Test
-    public void updateUser() throws Exception {
+    public void updateUser() {
         given()
             .auth()
             .preemptive()
@@ -342,7 +342,7 @@ public class UserResourceTest {
     }
 
     @Test
-    public void updateUserLogin() throws Exception {
+    public void updateUserLogin() {
         given()
             .auth()
             .preemptive()
@@ -399,7 +399,7 @@ public class UserResourceTest {
 
     @Test
     @Transactional
-    public void updateUserExistingEmail() throws Exception {
+    public void updateUserExistingEmail() {
         given()
             .auth()
             .preemptive()
@@ -467,7 +467,7 @@ public class UserResourceTest {
     }
 
     @Test
-    public void updateUserExistingLogin() throws Exception {
+    public void updateUserExistingLogin() {
         given()
             .auth()
             .preemptive()
@@ -535,7 +535,7 @@ public class UserResourceTest {
     }
 
     @Test
-    public void testCreateUserDuplicateEmailReturns400WithHeaders() throws Exception {
+    public void testCreateUserDuplicateEmailReturns400WithHeaders() {
         var firstUser = new ManagedUserVM();
         firstUser.login = "create-user-dup-email";
         firstUser.password = DEFAULT_PASSWORD;
@@ -585,7 +585,7 @@ public class UserResourceTest {
     }
 
     @Test
-    public void testCreateUserDuplicateLoginReturns400WithHeaders() throws Exception {
+    public void testCreateUserDuplicateLoginReturns400WithHeaders() {
         var firstUser = new ManagedUserVM();
         firstUser.login = "create-user-dup-login";
         firstUser.password = DEFAULT_PASSWORD;
@@ -635,7 +635,7 @@ public class UserResourceTest {
     }
 
     @Test
-    public void testUpdateUserDuplicateEmailReturns400WithHeaders() throws Exception {
+    public void testUpdateUserDuplicateEmailReturns400WithHeaders() {
         var firstUser = new ManagedUserVM();
         firstUser.login = "update-user-dup-email";
         firstUser.password = DEFAULT_PASSWORD;
@@ -715,7 +715,7 @@ public class UserResourceTest {
     }
 
     @Test
-    public void deleteUser() throws Exception {
+    public void deleteUser() {
         given()
             .auth()
             .preemptive()

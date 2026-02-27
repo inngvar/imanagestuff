@@ -90,7 +90,7 @@ public class AccountResource {
     @PermitAll
     public void activateAccount(@QueryParam(value = "key") String key) {
         var user = userService.activateRegistration(key);
-        if (!user.isPresent()) {
+        if (user.isEmpty()) {
             throw new AccountResourceException("No user was found for this activation key");
         }
     }
@@ -144,7 +144,7 @@ public class AccountResource {
             throw new BadRequestAlertException("Email is already in use!", "userManagement", "emailexists");
         }
         var user = User.findOneByLogin(userLogin);
-        if (!user.isPresent()) {
+        if (user.isEmpty()) {
             throw new AccountResourceException("User could not be found");
         }
         userService.updateUser(userLogin, userDTO.firstName, userDTO.lastName, userDTO.email, userDTO.langKey, userDTO.imageUrl);
@@ -207,7 +207,7 @@ public class AccountResource {
         }
         var user = userService.completePasswordReset(keyAndPassword.newPassword, keyAndPassword.key);
 
-        if (!user.isPresent()) {
+        if (user.isEmpty()) {
             throw new AccountResourceException("No user was found for this reset key");
         }
         return Response.ok().build();
@@ -215,9 +215,8 @@ public class AccountResource {
 
     private static boolean checkPasswordLength(String password) {
         return (
-            !password.isEmpty() &&
             password.length() >= ManagedUserVM.PASSWORD_MIN_LENGTH &&
-            password.length() <= ManagedUserVM.PASSWORD_MAX_LENGTH
+                password.length() <= ManagedUserVM.PASSWORD_MAX_LENGTH
         );
     }
 }

@@ -471,7 +471,7 @@ public class AccountResourceTest {
     //    }
     //
     @Test
-    public void testActivateAccount() throws Exception {
+    public void testActivateAccount() {
         var user = new ManagedUserVM();
         user.login = "test";
         user.email = "test@example.com";
@@ -485,8 +485,7 @@ public class AccountResourceTest {
     }
 
     @Test
-    public void testActivateAccountWithWrongKey() throws Exception {
-        //Activating user
+    public void testActivateAccountWithWrongKey() {
         given().when().get("/api/activate?key={key}", "wrongActivationKey").then().statusCode(INTERNAL_SERVER_ERROR.getStatusCode());
     }
 
@@ -804,7 +803,7 @@ public class AccountResourceTest {
     }
 
     @Test
-    public void testChangePassword() throws Exception {
+    public void testChangePassword() {
         var user = new ManagedUserVM();
         user.login = "change-password";
         user.email = "change-password@example.com";
@@ -924,7 +923,7 @@ public class AccountResourceTest {
     }
 
     @Test
-    public void testRequestPasswordResetUpperCaseEmail() throws Exception {
+    public void testRequestPasswordResetUpperCaseEmail() {
         var user = new ManagedUserVM();
         user.login = "password-reset";
         user.email = "password-reset@example.com";
@@ -1048,7 +1047,7 @@ public class AccountResourceTest {
     }
 
     @Test
-    public void testFinishPasswordResetWrongKey() throws Exception {
+    public void testFinishPasswordResetWrongKey() {
         var keyAndPassword = new KeyAndPasswordVM();
         keyAndPassword.key = "wrong reset key";
         keyAndPassword.newPassword = "new password";
