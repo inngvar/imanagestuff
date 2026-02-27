@@ -1,4 +1,4 @@
-package org.manage.service;
+package org.manage.service.time;
 
 import io.quarkus.panache.common.Page;
 import io.quarkus.security.identity.SecurityIdentity;
@@ -8,6 +8,9 @@ import org.manage.domain.TimeEntry;
 import org.manage.service.dto.TimeEntryDTO;
 import org.manage.service.mapper.ProjectMapper;
 import org.manage.service.mapper.TimeEntryMapper;
+import org.manage.service.member.MemberService;
+import org.manage.service.project.ProjectService;
+import org.manage.service.util.Paged;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

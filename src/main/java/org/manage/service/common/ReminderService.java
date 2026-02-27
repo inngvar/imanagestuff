@@ -1,9 +1,10 @@
-package org.manage.service;
+package org.manage.service.common;
 
 import io.quarkus.scheduler.Scheduled;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.manage.domain.Member;
 import org.manage.domain.TimeEntry;
+import org.manage.service.telegram.TelegramBotService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

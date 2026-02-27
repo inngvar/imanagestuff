@@ -1,4 +1,4 @@
-package org.manage.service;
+package org.manage.service.exception;
 
 public class EmailAlreadyUsedException extends RuntimeException {
 

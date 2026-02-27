@@ -1,4 +1,4 @@
-package org.manage.service;
+package org.manage.service.telegram;
 
 import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.StartupEvent;

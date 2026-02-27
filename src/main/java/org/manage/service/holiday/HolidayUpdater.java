@@ -1,4 +1,4 @@
-package org.manage.service;
+package org.manage.service.holiday;
 
 import org.manage.domain.DayInfo;
 import org.manage.domain.enums.DayType;

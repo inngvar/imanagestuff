@@ -1,4 +1,4 @@
-package org.manage.service;
+package org.manage.service.report;
 
 import org.manage.config.LocalDateProvider;
 import org.manage.domain.DayInfo;
@@ -7,7 +7,10 @@ import org.manage.domain.Project;
 import org.manage.domain.TimeEntry;
 import org.manage.service.dto.*;
 import org.manage.service.mapper.ProjectMapper;
-import org.manage.web.rest.CalendarResource;
+import org.manage.service.member.MemberService;
+import org.manage.service.project.ProjectService;
+import org.manage.service.time.TimeEntryService;
+import org.manage.service.time.TimeLogService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -17,10 +20,13 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.manage.service.HolidayUpdater.CONSULTANT_SOURCE_TYPE;
+import static org.manage.service.holiday.HolidayUpdater.CONSULTANT_SOURCE_TYPE;
 
 @ApplicationScoped
 public class ReportService {

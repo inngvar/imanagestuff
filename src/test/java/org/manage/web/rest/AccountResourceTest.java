@@ -471,7 +471,7 @@ public class AccountResourceTest {
     //    }
     //
     @Test
-    public void testActivateAccount() throws Exception {
+    public void testActivateAccount() {
         var user = new ManagedUserVM();
         user.login = "test";
         user.email = "test@example.com";
@@ -485,8 +485,7 @@ public class AccountResourceTest {
     }
 
     @Test
-    public void testActivateAccountWithWrongKey() throws Exception {
-        //Activating user
+    public void testActivateAccountWithWrongKey() {
         given().when().get("/api/activate?key={key}", "wrongActivationKey").then().statusCode(INTERNAL_SERVER_ERROR.getStatusCode());
     }
 
@@ -667,7 +666,144 @@ public class AccountResourceTest {
     }
 
     @Test
-    public void testChangePassword() throws Exception {
+    public void testRegisterDuplicateLoginReturns400WithHeaders() {
+        var firstUser = new ManagedUserVM();
+        firstUser.login = "duplicate-login-test";
+        firstUser.password = "password";
+        firstUser.firstName = "Alice";
+        firstUser.lastName = "Something";
+        firstUser.email = "duplicate-login-test@example.com";
+        firstUser.imageUrl = "http://placehold.it/50x50";
+        firstUser.langKey = Constants.DEFAULT_LANGUAGE;
+        firstUser.authorities = Collections.singleton(AuthoritiesConstants.USER);
+
+        registerUser(firstUser);
+        activateUser(firstUser.email);
+
+        var secondUser = new ManagedUserVM();
+        secondUser.login = firstUser.login;
+        secondUser.password = firstUser.password;
+        secondUser.firstName = firstUser.firstName;
+        secondUser.lastName = firstUser.lastName;
+        secondUser.email = "another-email@example.com";
+        secondUser.imageUrl = firstUser.imageUrl;
+        secondUser.langKey = firstUser.langKey;
+        secondUser.authorities = new HashSet<>(firstUser.authorities);
+
+        given()
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .body(secondUser)
+            .when()
+            .post("/api/register")
+            .then()
+            .statusCode(BAD_REQUEST.getStatusCode())
+            .header("message", "error.userexists");
+    }
+
+    @Test
+    public void testRegisterDuplicateEmailReturns400WithHeaders() {
+        var firstUser = new ManagedUserVM();
+        firstUser.login = "duplicate-email-test";
+        firstUser.password = "password";
+        firstUser.firstName = "Alice";
+        firstUser.lastName = "Something";
+        firstUser.email = "duplicate-email-test@example.com";
+        firstUser.imageUrl = "http://placehold.it/50x50";
+        firstUser.langKey = Constants.DEFAULT_LANGUAGE;
+        firstUser.authorities = Collections.singleton(AuthoritiesConstants.USER);
+
+        registerUser(firstUser);
+        activateUser(firstUser.email);
+
+        var secondUser = new ManagedUserVM();
+        secondUser.login = "another-login";
+        secondUser.password = firstUser.password;
+        secondUser.firstName = firstUser.firstName;
+        secondUser.lastName = firstUser.lastName;
+        secondUser.email = firstUser.email;
+        secondUser.imageUrl = firstUser.imageUrl;
+        secondUser.langKey = firstUser.langKey;
+        secondUser.authorities = new HashSet<>(firstUser.authorities);
+
+        given()
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .body(secondUser)
+            .when()
+            .post("/api/register")
+            .then()
+            .statusCode(BAD_REQUEST.getStatusCode())
+            .header("message", "error.emailexists");
+    }
+
+    @Test
+    public void testSaveAccountDuplicateEmailReturns400WithHeaders() {
+        var user = new ManagedUserVM();
+        user.login = "save-account-duplicate-email";
+        user.email = "save-account-duplicate-email@example.com";
+        user.password = RandomUtil.generatePassword();
+
+        registerUser(user);
+        activateUser(user.email);
+        var token = authenticateUser(user.login, user.password);
+
+        var anotherUser = new ManagedUserVM();
+        anotherUser.login = "save-account-duplicate-email-2";
+        anotherUser.email = "save-account-duplicate-email-2@example.com";
+        anotherUser.password = RandomUtil.generatePassword();
+
+        registerUser(anotherUser);
+        activateUser(anotherUser.email);
+
+        var userDTO = new UserDTO();
+        userDTO.login = "not-used";
+        userDTO.firstName = "firstname";
+        userDTO.lastName = "lastname";
+        userDTO.email = "save-account-duplicate-email-2@example.com";
+        userDTO.activated = false;
+        userDTO.imageUrl = "http://placehold.it/50x50";
+        userDTO.langKey = Constants.DEFAULT_LANGUAGE;
+        userDTO.authorities = Set.of(AuthoritiesConstants.ADMIN);
+
+        given()
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .body(userDTO)
+            .post("/api/account")
+            .then()
+            .statusCode(BAD_REQUEST.getStatusCode())
+            .header("message", "error.emailexists");
+    }
+
+    @Test
+    public void testChangePasswordWrongCurrentReturns400() {
+        var user = new ManagedUserVM();
+        user.login = "change-password-wrong-current";
+        user.email = "change-password-wrong-current@example.com";
+        user.password = RandomUtil.generatePassword();
+
+        registerUser(user);
+        activateUser(user.email);
+        var token = authenticateUser(user.login, user.password);
+
+        var passwordChangeDTO = new PasswordChangeDTO();
+        passwordChangeDTO.currentPassword = "wrong-password";
+        passwordChangeDTO.newPassword = "new password";
+
+        given()
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .body(passwordChangeDTO)
+            .post("/api/account/change-password")
+            .then()
+            .statusCode(BAD_REQUEST.getStatusCode());
+    }
+
+    @Test
+    public void testChangePassword() {
         var user = new ManagedUserVM();
         user.login = "change-password";
         user.email = "change-password@example.com";
@@ -787,7 +923,7 @@ public class AccountResourceTest {
     }
 
     @Test
-    public void testRequestPasswordResetUpperCaseEmail() throws Exception {
+    public void testRequestPasswordResetUpperCaseEmail() {
         var user = new ManagedUserVM();
         user.login = "password-reset";
         user.email = "password-reset@example.com";
@@ -823,7 +959,7 @@ public class AccountResourceTest {
             .body("password-reset-wrong-email@example.com")
             .post("/api/account/reset-password/init")
             .then()
-            .statusCode(BAD_REQUEST.getStatusCode());
+            .statusCode(NOT_FOUND.getStatusCode());
     }
 
     @Test
@@ -911,7 +1047,7 @@ public class AccountResourceTest {
     }
 
     @Test
-    public void testFinishPasswordResetWrongKey() throws Exception {
+    public void testFinishPasswordResetWrongKey() {
         var keyAndPassword = new KeyAndPasswordVM();
         keyAndPassword.key = "wrong reset key";
         keyAndPassword.newPassword = "new password";

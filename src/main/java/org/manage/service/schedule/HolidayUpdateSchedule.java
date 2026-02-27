@@ -4,7 +4,7 @@ import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.StartupEvent;
 import io.quarkus.scheduler.Scheduled;
 import org.jboss.logging.Logger;
-import org.manage.service.HolidayUpdater;
+import org.manage.service.holiday.HolidayUpdater;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;

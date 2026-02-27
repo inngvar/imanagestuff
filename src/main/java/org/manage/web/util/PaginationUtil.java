@@ -1,6 +1,6 @@
 package org.manage.web.util;
 
-import org.manage.service.Paged;
+import org.manage.service.util.Paged;
 
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.Response;

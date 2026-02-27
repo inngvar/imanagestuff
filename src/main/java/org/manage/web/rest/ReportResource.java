@@ -1,8 +1,8 @@
 package org.manage.web.rest;
 
 import org.manage.security.AuthoritiesConstants;
-import org.manage.service.MailService;
-import org.manage.service.ReportService;
+import org.manage.service.mail.MailService;
+import org.manage.service.report.ReportService;
 import org.manage.service.dto.DayReportDTO;
 import org.manage.service.dto.TimeLogReportDTO;
 import org.manage.web.util.ResponseUtil;

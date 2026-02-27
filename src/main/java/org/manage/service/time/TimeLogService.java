@@ -1,14 +1,11 @@
-package org.manage.service;
+package org.manage.service.time;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.panache.common.Page;
-import org.manage.domain.Member;
-import org.manage.domain.Project;
-import org.manage.domain.TimeEntry;
 import org.manage.domain.TimeLog;
-import org.manage.service.dto.TimeEntryDTO;
 import org.manage.service.dto.TimeLogDTO;
 import org.manage.service.mapper.TimeLogMapper;
+import org.manage.service.util.Paged;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

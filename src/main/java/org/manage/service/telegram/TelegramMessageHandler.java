@@ -1,7 +1,8 @@
-package org.manage.service;
+package org.manage.service.telegram;
 
 import org.manage.domain.Member;
 import org.manage.service.dto.TimeEntryDTO;
+import org.manage.service.time.TimeEntryService;
 import org.manage.service.util.TelegramMessageParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

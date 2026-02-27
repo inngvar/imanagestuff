@@ -1,8 +1,8 @@
 package org.manage.web.rest;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.manage.service.Paged;
-import org.manage.service.TimeLogService;
+import org.manage.service.util.Paged;
+import org.manage.service.time.TimeLogService;
 import org.manage.service.dto.TimeLogDTO;
 import org.manage.web.rest.errors.BadRequestAlertException;
 import org.manage.web.rest.vm.PageRequestVM;

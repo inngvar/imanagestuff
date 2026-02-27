@@ -1,4 +1,4 @@
-package org.manage.service;
+package org.manage.service.member;
 
 import io.quarkus.panache.common.Page;
 import io.quarkus.security.identity.SecurityIdentity;
@@ -7,6 +7,7 @@ import org.manage.domain.Project;
 import org.manage.service.dto.MemberDTO;
 import org.manage.service.dto.ProjectDTO;
 import org.manage.service.mapper.MemberMapper;
+import org.manage.service.util.Paged;
 import org.manage.web.rest.vm.MemberCreateVM;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

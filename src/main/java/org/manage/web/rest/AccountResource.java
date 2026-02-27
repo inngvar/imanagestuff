@@ -1,15 +1,16 @@
 package org.manage.web.rest;
 
 import org.manage.domain.User;
-import org.manage.service.InvalidPasswordException;
-import org.manage.service.MailService;
-import org.manage.service.UserService;
-import org.manage.service.UsernameAlreadyUsedException;
+import org.manage.service.exception.EmailAlreadyUsedException;
+import org.manage.service.exception.EmailNotFoundException;
+import org.manage.service.exception.InvalidPasswordException;
+import org.manage.service.exception.UsernameAlreadyUsedException;
+import org.manage.service.mail.MailService;
+import org.manage.service.auth.UserService;
 import org.manage.service.dto.PasswordChangeDTO;
 import org.manage.service.dto.UserDTO;
-import org.manage.web.rest.errors.EmailAlreadyUsedException;
-import org.manage.web.rest.errors.EmailNotFoundException;
-import org.manage.web.rest.errors.LoginAlreadyUsedException;
+import org.manage.web.rest.errors.BadRequestAlertException;
+import org.manage.web.rest.errors.NotFoundAlertException;
 import org.manage.web.rest.vm.KeyAndPasswordVM;
 import org.manage.web.rest.vm.ManagedUserVM;
 import io.quarkus.security.Authenticated;
@@ -59,24 +60,22 @@ public class AccountResource {
      * {@code POST /register} : register the user.
      *
      * @param managedUserVM the managed user View Model.
-     * @throws InvalidPasswordException  {@code 400 (Bad Request)} if the password is incorrect.
-     * @throws EmailAlreadyUsedException {@code 400 (Bad Request)} if the email is already used.
-     * @throws LoginAlreadyUsedException {@code 400 (Bad Request)} if the login is already used.
+     * @throws BadRequestAlertException  {@code 400 (Bad Request)} if the password is incorrect.
      */
     @POST
     @Path("/register")
     @PermitAll
     public CompletionStage<Response> registerAccount(@Valid ManagedUserVM managedUserVM) {
         if (!checkPasswordLength(managedUserVM.password)) {
-            throw new InvalidPasswordException();
+            throw new BadRequestAlertException("Incorrect password", "password", "invalid");
         }
         try {
             var user = userService.registerUser(managedUserVM, managedUserVM.password);
             return mailService.sendActivationEmail(user).thenApply(it -> Response.created(null).build());
         } catch (UsernameAlreadyUsedException e) {
-            throw new LoginAlreadyUsedException();
-        } catch (org.manage.service.EmailAlreadyUsedException e) {
-            throw new EmailAlreadyUsedException();
+            throw new BadRequestAlertException("Login name already used!", "userManagement", "userexists");
+        } catch (EmailAlreadyUsedException e) {
+            throw new BadRequestAlertException("Email is already in use!", "userManagement", "emailexists");
         }
     }
 
@@ -91,7 +90,7 @@ public class AccountResource {
     @PermitAll
     public void activateAccount(@QueryParam(value = "key") String key) {
         var user = userService.activateRegistration(key);
-        if (!user.isPresent()) {
+        if (user.isEmpty()) {
             throw new AccountResourceException("No user was found for this activation key");
         }
     }
@@ -142,10 +141,10 @@ public class AccountResource {
             .orElseThrow(() -> new AccountResourceException("Current user login not found"));
         var existingUser = User.findOneByEmailIgnoreCase(userDTO.email);
         if (existingUser.isPresent() && (!existingUser.get().login.equalsIgnoreCase(userLogin))) {
-            throw new EmailAlreadyUsedException();
+            throw new BadRequestAlertException("Email is already in use!", "userManagement", "emailexists");
         }
         var user = User.findOneByLogin(userLogin);
-        if (!user.isPresent()) {
+        if (user.isEmpty()) {
             throw new AccountResourceException("User could not be found");
         }
         userService.updateUser(userLogin, userDTO.firstName, userDTO.lastName, userDTO.email, userDTO.langKey, userDTO.imageUrl);
@@ -165,9 +164,13 @@ public class AccountResource {
             .ofNullable(ctx.getUserPrincipal().getName())
             .orElseThrow(() -> new AccountResourceException("Current user login not found"));
         if (!checkPasswordLength(passwordChangeDto.newPassword)) {
-            throw new InvalidPasswordException();
+            throw new BadRequestAlertException("Incorrect password", "password", "invalid");
         }
-        userService.changePassword(userLogin, passwordChangeDto.currentPassword, passwordChangeDto.newPassword);
+        try {
+            userService.changePassword(userLogin, passwordChangeDto.currentPassword, passwordChangeDto.newPassword);
+        } catch (InvalidPasswordException e) {
+            throw new BadRequestAlertException("Incorrect password", "password", "invalid");
+        }
         return Response.ok().build();
     }
 
@@ -181,7 +184,11 @@ public class AccountResource {
     @Path("/account/reset-password/init")
     @Consumes(MediaType.TEXT_PLAIN)
     public Response requestPasswordReset(String mail) {
-        mailService.sendPasswordResetMail(userService.requestPasswordReset(mail).orElseThrow(EmailNotFoundException::new));
+        try {
+            mailService.sendPasswordResetMail(userService.requestPasswordReset(mail).orElseThrow(EmailNotFoundException::new));
+        } catch (EmailNotFoundException e) {
+            throw new NotFoundAlertException("Email not registered", "userManagement", "emailnotfound");
+        }
         return Response.ok().build();
     }
 
@@ -196,11 +203,11 @@ public class AccountResource {
     @Path("/account/reset-password/finish")
     public Response finishPasswordReset(KeyAndPasswordVM keyAndPassword) {
         if (!checkPasswordLength(keyAndPassword.newPassword)) {
-            throw new InvalidPasswordException();
+            throw new BadRequestAlertException("Incorrect password", "password", "invalid");
         }
         var user = userService.completePasswordReset(keyAndPassword.newPassword, keyAndPassword.key);
 
-        if (!user.isPresent()) {
+        if (user.isEmpty()) {
             throw new AccountResourceException("No user was found for this reset key");
         }
         return Response.ok().build();
@@ -208,9 +215,8 @@ public class AccountResource {
 
     private static boolean checkPasswordLength(String password) {
         return (
-            !password.isEmpty() &&
             password.length() >= ManagedUserVM.PASSWORD_MIN_LENGTH &&
-            password.length() <= ManagedUserVM.PASSWORD_MAX_LENGTH
+                password.length() <= ManagedUserVM.PASSWORD_MAX_LENGTH
         );
     }
 }

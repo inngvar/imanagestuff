@@ -1,4 +1,4 @@
-package org.manage.service;
+package org.manage.service.telegram;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;

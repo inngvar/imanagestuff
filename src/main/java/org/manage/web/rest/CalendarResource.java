@@ -1,6 +1,6 @@
 package org.manage.web.rest;
 
-import org.manage.service.HolidayUpdater;
+import org.manage.service.holiday.HolidayUpdater;
 import org.manage.service.dto.YearInfo;
 
 import javax.enterprise.context.RequestScoped;

@@ -1,4 +1,4 @@
-package org.manage.service;
+package org.manage.service.common;
 
 import io.quarkus.runtime.configuration.ProfileManager;
 import org.manage.config.JHipsterInfo;

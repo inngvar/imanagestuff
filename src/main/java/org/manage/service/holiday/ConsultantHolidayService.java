@@ -1,4 +1,4 @@
-package org.manage.service;
+package org.manage.service.holiday;
 
 import com.google.common.collect.Lists;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
