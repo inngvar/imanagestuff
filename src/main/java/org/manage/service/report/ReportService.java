@@ -54,6 +54,9 @@ public class ReportService {
     public TimeLogService timeLogService;
 
     @Inject
+    public org.manage.service.holiday.HolidayService holidayService;
+
+    @Inject
     ProjectMapper projectMapper;
 
     @Transactional
@@ -186,9 +189,7 @@ public class ReportService {
         }
 
         private boolean isHoliday(LocalDate currentDate) {
-            return DayInfo.getByDate(currentDate, CONSULTANT_SOURCE_TYPE)
-                .map(f -> true)
-                .orElse(currentDate.getDayOfWeek().equals(DayOfWeek.SATURDAY) || currentDate.getDayOfWeek().equals(DayOfWeek.SUNDAY));
+            return !holidayService.isWorkingDay(currentDate);
         }
 
         private long getMinutes(TimeEntry f) {

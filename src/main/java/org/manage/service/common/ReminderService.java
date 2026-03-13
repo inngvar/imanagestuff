@@ -22,15 +22,26 @@ public class ReminderService {
     @Inject
     TelegramBotService telegramBotService;
 
+    @Inject
+    org.manage.service.holiday.HolidayService holidayService;
+
     @ConfigProperty(name = "reminder.message")
     String reminderMessage;
 
     @Scheduled(cron = "{reminder.cron}")
     public void sendReminders() {
-        log.info("Running daily reminders task");
-        LocalDate today = LocalDate.now();
+        sendReminders(LocalDate.now());
+    }
 
-        List<Member> membersToRemind = getMembersToRemind(today);
+    public void sendReminders(LocalDate date) {
+        log.info("Running daily reminders task for {}", date);
+
+        if (!holidayService.isWorkingDay(date)) {
+            log.info("Today ({}) is a non-working day. Skipping reminders.", date);
+            return;
+        }
+
+        List<Member> membersToRemind = getMembersToRemind(date);
         log.info("Found {} members to remind", membersToRemind.size());
 
         for (Member member : membersToRemind) {
