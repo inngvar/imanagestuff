@@ -223,6 +223,6 @@ public class TelegramMessageHandler {
         timeEntryDTO.projectId = member.defaultProject.id;
 
         timeEntryService.persist(timeEntryDTO);
-        telegramBotService.sendMsg(chatId, "Запись сохранена: " + formatDuration(result.getDuration()) + " - " + result.getDescription());
+        telegramBotService.sendMsg(chatId, "Запись сохранена (" + timeEntryDTO.date.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy")) + "): " + formatDuration(result.getDuration()) + " - " + result.getDescription());
     }
 }
