@@ -2,6 +2,7 @@ package org.manage.service.util;
 
 import org.junit.jupiter.api.Test;
 import java.time.Duration;
+import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -54,7 +55,7 @@ class TelegramMessageParserTest {
         assertThat(result).isNotNull();
         assertThat(result.getDuration()).isEqualTo(Duration.ofHours(1).plusMinutes(30));
         assertThat(result.getDescription()).isEqualTo("meeting with team");
-        
+
         result = TelegramMessageParser.parseMessage("90м some task");
         assertThat(result).isNotNull();
         assertThat(result.getDuration()).isEqualTo(Duration.ofMinutes(90));
@@ -66,5 +67,62 @@ class TelegramMessageParserTest {
         assertThat(TelegramMessageParser.parseMessage("coding 2:30")).isNull();
         assertThat(TelegramMessageParser.parseMessage("2:30")).isNull(); // No description
         assertThat(TelegramMessageParser.parseMessage("just some text")).isNull();
+    }
+
+    @Test
+    void parseMessage_WithRelativeDate() {
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        var result1 = TelegramMessageParser.parseMessage("вчера 2:30 рефакторинг");
+        assertThat(result1).isNotNull();
+        assertThat(result1.getDuration()).isEqualTo(Duration.ofHours(2).plusMinutes(30));
+        assertThat(result1.getDescription()).isEqualTo("рефакторинг");
+        assertThat(result1.getDate()).isEqualTo(yesterday);
+
+        LocalDate dayBeforeYesterday = LocalDate.now().minusDays(2);
+        var result2 = TelegramMessageParser.parseMessage("1.5h meeting ПОЗАВЧЕРА");
+        assertThat(result2).isNotNull();
+        assertThat(result2.getDuration()).isEqualTo(Duration.ofHours(1).plusMinutes(30));
+        assertThat(result2.getDescription()).isEqualTo("meeting");
+        assertThat(result2.getDate()).isEqualTo(dayBeforeYesterday);
+    }
+
+    @Test
+    void parseMessage_WithRelativeDateCapitalized() {
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        var result1 = TelegramMessageParser.parseMessage("Вчера 2:30 рефакторинг");
+        assertThat(result1).isNotNull();
+        assertThat(result1.getDuration()).isEqualTo(Duration.ofHours(2).plusMinutes(30));
+        assertThat(result1.getDescription()).isEqualTo("рефакторинг");
+        assertThat(result1.getDate()).isEqualTo(yesterday);
+
+        LocalDate dayBeforeYesterday = LocalDate.now().minusDays(2);
+        var result2 = TelegramMessageParser.parseMessage("1.5h meeting Позавчера");
+        assertThat(result2).isNotNull();
+        assertThat(result2.getDuration()).isEqualTo(Duration.ofHours(1).plusMinutes(30));
+        assertThat(result2.getDescription()).isEqualTo("meeting");
+        assertThat(result2.getDate()).isEqualTo(dayBeforeYesterday);
+    }
+
+    @Test
+    void parseMessage_WithAbsoluteDate() {
+        int currentYear = LocalDate.now().getYear();
+        var result1 = TelegramMessageParser.parseMessage("15.03 1h testing");
+        assertThat(result1).isNotNull();
+        assertThat(result1.getDuration()).isEqualTo(Duration.ofHours(1));
+        assertThat(result1.getDescription()).isEqualTo("testing");
+        assertThat(result1.getDate()).isEqualTo(LocalDate.of(currentYear, 3, 15));
+
+        var result2 = TelegramMessageParser.parseMessage("2ч 30м разработка API 01.12.2023");
+        assertThat(result2).isNotNull();
+        assertThat(result2.getDuration()).isEqualTo(Duration.ofHours(2).plusMinutes(30));
+        assertThat(result2.getDescription()).isEqualTo("разработка API");
+        assertThat(result2.getDate()).isEqualTo(LocalDate.of(2023, 12, 1));
+    }
+
+    @Test
+    void parseMessage_DefaultDateIsNull() {
+        var result = TelegramMessageParser.parseMessage("2:30 coding");
+        assertThat(result).isNotNull();
+        assertThat(result.getDate()).isNull();
     }
 }
