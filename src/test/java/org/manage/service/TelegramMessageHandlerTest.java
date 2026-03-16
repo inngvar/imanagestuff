@@ -19,6 +19,8 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -136,6 +138,94 @@ public class TelegramMessageHandlerTest {
         assertThat(TelegramBotServiceMock.sentMessages).hasSize(1);
         assertThat(TelegramBotServiceMock.sentMessages.get(0).text).contains("meeting");
         assertThat(TelegramBotServiceMock.sentMessages.get(0).text).contains("1:00");
+    }
+
+    @Test
+    @Transactional
+    public void testHandleYesterday() {
+        Project project = new Project();
+        project.name = "Test Project";
+        project.persist();
+
+        Member member = new Member();
+        member.login = "testuser";
+        member.firstName = "Test";
+        member.lastName = "User";
+        member.defaultProject = project;
+        member.telegramId = 123L;
+        member.persist();
+
+        Message message = createMessage("вчера 1:00 meeting", 123L);
+        telegramMessageHandler.handleMessage(message);
+        TelegramBotServiceMock.sentMessages.clear();
+
+        Message yesterdayMessage = createMessage("/yesterday", 123L);
+        telegramMessageHandler.handleMessage(yesterdayMessage);
+
+        assertThat(TelegramBotServiceMock.sentMessages).hasSize(1);
+        assertThat(TelegramBotServiceMock.sentMessages.get(0).text).contains("meeting");
+        assertThat(TelegramBotServiceMock.sentMessages.get(0).text).contains("1:00");
+    }
+
+    @Test
+    @Transactional
+    public void testHandleDate() {
+        Project project = new Project();
+        project.name = "Test Project";
+        project.persist();
+
+        Member member = new Member();
+        member.login = "testuser";
+        member.firstName = "Test";
+        member.lastName = "User";
+        member.defaultProject = project;
+        member.telegramId = 123L;
+        member.persist();
+
+        LocalDate today = LocalDate.now();
+        String dateStr = today.format(DateTimeFormatter.ofPattern("dd.MM"));
+
+        Message message = createMessage(dateStr + " 1:00 meeting", 123L);
+        telegramMessageHandler.handleMessage(message);
+        TelegramBotServiceMock.sentMessages.clear();
+
+        Message dateMessage = createMessage("/date " + dateStr, 123L);
+        telegramMessageHandler.handleMessage(dateMessage);
+
+        assertThat(TelegramBotServiceMock.sentMessages).hasSize(1);
+        assertThat(TelegramBotServiceMock.sentMessages.get(0).text).contains("meeting");
+        assertThat(TelegramBotServiceMock.sentMessages.get(0).text).contains("1:00");
+    }
+
+    @Test
+    @Transactional
+    public void testHandleWeek() {
+        Project project = new Project();
+        project.name = "Test Project";
+        project.persist();
+
+        Member member = new Member();
+        member.login = "testuser";
+        member.firstName = "Test";
+        member.lastName = "User";
+        member.defaultProject = project;
+        member.telegramId = 123L;
+        member.persist();
+
+        Message message1 = createMessage("1:00 task1", 123L);
+        telegramMessageHandler.handleMessage(message1);
+        
+        Message message2 = createMessage("2:30 task2", 123L);
+        telegramMessageHandler.handleMessage(message2);
+        
+        TelegramBotServiceMock.sentMessages.clear();
+
+        Message weekMessage = createMessage("/week", 123L);
+        telegramMessageHandler.handleMessage(weekMessage);
+
+        assertThat(TelegramBotServiceMock.sentMessages).hasSize(1);
+        assertThat(TelegramBotServiceMock.sentMessages.get(0).text).contains("Всего записей: 2");
+        assertThat(TelegramBotServiceMock.sentMessages.get(0).text).contains("3:30");
     }
 
     private Message createMessage(String text, Long telegramId) {
