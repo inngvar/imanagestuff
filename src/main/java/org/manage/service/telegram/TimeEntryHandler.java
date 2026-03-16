@@ -1,18 +1,17 @@
-package org.manage.service.telegram.command;
+package org.manage.service.telegram;
 
 import org.manage.domain.Member;
 import org.manage.service.dto.TimeEntryDTO;
+import org.manage.service.member.MemberService;
 import org.manage.service.time.TimeEntryService;
 import org.manage.service.util.TelegramMessageParser;
-import org.manage.service.telegram.TelegramBotService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.LocalDate;
-import java.util.Optional;
 
 @ApplicationScoped
-public class TimeEntryCommand implements TelegramCommand {
+public class TimeEntryHandler {
 
     @Inject
     TimeEntryService timeEntryService;
@@ -23,20 +22,14 @@ public class TimeEntryCommand implements TelegramCommand {
     @Inject
     TelegramReportHelper reportHelper;
 
-    @Override
-    public boolean canHandle(String command) {
-        return true; 
-    }
+    @Inject
+    MemberService memberService;
 
-    @Override
+
     public void handle(Long chatId, Long telegramId, String text) {
-        Optional<Member> memberOpt = Member.findByTelegramId(telegramId);
-        if (memberOpt.isEmpty()) {
-            telegramBotService.sendMsg(chatId, "Ваш Telegram не привязан к аккаунту. Используйте `/start CODE` для привязки.");
-            return;
-        }
 
-        Member member = memberOpt.get();
+        Member member = Member.findByTelegramId(telegramId)
+            .orElseThrow();
         if (member.defaultProject == null) {
             telegramBotService.sendMsg(chatId, "У вас не выбран проект по умолчанию. Пожалуйста, установите его в личном кабинете.");
             return;

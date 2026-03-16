@@ -1,9 +1,8 @@
-package org.manage.service.telegram.command;
+package org.manage.service.telegram;
 
 import org.manage.domain.Member;
 import org.manage.service.dto.TimeEntryDTO;
 import org.manage.service.time.TimeEntryService;
-import org.manage.service.telegram.TelegramBotService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -20,20 +19,16 @@ public class TelegramReportHelper {
     TelegramBotService telegramBotService;
 
     public void handlePeriodEntries(Long chatId, Long telegramId, LocalDate startDate, LocalDate endDate, String periodName) {
-        Optional<Member> memberOpt = Member.findByTelegramId(telegramId);
-        if (memberOpt.isEmpty()) {
-            telegramBotService.sendMsg(chatId, "Ваш Telegram не привязан к аккаунту.");
-            return;
-        }
+        Member member = Member.findByTelegramId(telegramId)
+                .orElseThrow();
 
-        Member member = memberOpt.get();
         var entries = timeEntryService.findByMemberAndDateAndProject(member.id, startDate, endDate, member.defaultProject != null ? member.defaultProject.id : null);
 
         if (entries.isEmpty()) {
             telegramBotService.sendMsg(chatId, "За " + periodName + " записей нет.");
             return;
         }
-        
+
         if (startDate.equals(endDate)) {
              StringBuilder sb = new StringBuilder("Записи за " + periodName + ":\n");
              for (TimeEntryDTO entry : entries) {

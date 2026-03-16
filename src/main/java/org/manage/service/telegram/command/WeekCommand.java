@@ -1,5 +1,7 @@
 package org.manage.service.telegram.command;
 
+import org.manage.service.telegram.TelegramReportHelper;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.LocalDate;
@@ -11,8 +13,13 @@ public class WeekCommand implements TelegramCommand {
     TelegramReportHelper reportHelper;
 
     @Override
-    public boolean canHandle(String command) {
-        return "/week".equals(command);
+    public String commandName() {
+        return "/week";
+    }
+
+    @Override
+    public boolean existenceLinkedAccount() {
+        return true;
     }
 
     @Override

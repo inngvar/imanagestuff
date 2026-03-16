@@ -2,12 +2,13 @@ package org.manage.service.telegram.command;
 
 import org.manage.service.telegram.TelegramBotService;
 import org.manage.service.telegram.TelegramLinkService;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
 public class StartCommand implements TelegramCommand {
-    
+
     @Inject
     TelegramLinkService telegramLinkService;
 
@@ -15,8 +16,13 @@ public class StartCommand implements TelegramCommand {
     TelegramBotService telegramBotService;
 
     @Override
-    public boolean canHandle(String command) {
-        return "/start".equals(command);
+    public String commandName() {
+        return "/start";
+    }
+
+    @Override
+    public boolean existenceLinkedAccount() {
+        return false;
     }
 
     @Override

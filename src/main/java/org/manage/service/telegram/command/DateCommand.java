@@ -1,6 +1,9 @@
 package org.manage.service.telegram.command;
 
 import org.manage.service.telegram.TelegramBotService;
+import org.manage.service.telegram.TelegramReportHelper;
+import org.manage.service.util.TelegramMessageParser;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.LocalDate;
@@ -15,8 +18,13 @@ public class DateCommand implements TelegramCommand {
     TelegramBotService telegramBotService;
 
     @Override
-    public boolean canHandle(String command) {
-        return "/date".equals(command);
+    public String commandName() {
+        return "/date";
+    }
+
+    @Override
+    public boolean existenceLinkedAccount() {
+        return true;
     }
 
     @Override
@@ -27,15 +35,8 @@ public class DateCommand implements TelegramCommand {
             return;
         }
 
-        LocalDate targetDate;
-        try {
-            String dateText = parts[1];
-            String[] dp = dateText.split("\\.");
-            int day = Integer.parseInt(dp[0]);
-            int month = Integer.parseInt(dp[1]);
-            int year = dp.length == 3 ? Integer.parseInt(dp[2]) : LocalDate.now().getYear();
-            targetDate = LocalDate.of(year, month, day);
-        } catch (Exception e) {
+        LocalDate targetDate = TelegramMessageParser.parseDate(parts[1]);
+        if (targetDate == null) {
             telegramBotService.sendMsg(chatId, "Неверный формат даты. Используйте ДД.ММ или ДД.ММ.ГГГГ, например: /date 15.03");
             return;
         }

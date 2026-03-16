@@ -1,7 +1,7 @@
 package org.manage.service.telegram;
 
+import org.manage.domain.Member;
 import org.manage.service.telegram.command.TelegramCommand;
-import org.manage.service.telegram.command.TimeEntryCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -10,6 +10,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.Map;
+import java.util.Optional;
 
 @ApplicationScoped
 public class TelegramMessageHandler {
@@ -17,10 +19,16 @@ public class TelegramMessageHandler {
     private static final Logger log = LoggerFactory.getLogger(TelegramMessageHandler.class);
 
     @Inject
-    Instance<TelegramCommand> commands;
+    Map<String, TelegramCommand> telegramCommands;
 
     @Inject
-    TimeEntryCommand timeEntryCommand;
+    TimeEntryHandler timeEntryHandler;
+
+    @Inject
+    TelegramBotService telegramBotService;
+
+    @Inject
+    TelegramReportHelper reportHelper;
 
     @Transactional
     public void handleMessage(Message message) {
@@ -35,15 +43,24 @@ public class TelegramMessageHandler {
 
         String commandName = text.split("\\s+")[0].toLowerCase();
 
-        for (TelegramCommand cmd : commands) {
-            // Skip TimeEntryCommand in the loop to use it as an explicit fallback
-            if (!(cmd instanceof TimeEntryCommand) && cmd.canHandle(commandName)) {
-                cmd.handle(chatId, telegramId, text);
-                return;
+        var existLinkedAccount = Member.existsByTelegramId(telegramId);
+
+        var telegramCommand = telegramCommands.get(commandName);
+        if (telegramCommand != null) {
+            if (telegramCommand.existenceLinkedAccount() && !existLinkedAccount) {
+                telegramBotService.sendMsg(chatId, "Ваш Telegram не привязан к аккаунту. Используйте `/start CODE` для привязки.");
+            } else {
+                telegramCommand.handle(chatId, telegramId, text);
+            }
+        } else {
+            // Если ни одна команда не подошла, расцениваем как попытку создать Time Entry
+            if (existLinkedAccount) {
+                timeEntryHandler.handle(chatId, telegramId, text);
+            } else {
+                telegramBotService.sendMsg(chatId, "Ваш Telegram не привязан к аккаунту. Используйте `/start CODE` для привязки.");
             }
         }
 
-        // Fallback
-        timeEntryCommand.handle(chatId, telegramId, text);
+
     }
 }

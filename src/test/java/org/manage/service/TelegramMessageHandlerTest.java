@@ -12,7 +12,6 @@ import org.manage.service.telegram.TelegramLinkService;
 import org.manage.service.telegram.TelegramMessageHandler;
 import org.manage.service.time.TimeEntryService;
 import org.mockito.Mockito;
-import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;
 
@@ -214,10 +213,10 @@ public class TelegramMessageHandlerTest {
 
         Message message1 = createMessage("1:00 task1", 123L);
         telegramMessageHandler.handleMessage(message1);
-        
+
         Message message2 = createMessage("2:30 task2", 123L);
         telegramMessageHandler.handleMessage(message2);
-        
+
         TelegramBotServiceMock.sentMessages.clear();
 
         Message weekMessage = createMessage("/week", 123L);
@@ -228,15 +227,70 @@ public class TelegramMessageHandlerTest {
         assertThat(TelegramBotServiceMock.sentMessages.get(0).text).contains("3:30");
     }
 
+    @Test
+    public void testHandleUnauthenticatedCommandWhenNotLinked() {
+        Message message = createMessage("/help", 999L);
+        telegramMessageHandler.handleMessage(message);
+
+        // /help должен отработать и прислать справку
+        assertThat(TelegramBotServiceMock.sentMessages).hasSize(1);
+        assertThat(TelegramBotServiceMock.sentMessages.get(0).text).contains("Доступные команды");
+    }
+
+    @Test
+    public void testHandleAuthenticatedCommandWhenNotLinked() {
+        Message message = createMessage("/today", 999L);
+        telegramMessageHandler.handleMessage(message);
+
+        // /today требует привязки, поэтому бот должен попросить привязать аккаунт
+        assertThat(TelegramBotServiceMock.sentMessages).hasSize(1);
+        assertThat(TelegramBotServiceMock.sentMessages.get(0).text).contains("не привязан к аккаунту");
+        assertThat(TelegramBotServiceMock.sentMessages.get(0).text).contains("/start CODE");
+    }
+
+    @Test
+    public void testHandleTimeEntryWhenNotLinked() {
+        Message message = createMessage("1:00 test", 999L);
+        telegramMessageHandler.handleMessage(message);
+
+        // Time entry (fallback) требует привязки
+        assertThat(TelegramBotServiceMock.sentMessages).hasSize(1);
+        assertThat(TelegramBotServiceMock.sentMessages.get(0).text).contains("не привязан к аккаунту");
+        assertThat(TelegramBotServiceMock.sentMessages.get(0).text).contains("/start CODE");
+    }
+
+    @Test
+    @Transactional
+    public void testHandleUnauthenticatedCommandWhenLinked() {
+        Project project = new Project();
+        project.name = "Test Project";
+        project.persist();
+
+        Member member = new Member();
+        member.login = "testuser";
+        member.firstName = "Test";
+        member.lastName = "User";
+        member.defaultProject = project;
+        member.telegramId = 123L;
+        member.persist();
+
+        Message message = createMessage("/help", 123L);
+        telegramMessageHandler.handleMessage(message);
+
+        // /help должен отработать даже если аккаунт привязан
+        assertThat(TelegramBotServiceMock.sentMessages).hasSize(1);
+        assertThat(TelegramBotServiceMock.sentMessages.get(0).text).contains("Доступные команды");
+    }
+
     private Message createMessage(String text, Long telegramId) {
         Message message = Mockito.mock(Message.class);
         when(message.getText()).thenReturn(text);
         when(message.getChatId()).thenReturn(456L);
-        
+
         User user = Mockito.mock(User.class);
         when(user.getId()).thenReturn(telegramId);
         when(message.getFrom()).thenReturn(user);
-        
+
         return message;
     }
 }

@@ -125,4 +125,24 @@ class TelegramMessageParserTest {
         assertThat(result).isNotNull();
         assertThat(result.getDate()).isNull();
     }
+
+    @Test
+    void parseDate_Valid() {
+        assertThat(TelegramMessageParser.parseDate("вчера")).isEqualTo(LocalDate.now().minusDays(1));
+        assertThat(TelegramMessageParser.parseDate("позавчера")).isEqualTo(LocalDate.now().minusDays(2));
+        
+        int currentYear = LocalDate.now().getYear();
+        assertThat(TelegramMessageParser.parseDate("15.03")).isEqualTo(LocalDate.of(currentYear, 3, 15));
+        assertThat(TelegramMessageParser.parseDate("15.03.2023")).isEqualTo(LocalDate.of(2023, 3, 15));
+    }
+
+    @Test
+    void parseDate_Invalid() {
+        assertThat(TelegramMessageParser.parseDate(null)).isNull();
+        assertThat(TelegramMessageParser.parseDate("")).isNull();
+        assertThat(TelegramMessageParser.parseDate("   ")).isNull();
+        assertThat(TelegramMessageParser.parseDate("непонятно")).isNull();
+        assertThat(TelegramMessageParser.parseDate("32.13")).isNull(); // invalid day/month
+        assertThat(TelegramMessageParser.parseDate("abc")).isNull();
+    }
 }

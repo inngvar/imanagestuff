@@ -243,6 +243,22 @@ public class TelegramMessageParser {
         return new DateExtractionResult(null, trimmed);
     }
 
+    public static LocalDate parseDate(String text) {
+        if (text == null || text.isBlank()) {
+            return null;
+        }
+        String trimmed = text.trim();
+        LocalDate rel = parseRelative(trimmed);
+        if (rel != null) {
+            return rel;
+        }
+        try {
+            return parseAbsolute(trimmed);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     private static LocalDate parseRelative(String text) {
         if (text.equalsIgnoreCase("вчера")) {
             return LocalDate.now().minusDays(1);

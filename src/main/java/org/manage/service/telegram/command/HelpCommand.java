@@ -11,8 +11,13 @@ public class HelpCommand implements TelegramCommand {
     TelegramBotService telegramBotService;
 
     @Override
-    public boolean canHandle(String command) {
-        return "/help".equals(command);
+    public String commandName() {
+        return "/help";
+    }
+
+    @Override
+    public boolean existenceLinkedAccount() {
+        return false;
     }
 
     @Override
