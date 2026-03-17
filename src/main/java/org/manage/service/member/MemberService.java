@@ -20,7 +20,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @ApplicationScoped
-@Transactional
 public class MemberService {
 
     private final Logger log = LoggerFactory.getLogger(MemberService.class);

@@ -66,6 +66,10 @@ public class Member extends PanacheEntityBase implements Serializable {
         return find("login=?1", login).firstResultOptional();
     }
 
+    public static boolean existsByTelegramId(Long telegramId) {
+        return count("telegramId=?1", telegramId) > 0;
+    }
+
     public static Optional<Member> findByTelegramId(Long telegramId) {
         return find("telegramId=?1", telegramId).firstResultOptional();
     }
