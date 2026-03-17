@@ -20,8 +20,8 @@ public class TelegramMessageParser {
     // Support X.Y H, X H, Y M, etc.
     private static final Pattern DURATION_COMPONENTS_PATTERN = Pattern.compile("(\\d+(?:[.,]\\d+)?)([HMD])");
 
-    private static final Pattern RELATIVE_DATE_START = Pattern.compile("(?iu)^(вчера|позавчера)\\s+(.*)");
-    private static final Pattern RELATIVE_DATE_END = Pattern.compile("(?iu)(.*)\\s+(вчера|позавчера)$");
+    private static final Pattern RELATIVE_DATE_START = Pattern.compile("(?iu)^(сегодня|вчера|позавчера)\\s+(.*)");
+    private static final Pattern RELATIVE_DATE_END = Pattern.compile("(?iu)(.*)\\s+(сегодня|вчера|позавчера)$");
     private static final Pattern ABSOLUTE_DATE_START = Pattern.compile("^(\\d{1,2}\\.\\d{2}(?:\\.\\d{4})?)\\s+(.*)");
     private static final Pattern ABSOLUTE_DATE_END = Pattern.compile("(.*)\\s+(\\d{1,2}\\.\\d{2}(?:\\.\\d{4})?)$");
 
@@ -260,7 +260,9 @@ public class TelegramMessageParser {
     }
 
     private static LocalDate parseRelative(String text) {
-        if (text.equalsIgnoreCase("вчера")) {
+        if (text.equalsIgnoreCase("сегодня")) {
+            return LocalDate.now();
+        } else if (text.equalsIgnoreCase("вчера")) {
             return LocalDate.now().minusDays(1);
         } else if (text.equalsIgnoreCase("позавчера")) {
             return LocalDate.now().minusDays(2);

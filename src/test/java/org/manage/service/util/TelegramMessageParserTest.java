@@ -71,6 +71,11 @@ class TelegramMessageParserTest {
 
     @Test
     void parseMessage_WithRelativeDate() {
+        LocalDate today = LocalDate.now();
+        var result0 = TelegramMessageParser.parseMessage("сегодня 1h test");
+        assertThat(result0).isNotNull();
+        assertThat(result0.getDate()).isEqualTo(today);
+
         LocalDate yesterday = LocalDate.now().minusDays(1);
         var result1 = TelegramMessageParser.parseMessage("вчера 2:30 рефакторинг");
         assertThat(result1).isNotNull();
@@ -128,6 +133,7 @@ class TelegramMessageParserTest {
 
     @Test
     void parseDate_Valid() {
+        assertThat(TelegramMessageParser.parseDate("сегодня")).isEqualTo(LocalDate.now());
         assertThat(TelegramMessageParser.parseDate("вчера")).isEqualTo(LocalDate.now().minusDays(1));
         assertThat(TelegramMessageParser.parseDate("позавчера")).isEqualTo(LocalDate.now().minusDays(2));
         
